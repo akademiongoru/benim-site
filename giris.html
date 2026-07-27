@@ -1,0 +1,43 @@
+<script src="kullanicilar.js"></script>
+
+<script>
+
+function girisYap(){
+
+    let kullaniciAdi = document.getElementById("kullaniciAdi").value;
+    let sifre = document.getElementById("sifre").value;
+
+
+    let kullanici = kullanicilar.find(function(k){
+
+        return k.kullaniciAdi === kullaniciAdi &&
+               k.sifre === sifre;
+
+    });
+
+
+    if(kullanici){
+
+        if(kullanici.rol === "ogrenci"){
+            window.location.href = "ogrenci.html";
+        }
+
+        else if(kullanici.rol === "ogretmen"){
+            window.location.href = "ogretmen.html";
+        }
+
+        else if(kullanici.rol === "yonetici"){
+            window.location.href = "yonetici.html";
+        }
+
+    }
+
+    else{
+
+        alert("Kullanıcı adı veya şifre yanlış!");
+
+    }
+
+}
+
+</script>

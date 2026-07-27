@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Öğretmen Paneli | Öngörü Akademi</title>
+
+<script src="guvenlik.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+
+body{
+
+background:#2f2f2f;
+color:white;
+
+}
+
+
+
+header{
+
+background:#1f1f1f;
+padding:20px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:3px solid #ff7a00;
+
+}
+
+
+
+.logo{
+
+display:flex;
+align-items:center;
+gap:15px;
+
+}
+
+
+
+.logo img{
+
+width:75px;
+height:75px;
+background:white;
+padding:7px;
+border-radius:50%;
+object-fit:contain;
+
+}
+
+
+
+.logo h1{
+
+color:#ff7a00;
+font-size:26px;
+
+}
+
+
+
+
+.cikis{
+
+background:#ff7a00;
+padding:12px 22px;
+border-radius:10px;
+color:white;
+text-decoration:none;
+font-weight:600;
+cursor:pointer;
+
+}
+
+
+
+
+.container{
+
+padding:40px 8%;
+
+}
+
+
+
+
+
+.baslik{
+
+color:#ff7a00;
+margin-bottom:30px;
+
+}
+
+
+
+
+
+.kartlar{
+
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+
+}
+
+
+
+
+
+.kart{
+
+background:#383838;
+padding:30px;
+border-radius:20px;
+text-align:center;
+transition:.3s;
+
+}
+
+
+
+
+.kart:hover{
+
+transform:translateY(-8px);
+
+}
+
+
+
+
+.kart i{
+
+font-size:45px;
+color:#ff7a00;
+margin-bottom:15px;
+
+}
+
+
+
+
+.kart h2{
+
+font-size:32px;
+margin-bottom:10px;
+
+}
+
+
+
+
+
+
+.alanlar{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-top:40px;
+
+}
+
+
+
+
+.kutu{
+
+background:#383838;
+padding:30px;
+border-radius:20px;
+
+}
+
+
+
+
+.kutu h2{
+
+color:#ff7a00;
+margin-bottom:20px;
+
+}
+
+
+
+
+
+table{
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+
+
+
+th,
+td{
+
+padding:12px;
+border-bottom:1px solid #555;
+text-align:left;
+
+}
+
+
+
+
+.duyuru{
+
+background:#2f2f2f;
+padding:15px;
+border-left:4px solid #ff7a00;
+margin-bottom:15px;
+
+}
+
+
+
+
+.bilgi{
+
+background:#2f2f2f;
+padding:15px;
+border-radius:10px;
+line-height:1.8;
+
+}
+
+
+
+
+
+@media(max-width:900px){
+
+
+.kartlar,
+.alanlar{
+
+grid-template-columns:1fr;
+
+}
+
+
+header{
+
+flex-direction:column;
+gap:20px;
+
+}
+
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+
+<div class="logo">
+
+<img src="images/logo.png">
+
+
+<h1>
+Öğretmen Paneli
+</h1>
+
+
+</div>
+
+
+
+<a onclick="cikisYap()" class="cikis">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Çıkış
+
+</a>
+
+
+
+</header>
+
+
+
+
+
+<div class="container">
+
+
+<h1 class="baslik">
+
+Hoş Geldiniz Öğretmenim 👋
+
+</h1>
+
+
+
+
+
+<div class="kartlar">
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-user-graduate"></i>
+
+<h2 id="ogrenciSayisi">
+0
+</h2>
+
+<p>
+Öğrenci
+</p>
+
+</div>
+
+
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-book"></i>
+
+<h2>
+5
+</h2>
+
+<p>
+Ders
+</p>
+
+</div>
+
+
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-chart-line"></i>
+
+<h2>
+%92
+</h2>
+
+<p>
+Başarı
+</p>
+
+</div>
+
+
+
+</div>
+<div class="alanlar">
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-users"></i>
+
+Öğrenci Listesi
+
+</h2>
+
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>
+Ad Soyad
+</th>
+
+
+<th>
+Sınıf
+</th>
+
+
+<th>
+Puan
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="ogrenciListe">
+
+
+</tbody>
+
+
+
+</table>
+
+
+
+<div id="bosMesaj" class="bilgi" style="display:none;">
+
+Henüz kayıtlı öğrenci bulunmuyor.
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-calendar-days"></i>
+
+Ders Programı
+
+</h2>
+
+
+
+
+<div class="bilgi">
+
+
+Pazartesi
+
+<br>
+
+Matematik
+
+
+<br><br>
+
+
+Salı
+
+<br>
+
+Fen Bilimleri
+
+
+<br><br>
+
+
+Çarşamba
+
+<br>
+
+Türkçe
+
+
+<br><br>
+
+
+Perşembe
+
+<br>
+
+İngilizce
+
+
+<br><br>
+
+
+Cuma
+
+<br>
+
+Sosyal Bilgiler
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-bullhorn"></i>
+
+Duyurular
+
+</h2>
+
+
+
+<div id="duyuruAlan">
+
+
+<div class="duyuru">
+
+Henüz duyuru yok.
+
+</div>
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-chart-column"></i>
+
+Sınıf Takibi
+
+</h2>
+
+
+
+<div class="bilgi">
+
+
+Öğrenci başarı durumlarını,
+ödev ve sınav gelişimlerini
+buradan takip edebilirsiniz.
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script>
+
+
+// ÖĞRETMEN YETKİ KONTROLÜ
+
+kontrolEt("ogretmen");
+
+
+
+
+
+// ÖĞRENCİLERİ ÇEK
+
+
+let ogrenciler =
+
+JSON.parse(
+
+localStorage.getItem("ogrenciler")
+
+) || [];
+
+
+
+
+
+let liste =
+
+document.getElementById("ogrenciListe");
+
+
+
+let bosMesaj =
+
+document.getElementById("bosMesaj");
+
+
+
+
+
+if(ogrenciler.length > 0){
+
+
+ogrenciler.forEach(function(o){
+
+
+
+liste.innerHTML += `
+
+<tr>
+
+<td>${o.ad}</td>
+
+<td>${o.sinif}</td>
+
+<td>${o.puan}</td>
+
+</tr>
+
+`;
+
+
+
+});
+
+
+
+}
+
+else{
+
+
+bosMesaj.style.display="block";
+
+
+}
+
+
+
+
+
+
+document.getElementById("ogrenciSayisi").innerHTML =
+
+ogrenciler.length;
+
+
+
+
+
+
+
+
+// DUYURULAR
+
+
+let duyurular =
+
+JSON.parse(
+
+localStorage.getItem("duyurular")
+
+) || [];
+
+
+
+
+
+let duyuruAlan =
+
+document.getElementById("duyuruAlan");
+
+
+
+
+
+if(duyurular.length > 0){
+
+
+
+duyuruAlan.innerHTML="";
+
+
+
+duyurular.forEach(function(d){
+
+
+
+duyuruAlan.innerHTML += `
+
+<div class="duyuru">
+
+${d}
+
+</div>
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

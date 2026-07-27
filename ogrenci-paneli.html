@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Öğrenci Paneli | Öngörü Akademi</title>
+
+<script src="guvenlik.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+
+body{
+
+background:#2f2f2f;
+color:white;
+
+}
+
+
+
+header{
+
+background:#1f1f1f;
+padding:20px 8%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:3px solid #ff7a00;
+
+}
+
+
+
+.logo{
+
+display:flex;
+align-items:center;
+gap:15px;
+
+}
+
+
+
+.logo img{
+
+width:75px;
+height:75px;
+background:white;
+padding:7px;
+border-radius:50%;
+object-fit:contain;
+
+}
+
+
+
+.logo h1{
+
+color:#ff7a00;
+font-size:26px;
+
+}
+
+
+
+
+.cikis{
+
+background:#ff7a00;
+padding:12px 22px;
+border-radius:10px;
+color:white;
+text-decoration:none;
+font-weight:600;
+
+}
+
+
+
+.container{
+
+padding:40px 8%;
+
+}
+
+
+
+.baslik{
+
+color:#ff7a00;
+margin-bottom:30px;
+
+}
+
+
+
+
+.kartlar{
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:25px;
+
+}
+
+
+
+.kart{
+
+background:#383838;
+padding:30px;
+border-radius:20px;
+text-align:center;
+transition:.3s;
+
+}
+
+
+
+.kart:hover{
+
+transform:translateY(-8px);
+
+}
+
+
+
+.kart i{
+
+font-size:45px;
+color:#ff7a00;
+margin-bottom:15px;
+
+}
+
+
+
+.kart h2{
+
+font-size:28px;
+margin-bottom:10px;
+
+}
+
+
+
+
+
+.alanlar{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-top:40px;
+
+}
+
+
+
+.kutu{
+
+background:#383838;
+padding:30px;
+border-radius:20px;
+
+}
+
+
+
+.kutu h2{
+
+color:#ff7a00;
+margin-bottom:20px;
+
+}
+
+
+
+
+.bilgi{
+
+background:#2f2f2f;
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
+
+}
+
+
+
+.bilgi span{
+
+color:#ff7a00;
+font-weight:600;
+
+}
+
+
+
+
+
+.duyuru{
+
+background:#2f2f2f;
+padding:15px;
+border-left:4px solid #ff7a00;
+margin-bottom:15px;
+
+}
+
+
+
+
+
+.progress{
+
+height:12px;
+background:#222;
+border-radius:20px;
+overflow:hidden;
+
+}
+
+
+
+.progress div{
+
+height:100%;
+background:#ff7a00;
+
+}
+
+
+
+
+@media(max-width:1000px){
+
+.kartlar{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+
+
+@media(max-width:700px){
+
+header{
+
+flex-direction:column;
+gap:20px;
+
+}
+
+
+.kartlar,
+.alanlar{
+
+grid-template-columns:1fr;
+
+}
+
+
+.container{
+
+padding:30px 5%;
+
+}
+
+}
+
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+
+<div class="logo">
+
+<img src="images/logo.png">
+
+<h1>
+Öğrenci Paneli
+</h1>
+
+</div>
+
+
+
+<a onclick="cikisYap()" class="cikis" href="#">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+Çıkış
+
+</a>
+
+
+</header>
+
+
+
+<div class="container">
+
+
+<h1 class="baslik" id="hosgeldin">
+
+Hoş Geldin 👋
+
+</h1>
+
+
+
+<div class="kartlar">
+
+
+<div class="kart">
+
+<i class="fa-solid fa-user-graduate"></i>
+
+<h2 id="isim">
+-
+</h2>
+
+<p>
+Öğrenci
+</p>
+
+</div>
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-school"></i>
+
+<h2 id="sinif">
+-
+</h2>
+
+<p>
+Sınıf
+</p>
+
+</div>
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-chart-line"></i>
+
+<h2 id="puan">
+-
+</h2>
+
+<p>
+Başarı Puanı
+</p>
+
+</div>
+
+
+
+<div class="kart">
+
+<i class="fa-solid fa-book"></i>
+
+<h2>
+6
+</h2>
+
+<p>
+Ders
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="alanlar">
+
+
+<div class="kutu">
+
+
+<h2>
+<i class="fa-solid fa-id-card"></i>
+ Öğrenci Bilgileri
+</h2>
+
+
+<div class="bilgi">
+
+Ad Soyad:
+
+<span id="bilgiAd">
+-
+</span>
+
+</div>
+
+
+<div class="bilgi">
+
+Sınıf:
+
+<span id="bilgiSinif">
+-
+</span>
+
+</div>
+
+
+<div class="bilgi">
+
+Puan:
+
+<span id="bilgiPuan">
+-
+</span>
+
+</div>
+
+
+</div>
+<div class="kutu">
+
+
+<h2>
+<i class="fa-solid fa-calendar-days"></i>
+Ders Programı
+</h2>
+
+
+
+<div class="bilgi">
+Pazartesi:
+<span>
+Matematik
+</span>
+</div>
+
+
+<div class="bilgi">
+Salı:
+<span>
+Fen Bilimleri
+</span>
+</div>
+
+
+<div class="bilgi">
+Çarşamba:
+<span>
+Türkçe
+</span>
+</div>
+
+
+<div class="bilgi">
+Perşembe:
+<span>
+İngilizce
+</span>
+</div>
+
+
+<div class="bilgi">
+Cuma:
+<span>
+Sosyal Bilgiler
+</span>
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-chart-line"></i>
+
+Başarı Durumu
+
+</h2>
+
+
+
+<p>
+Genel Başarı
+</p>
+
+
+<div class="progress">
+
+<div id="basariBar" style="width:0%"></div>
+
+</div>
+
+
+<br>
+
+
+<p>
+
+Başarı Puanı:
+
+<span id="basariYazi">
+-
+
+</span>
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-bullhorn"></i>
+
+Duyurular
+
+</h2>
+
+
+
+<div id="duyurular">
+
+
+<div class="duyuru">
+
+Henüz duyuru bulunmuyor.
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="kutu">
+
+
+<h2>
+
+<i class="fa-solid fa-star"></i>
+
+Hedefler
+
+</h2>
+
+
+
+<p>
+
+✔ Düzenli tekrar yapmak
+
+<br><br>
+
+✔ Eksik konuları tamamlamak
+
+<br><br>
+
+✔ Deneme sınavlarına katılmak
+
+<br><br>
+
+✔ Günlük soru çözmek
+
+</p>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+// YETKİ KONTROLÜ
+
+kontrolEt("ogrenci");
+
+
+
+
+// ÖĞRENCİ VERİLERİ
+
+let ogrenciler = 
+JSON.parse(
+localStorage.getItem("ogrenciler")
+) || [];
+
+
+
+
+
+let ogrenci = null;
+
+
+
+
+if(ogrenciler.length > 0){
+
+ogrenci = ogrenciler[0];
+
+}
+
+
+
+
+if(ogrenci){
+
+
+
+document.getElementById("hosgeldin").innerHTML =
+
+"Hoş Geldin " + ogrenci.ad + " 👋";
+
+
+
+document.getElementById("isim").innerHTML =
+ogrenci.ad;
+
+
+
+document.getElementById("sinif").innerHTML =
+ogrenci.sinif;
+
+
+
+document.getElementById("puan").innerHTML =
+ogrenci.puan;
+
+
+
+document.getElementById("bilgiAd").innerHTML =
+ogrenci.ad;
+
+
+
+document.getElementById("bilgiSinif").innerHTML =
+ogrenci.sinif;
+
+
+
+document.getElementById("bilgiPuan").innerHTML =
+ogrenci.puan;
+
+
+
+document.getElementById("basariYazi").innerHTML =
+ogrenci.puan;
+
+
+
+let puan =
+Number(ogrenci.puan);
+
+
+
+if(puan > 100){
+
+puan = 100;
+
+}
+
+
+
+document.getElementById("basariBar").style.width =
+puan + "%";
+
+
+
+}
+
+else{
+
+
+
+document.getElementById("hosgeldin").innerHTML =
+
+"Hoş Geldin Öğrenci 👋";
+
+
+
+}
+
+
+
+
+
+
+// DUYURU SİSTEMİ
+
+
+let duyurular =
+
+JSON.parse(
+localStorage.getItem("duyurular")
+) || [];
+
+
+
+
+
+let duyuruAlan =
+
+document.getElementById("duyurular");
+
+
+
+
+
+if(duyurular.length > 0){
+
+
+
+duyuruAlan.innerHTML = "";
+
+
+
+duyurular.forEach(function(d){
+
+
+
+duyuruAlan.innerHTML += `
+
+<div class="duyuru">
+
+${d}
+
+</div>
+
+`;
+
+
+
+});
+
+
+
+}
+
+
+
+</script>
+
+
+
+</body>
+
+</html>
