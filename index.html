@@ -154,8 +154,9 @@ margin-bottom:20px;
 font-size:22px;
 }
 
-.giris a{
+.giris a, .giris button{
 display:block;
+width:100%;
 background:#ff7a00;
 color:white;
 text-decoration:none;
@@ -164,9 +165,13 @@ margin-bottom:15px;
 border-radius:10px;
 text-align:center;
 font-weight:bold;
+border:none;
+cursor:pointer;
+font-size:16px;
+transition:.3s;
 }
 
-.giris a:hover{
+.giris a:hover, .giris button:hover{
 background:white;
 color:#ff7a00;
 }
@@ -385,6 +390,65 @@ text-decoration:none;
 z-index:999;
 }
 
+/* BİLGİ AL MODAL (POPUP) STİLLERİ */
+.modal-arkaplan {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-ic {
+  background: #383838;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  border: 2px solid #ff7a00;
+}
+
+.modal-kapat {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  color: white;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.modal-ic input, .modal-ic select, .modal-ic textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #2f2f2f;
+  border: none;
+  border-radius: 8px;
+  color: white;
+}
+
+.modal-ic button {
+  width: 100%;
+  padding: 12px;
+  background: #ff7a00;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-ic button:hover {
+  background: white;
+  color: #ff7a00;
+}
+
 @media(max-width:1000px){
 .ana-alan{
 grid-template-columns:1fr;
@@ -470,6 +534,11 @@ Hızlı Giriş
 Yönetici
 </a>
 
+<button id="modalAcBtn">
+<i class="fa-solid fa-circle-info"></i>
+Bilgi Al
+</button>
+
 </div>
 
 <div class="slider">
@@ -516,11 +585,6 @@ Yönetici
 </h3>
 
 <p>
-<i class="fa-solid fa-user"></i>
-Yönetici
-</p>
-
-<p>
 <i class="fa-solid fa-phone"></i>
 0530 660 94 80
 </p>
@@ -532,7 +596,7 @@ Yönetici
 
 <p>
 <i class="fa-solid fa-location-dot"></i>
-Arnavutköy / İstanbul
+Merkez Mahallesi Cihaner Sokak No 7/5A Öngörü Akademi Kurs Merkezi Arnavutköy / İstanbul
 </p>
 
 <p>
@@ -706,6 +770,31 @@ Konum
 
 </section>
 
+<!-- HIZLI BİLGİ AL AÇILIR PENCERE (MODAL) -->
+<div class="modal-arkaplan" id="bilgiModal">
+  <div class="modal-ic">
+    <span class="modal-kapat" id="modalKapatBtn">&times;</span>
+    <h2 style="color:#ff7a00; margin-bottom: 20px;"><i class="fa-solid fa-pen"></i> Bilgi Al Formu</h2>
+    <form id="modalContactForm">
+      <input type="text" id="mOgrenciAd" placeholder="Öğrenci Ad Soyad" required>
+      <input type="tel" id="mOgrenciTel" placeholder="Telefon Numarası" required>
+      <select id="mOgrenciSinif" required>
+        <option value="">Sınıf Seçiniz</option>
+        <option value="1. Sınıf">1. Sınıf</option>
+        <option value="2. Sınıf">2. Sınıf</option>
+        <option value="3. Sınıf">3. Sınıf</option>
+        <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+        <option value="5. Sınıf">5. Sınıf</option>
+        <option value="6. Sınıf">6. Sınıf</option>
+        <option value="7. Sınıf">7. Sınıf</option>
+        <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+      </select>
+      <textarea id="mOgrenciMesaj" placeholder="Mesajınız" style="height: 80px; resize: none;"></textarea>
+      <button type="submit" id="mGonderBtn">Gönder</button>
+    </form>
+  </div>
+</div>
+
 <footer>
 
 <h2>
@@ -717,7 +806,7 @@ Geleceği Öngör, Bilginle Yön Ver.
 </p>
 
 <p>
-📍 Merkez Mahallesi Cihaner Sokak No:5/7A
+📍 Merkez Mahallesi Cihaner Sokak No:7/5A
 <br>
 Arnavutköy / İstanbul
 </p>
@@ -745,7 +834,7 @@ Tüm Hakları Saklıdır.
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-<!-- SLIDER VE GALERI KODLARI -->
+<!-- SLIDER, GALERİ VE MODAL AÇ/KAPAT SCRIPT'LERİ -->
 <script>
 
 let sliderlar = document.querySelectorAll(".slide");
@@ -790,6 +879,25 @@ window.open(this.src, "_blank");
 }
 });
 
+// MODAL AÇMA/KAPATMA
+const modal = document.getElementById("bilgiModal");
+const modalAcBtn = document.getElementById("modalAcBtn");
+const modalKapatBtn = document.getElementById("modalKapatBtn");
+
+modalAcBtn.onclick = function() {
+  modal.style.display = "flex";
+}
+
+modalKapatBtn.onclick = function() {
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
 </script>
 
 <!-- FIREBASE BAĞLANTISI VE VERİ TABANINA KAYIT KODU -->
@@ -810,8 +918,8 @@ window.open(this.src, "_blank");
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
+  // Genel Kayıt Formu
   const form = document.getElementById("contactForm");
-
   if (form) {
     form.addEventListener("submit", async function(e) {
       e.preventDefault();
@@ -842,6 +950,44 @@ window.open(this.src, "_blank");
         alert("Başvuru gönderilirken hata oluştu: " + error.message);
       } finally {
         btn.innerText = "Başvuru Gönder";
+        btn.disabled = false;
+      }
+    });
+  }
+
+  // Hızlı Giriş Altındaki Açılır (Modal) Form
+  const modalForm = document.getElementById("modalContactForm");
+  if (modalForm) {
+    modalForm.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById("mGonderBtn");
+      btn.innerText = "Gönderiliyor...";
+      btn.disabled = true;
+
+      const ad = document.getElementById("mOgrenciAd").value;
+      const tel = document.getElementById("mOgrenciTel").value;
+      const sinif = document.getElementById("mOgrenciSinif").value;
+      const mesaj = document.getElementById("mOgrenciMesaj").value;
+
+      const bugun = new Date();
+      const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+
+      try {
+        await addDoc(collection(db, "basvurular"), {
+          ad: ad,
+          tel: tel,
+          sinif: sinif,
+          mesaj: mesaj,
+          tarih: tarihStr
+        });
+        alert("Başvurunuz başarıyla gönderildi!");
+        modalForm.reset();
+        document.getElementById("bilgiModal").style.display = "none";
+      } catch (error) {
+        alert("Başvuru gönderilirken hata oluştu: " + error.message);
+      } finally {
+        btn.innerText = "Gönder";
         btn.disabled = false;
       }
     });
