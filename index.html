@@ -154,7 +154,7 @@ margin-bottom:20px;
 font-size:22px;
 }
 
-.giris a, .giris button{
+.giris a, .giris .bilgi-btn{
 display:block;
 width:100%;
 background:#ff7a00;
@@ -171,9 +171,54 @@ font-size:16px;
 transition:.3s;
 }
 
-.giris a:hover, .giris button:hover{
+.giris a:hover, .giris .bilgi-btn:hover{
 background:white;
 color:#ff7a00;
+}
+
+/* HIZLI GİRİŞ ALTINDAKİ AÇILIR FORM */
+.hizli-form-alani {
+  display: none;
+  background: #2f2f2f;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #ff7a00;
+  margin-top: 10px;
+}
+
+.hizli-form-alani input,
+.hizli-form-alani select,
+.hizli-form-alani textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #383838;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+}
+
+.hizli-form-alani textarea {
+  height: 60px;
+  resize: none;
+}
+
+.hizli-form-alani button {
+  width: 100%;
+  padding: 10px;
+  background: #ff7a00;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.hizli-form-alani button:hover {
+  background: white;
+  color: #ff7a00;
 }
 
 /* SLIDER */
@@ -390,65 +435,6 @@ text-decoration:none;
 z-index:999;
 }
 
-/* BİLGİ AL MODAL (POPUP) STİLLERİ */
-.modal-arkaplan {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-ic {
-  background: #383838;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 450px;
-  position: relative;
-  border: 2px solid #ff7a00;
-}
-
-.modal-kapat {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  color: white;
-  font-size: 25px;
-  cursor: pointer;
-}
-
-.modal-ic input, .modal-ic select, .modal-ic textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #2f2f2f;
-  border: none;
-  border-radius: 8px;
-  color: white;
-}
-
-.modal-ic button {
-  width: 100%;
-  padding: 12px;
-  background: #ff7a00;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.modal-ic button:hover {
-  background: white;
-  color: #ff7a00;
-}
-
 @media(max-width:1000px){
 .ana-alan{
 grid-template-columns:1fr;
@@ -534,10 +520,31 @@ Hızlı Giriş
 Yönetici
 </a>
 
-<button id="modalAcBtn">
+<button type="button" class="bilgi-btn" id="bilgiToggleBtn">
 <i class="fa-solid fa-circle-info"></i>
 Bilgi Al
 </button>
+
+<!-- BUTONA TIKLAYINCA BURADA AÇILACAK FORM -->
+<div class="hizli-form-alani" id="hizliFormAlani">
+  <form id="hizliContactForm">
+    <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" required>
+    <input type="tel" id="hOgrenciTel" placeholder="Telefon Numarası" required>
+    <select id="hOgrenciSinif" required>
+      <option value="">Sınıf Seçiniz</option>
+      <option value="1. Sınıf">1. Sınıf</option>
+      <option value="2. Sınıf">2. Sınıf</option>
+      <option value="3. Sınıf">3. Sınıf</option>
+      <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+      <option value="5. Sınıf">5. Sınıf</option>
+      <option value="6. Sınıf">6. Sınıf</option>
+      <option value="7. Sınıf">7. Sınıf</option>
+      <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+    </select>
+    <textarea id="hOgrenciMesaj" placeholder="Mesajınız"></textarea>
+    <button type="submit" id="hGonderBtn">Gönder</button>
+  </form>
+</div>
 
 </div>
 
@@ -608,81 +615,7 @@ Merkez Mahallesi Cihaner Sokak No 7/5A Öngörü Akademi Kurs Merkezi Arnavutkö
 
 </section>
 
-<section class="kartlar" id="hakkimizda">
-
-<div class="kart">
-<h2>
-Misyonumuz
-</h2>
-<p>
-Öğrencilerimizin akademik gelişimini destekleyerek,
-onları geleceğe hazırlayan kaliteli ve güvenilir eğitim sunmak.
-</p>
-</div>
-
-<div class="kart">
-<h2>
-Vizyonumuz
-</h2>
-<p>
-Modern eğitim anlayışıyla başarılı,
-özgüvenli ve hedef sahibi öğrenciler yetiştirmek.
-</p>
-</div>
-
-<div class="kart" id="dersler">
-<h2>
-Derslerimiz
-</h2>
-<ul>
-<li>
-Matematik
-</li>
-<li>
-Türkçe
-</li>
-<li>
-Fen Bilimleri
-</li>
-<li>
-İngilizce
-</li>
-<li>
-LGS Hazırlık
-</li>
-<li>
-Proje Okulları Hazırlık
-</li>
-</ul>
-</div>
-
-</section>
-
-<section class="galeri">
-
-<h2 class="baslik">
-Öngörü Akademi'den Kareler
-</h2>
-
-<div class="galeri-grid">
-
-<img src="images/kurs1.jpg">
-<img src="images/kurs2.jpg">
-<img src="images/kurs3.jpg">
-<img src="images/kurs4.jpg">
-<img src="images/kurs5.jpg">
-<img src="images/kurs6.jpg">
-<img src="images/kurs7.jpg">
-<img src="images/kurs8.jpg">
-<img src="images/kurs9.jpg">
-<img src="images/kurs10.jpg">
-<img src="images/kurs11.jpg">
-<img src="images/kurs12.jpg">
-
-</div>
-
-</section>
-
+<!-- YUKARI TAŞINAN ÖN KAYIT FORMU BÖLÜMÜ -->
 <section class="kayit">
 
 <h2 class="baslik">
@@ -770,30 +703,80 @@ Konum
 
 </section>
 
-<!-- HIZLI BİLGİ AL AÇILIR PENCERE (MODAL) -->
-<div class="modal-arkaplan" id="bilgiModal">
-  <div class="modal-ic">
-    <span class="modal-kapat" id="modalKapatBtn">&times;</span>
-    <h2 style="color:#ff7a00; margin-bottom: 20px;"><i class="fa-solid fa-pen"></i> Bilgi Al Formu</h2>
-    <form id="modalContactForm">
-      <input type="text" id="mOgrenciAd" placeholder="Öğrenci Ad Soyad" required>
-      <input type="tel" id="mOgrenciTel" placeholder="Telefon Numarası" required>
-      <select id="mOgrenciSinif" required>
-        <option value="">Sınıf Seçiniz</option>
-        <option value="1. Sınıf">1. Sınıf</option>
-        <option value="2. Sınıf">2. Sınıf</option>
-        <option value="3. Sınıf">3. Sınıf</option>
-        <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
-        <option value="5. Sınıf">5. Sınıf</option>
-        <option value="6. Sınıf">6. Sınıf</option>
-        <option value="7. Sınıf">7. Sınıf</option>
-        <option value="8. Sınıf LGS">8. Sınıf LGS</option>
-      </select>
-      <textarea id="mOgrenciMesaj" placeholder="Mesajınız" style="height: 80px; resize: none;"></textarea>
-      <button type="submit" id="mGonderBtn">Gönder</button>
-    </form>
-  </div>
+<section class="kartlar" id="hakkimizda">
+
+<div class="kart">
+<h2>
+Misyonumuz
+</h2>
+<p>
+Öğrencilerimizin akademik gelişimini destekleyerek,
+onları geleceğe hazırlayan kaliteli ve güvenilir eğitim sunmak.
+</p>
 </div>
+
+<div class="kart">
+<h2>
+Vizyonumuz
+</h2>
+<p>
+Modern eğitim anlayışıyla başarılı,
+özgüvenli ve hedef sahibi öğrenciler yetiştirmek.
+</p>
+</div>
+
+<div class="kart" id="dersler">
+<h2>
+Derslerimiz
+</h2>
+<ul>
+<li>
+Matematik
+</li>
+<li>
+Türkçe
+</li>
+<li>
+Fen Bilimleri
+</li>
+<li>
+İngilizce
+</li>
+<li>
+LGS Hazırlık
+</li>
+<li>
+Proje Okulları Hazırlık
+</li>
+</ul>
+</div>
+
+</section>
+
+<section class="galeri">
+
+<h2 class="baslik">
+Öngörü Akademi'den Kareler
+</h2>
+
+<div class="galeri-grid">
+
+<img src="images/kurs1.jpg">
+<img src="images/kurs2.jpg">
+<img src="images/kurs3.jpg">
+<img src="images/kurs4.jpg">
+<img src="images/kurs5.jpg">
+<img src="images/kurs6.jpg">
+<img src="images/kurs7.jpg">
+<img src="images/kurs8.jpg">
+<img src="images/kurs9.jpg">
+<img src="images/kurs10.jpg">
+<img src="images/kurs11.jpg">
+<img src="images/kurs12.jpg">
+
+</div>
+
+</section>
 
 <footer>
 
@@ -834,7 +817,7 @@ Tüm Hakları Saklıdır.
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-<!-- SLIDER, GALERİ VE MODAL AÇ/KAPAT SCRIPT'LERİ -->
+<!-- SLIDER VEYA FORMLAR İÇİN SCRIPT KODLARI -->
 <script>
 
 let sliderlar = document.querySelectorAll(".slide");
@@ -879,24 +862,17 @@ window.open(this.src, "_blank");
 }
 });
 
-// MODAL AÇMA/KAPATMA
-const modal = document.getElementById("bilgiModal");
-const modalAcBtn = document.getElementById("modalAcBtn");
-const modalKapatBtn = document.getElementById("modalKapatBtn");
+// HIZLI GİRİŞ KUTUSUNDAKİ "BİLGİ AL" FORMUNU AÇMA/KAPATMA
+const bilgiToggleBtn = document.getElementById("bilgiToggleBtn");
+const hizliFormAlani = document.getElementById("hizliFormAlani");
 
-modalAcBtn.onclick = function() {
-  modal.style.display = "flex";
-}
-
-modalKapatBtn.onclick = function() {
-  modal.style.display = "none";
-}
-
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
+bilgiToggleBtn.addEventListener("click", function() {
+  if (hizliFormAlani.style.display === "block") {
+    hizliFormAlani.style.display = "none";
+  } else {
+    hizliFormAlani.style.display = "block";
   }
-}
+});
 
 </script>
 
@@ -918,7 +894,7 @@ window.onclick = function(event) {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Genel Kayıt Formu
+  // 1. ANA SAYFADAKİ BÜYÜK ÖN KAYIT FORMU
   const form = document.getElementById("contactForm");
   if (form) {
     form.addEventListener("submit", async function(e) {
@@ -955,20 +931,20 @@ window.onclick = function(event) {
     });
   }
 
-  // Hızlı Giriş Altındaki Açılır (Modal) Form
-  const modalForm = document.getElementById("modalContactForm");
-  if (modalForm) {
-    modalForm.addEventListener("submit", async function(e) {
+  // 2. HIZLI GİRİŞ KUTUSUNDAKİ AÇILAN BİLGİ FORMU
+  const hizliForm = document.getElementById("hizliContactForm");
+  if (hizliForm) {
+    hizliForm.addEventListener("submit", async function(e) {
       e.preventDefault();
 
-      const btn = document.getElementById("mGonderBtn");
+      const btn = document.getElementById("hGonderBtn");
       btn.innerText = "Gönderiliyor...";
       btn.disabled = true;
 
-      const ad = document.getElementById("mOgrenciAd").value;
-      const tel = document.getElementById("mOgrenciTel").value;
-      const sinif = document.getElementById("mOgrenciSinif").value;
-      const mesaj = document.getElementById("mOgrenciMesaj").value;
+      const ad = document.getElementById("hOgrenciAd").value;
+      const tel = document.getElementById("hOgrenciTel").value;
+      const sinif = document.getElementById("hOgrenciSinif").value;
+      const mesaj = document.getElementById("hOgrenciMesaj").value;
 
       const bugun = new Date();
       const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
@@ -982,8 +958,8 @@ window.onclick = function(event) {
           tarih: tarihStr
         });
         alert("Başvurunuz başarıyla gönderildi!");
-        modalForm.reset();
-        document.getElementById("bilgiModal").style.display = "none";
+        hizliForm.reset();
+        document.getElementById("hizliFormAlani").style.display = "none";
       } catch (error) {
         alert("Başvuru gönderilirken hata oluştu: " + error.message);
       } finally {
