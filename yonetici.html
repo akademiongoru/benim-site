@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yönetici Girişi | Öngörü Akademi</title>
+  <title>Yönetici Paneli | Öngörü Akademi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   
@@ -11,48 +11,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body { background: #2f2f2f; color: white; padding: 40px 8%; min-height: 100vh; }
     
-    /* GİRİŞ KUTUSU */
-    .giris-kutu {
-      max-width: 400px;
-      margin: 80px auto;
-      background: #383838;
-      padding: 40px;
-      border-radius: 20px;
-      text-align: center;
-      border-top: 4px solid #ff7a00;
-    }
-
-    .giris-kutu h2 { color: #ff7a00; margin-bottom: 20px; }
-    .giris-kutu input {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 20px;
-      background: #2f2f2f;
-      border: 1px solid #4f4f4f;
-      border-radius: 10px;
-      color: white;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .giris-kutu button {
-      width: 100%;
-      padding: 15px;
-      background: #ff7a00;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .giris-kutu button:hover { background: white; color: #ff7a00; }
-    .hata-mesaji { color: #ff3333; margin-top: 15px; display: none; }
-
-    /* YÖNETİCİ PANELİ (VARSAYILAN KESİNLİKLE GİZLİ) */
-    #panelAlan { display: none; }
-
     header {
       display: flex;
       justify-content: space-between;
@@ -100,125 +58,108 @@
 
     .sil-btn:hover { background: #cc0000; }
   </style>
+
+  <!-- KESİN ŞİFRE KONTROLÜ (SAYFA YÜKLENMEDEN ÇALIŞIR) -->
+  <script>
+    const YONETICI_SIFRESI = "1234";
+    let girilenSifre = prompt("Lütfen Yönetici Şifresini Girin:");
+
+    if (girilenSifre !== YONETICI_SIFRESI) {
+      alert("Hatalı şifre girdiğiniz için erişim engellendi!");
+      window.location.href = "index.html"; // Şifre yanlışsa ana sayfaya atar
+    }
+  </script>
 </head>
 <body>
 
-  <!-- 1. GİRİŞ FORMU EKRANI -->
-  <div id="girisEkrani" class="giris-kutu">
-    <h2><i class="fa-solid fa-lock"></i> Yönetici Girişi</h2>
-    <input type="password" id="sifreInput" placeholder="Şifrenizi Girin" autocomplete="off">
-    <button onclick="girisYap()"><i class="fa-solid fa-right-to-bracket"></i> Giriş Yap</button>
-    <p id="hataText" class="hata-mesaji">Hatalı şifre! Tekrar deneyin.</p>
+  <header>
+    <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
+    <a href="index.html" class="ana-sayfa-btn"><i class="fa-solid fa-house"></i> Ana Sayfaya Dön</a>
+  </header>
+
+  <div class="tablo-kutu">
+    <table>
+      <thead>
+        <tr>
+          <th>Tarih</th>
+          <th>Öğrenci Ad Soyad</th>
+          <th>Telefon</th>
+          <th>Sınıf</th>
+          <th>Mesaj</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody id="basvuruListesi">
+        <tr>
+          <td colspan="6" style="text-align:center;">Veriler yükleniyor...</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- 2. BAŞVURULAR TABLOSU (SADECE ŞİFRE DOĞRUYSA AÇILACAK) -->
-  <div id="panelAlan">
-    <header>
-      <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
-      <a href="index.html" class="ana-sayfa-btn"><i class="fa-solid fa-house"></i> Ana Sayfaya Dön</a>
-    </header>
+  <!-- FIREBASE VERİ ÇEKME KODLARI -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <div class="tablo-kutu">
-      <table>
-        <thead>
-          <tr>
-            <th>Tarih</th>
-            <th>Öğrenci Ad Soyad</th>
-            <th>Telefon</th>
-            <th>Sınıf</th>
-            <th>Mesaj</th>
-            <th>İşlem</th>
-          </tr>
-        </thead>
-        <tbody id="basvuruListesi">
-          <tr>
-            <td colspan="6" style="text-align:center;">Veriler yükleniyor...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+      authDomain: "weffg5-b84a8.firebaseapp.com",
+      projectId: "weffg5-b84a8",
+      storageBucket: "weffg5-b84a8.firebasestorage.app",
+      messagingSenderId: "979023738185",
+      appId: "1:979023738185:web:6327d7ba34be220de91698",
+      measurementId: "G-P80RPZCSE7"
+    };
 
-  <script>
-    // ŞİFRE KONTROLÜ
-    function girisYap() {
-      const girilenSifre = document.getElementById("sifreInput").value;
-      
-      // BELİRLENEN ŞİFRE: 1234
-      if (girilenSifre === "1234") {
-        document.getElementById("girisEkrani").style.display = "none";
-        document.getElementById("panelAlan").style.display = "block";
-        firebaseYukle(); // Şifre doğruysa Firebase scriptini çalıştır
-      } else {
-        document.getElementById("hataText").style.display = "block";
-      }
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    // Enter tuşu desteği
-    document.getElementById("sifreInput").addEventListener("keyup", function(event) {
-      if (event.key === "Enter") {
-        girisYap();
-      }
-    });
+    async function basvurulariGetir() {
+      const liste = document.getElementById("basvuruListesi");
+      liste.innerHTML = "";
 
-    // FIREBASE VERİLERİNİ ŞİFREDEN SONRA YÜKLEME
-    function firebaseYukle() {
-      import("https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js").then((appModule) => {
-        import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js").then((firestoreModule) => {
-          
-          const firebaseConfig = {
-            apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
-            authDomain: "weffg5-b84a8.firebaseapp.com",
-            projectId: "weffg5-b84a8",
-            storageBucket: "weffg5-b84a8.firebasestorage.app",
-            messagingSenderId: "979023738185",
-            appId: "1:979023738185:web:6327d7ba34be220de91698",
-            measurementId: "G-P80RPZCSE7"
-          };
+      try {
+        const querySnapshot = await getDocs(collection(db, "basvurular"));
+        
+        if (querySnapshot.empty) {
+          liste.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Henüz hiç başvuru yok.</td></tr>";
+          return;
+        }
 
-          const app = appModule.initializeApp(firebaseConfig);
-          const db = firestoreModule.getFirestore(app);
+        querySnapshot.forEach((documentItem) => {
+          const data = documentItem.data();
+          const id = documentItem.id;
 
-          // Başvuruları Getir
-          firestoreModule.getDocs(firestoreModule.collection(db, "basvurular")).then((querySnapshot) => {
-            const liste = document.getElementById("basvuruListesi");
-            liste.innerHTML = "";
-
-            if (querySnapshot.empty) {
-              liste.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Henüz hiç başvuru yok.</td></tr>";
-              return;
-            }
-
-            querySnapshot.forEach((documentItem) => {
-              const data = documentItem.data();
-              const id = documentItem.id;
-
-              liste.innerHTML += `
-                <tr>
-                  <td>${data.tarih || '-'}</td>
-                  <td><b>${data.ad}</b></td>
-                  <td><a href="tel:${data.tel}" style="color:#ff7a00; text-decoration:none;">${data.tel}</a></td>
-                  <td>${data.sinif}</td>
-                  <td>${data.mesaj || '-'}</td>
-                  <td><button class="sil-btn" onclick="basvuruSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button></td>
-                </tr>
-              `;
-            });
-          });
-
-          // Silme Fonksiyonu
-          window.basvuruSil = function(id) {
-            if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
-              firestoreModule.deleteDoc(firestoreModule.doc(db, "basvurular", id)).then(() => {
-                alert("Başvuru silindi.");
-                firebaseYukle();
-              });
-            }
-          };
-
+          liste.innerHTML += `
+            <tr>
+              <td>${data.tarih || '-'}</td>
+              <td><b>${data.ad}</b></td>
+              <td><a href="tel:${data.tel}" style="color:#ff7a00; text-decoration:none;">${data.tel}</a></td>
+              <td>${data.sinif}</td>
+              <td>${data.mesaj || '-'}</td>
+              <td><button class="sil-btn" onclick="basvuruSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button></td>
+            </tr>
+          `;
         });
-      });
+      } catch (error) {
+        liste.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Hata oluştu: ${error.message}</td></tr>`;
+      }
     }
+
+    window.basvuruSil = async function(id) {
+      if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
+        try {
+          await deleteDoc(doc(db, "basvurular", id));
+          alert("Başvuru silindi.");
+          basvurulariGetir();
+        } catch (error) {
+          alert("Silinirken hata oluştu: " + error.message);
+        }
+      }
+    };
+
+    basvurulariGetir();
   </script>
 
 </body>
