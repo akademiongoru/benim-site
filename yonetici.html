@@ -1,247 +1,165 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yönetici Paneli | Öngörü Akademi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: #2f2f2f; color: white; padding: 40px 8%; }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #ff7a00;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    h1 { color: #ff7a00; font-size: 28px; }
 
-<title>Öngörü Akademi Yönetici Paneli</title>
+    .ana-sayfa-btn {
+      background: #ff7a00;
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: .3s;
+    }
 
-<style>
+    .ana-sayfa-btn:hover { background: white; color: #ff7a00; }
 
-body{
-    margin:0;
-    font-family:Arial,sans-serif;
-    background:#2f2f2f;
-    color:white;
-}
+    .tablo-kutu {
+      background: #383838;
+      padding: 20px;
+      border-radius: 15px;
+      overflow-x: auto;
+    }
 
-.container{
-    width:90%;
-    max-width:500px;
-    margin:80px auto;
-    background:#242424;
-    padding:30px;
-    border-radius:15px;
-    text-align:center;
-}
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #4f4f4f; }
+    th { background: #1f1f1f; color: #ff7a00; }
+    tr:hover { background: #444; }
 
-h1{
-    color:#ff7a00;
-}
+    .sil-btn {
+      background: #ff3333;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-input{
-    width:90%;
-    padding:15px;
-    margin:10px;
-    border:none;
-    border-radius:8px;
-    background:#111;
-    color:white;
-}
-
-
-button{
-
-    width:95%;
-    padding:15px;
-    background:#ff7a00;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-    cursor:pointer;
-
-}
-
-
-button:hover{
-    background:white;
-    color:#ff7a00;
-}
-
-
-#panel{
-    display:none;
-}
-
-
-</style>
-
+    .sil-btn:hover { background: #cc0000; }
+    
+    .yukleniyor {
+      text-align: center;
+      padding: 20px;
+      font-size: 18px;
+      color: #ddd;
+    }
+  </style>
 </head>
-
-
 <body>
 
-
-<div class="container" id="login">
-
-
-<h1>Yönetici Girişi</h1>
-
-
-<input 
-type="email"
-id="email"
-placeholder="E-posta">
-
-
-<input
-type="password"
-id="password"
-placeholder="Şifre">
-
-
-<button id="loginBtn">
-Giriş Yap
-</button>
-
-
-<p id="sonuc"></p>
-
-
-</div>
-
-
-
-
-<div class="container" id="panel">
-
-
-<h1>
-Öngörü Akademi Yönetim Paneli
-</h1>
-
-
-<p>
-Giriş başarılı.
-</p>
-
-
-<button id="logoutBtn">
-Çıkış Yap
-</button>
-
-
-</div>
-
-
-
-
-
-<script type="module">
-
-
-import { initializeApp } 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-
-import { 
-getAuth,
-signInWithEmailAndPassword,
-signOut
-} 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-
-
-
-
-
-const firebaseConfig = {
-
-
-apiKey: "AIzaSyCrT2ExfWOb5K5d4vL7oAoUHMRogqL4JzY",
-
-authDomain: "ongoruakademi-73303-70a6a.firebaseapp.com",
-
-projectId: "ongoruakademi-73303-70a6a",
-
-storageBucket: "ongoruakademi-73303-70a6a.firebasestorage.app",
-
-messagingSenderId: "406134243362",
-
-appId: "1:406134243362:web:a88e82e2a2b835b259ca7b"
-
-};
-
-
-
-const app = initializeApp(firebaseConfig);
-
-
-const auth = getAuth(app);
-
-
-
-
-
-document.getElementById("loginBtn")
-.addEventListener("click",()=>{
-
-
-let email =
-document.getElementById("email").value;
-
-
-let password =
-document.getElementById("password").value;
-
-
-
-signInWithEmailAndPassword(
-auth,
-email,
-password
-)
-
-
-.then(()=>{
-
-
-document.getElementById("login").style.display="none";
-
-document.getElementById("panel").style.display="block";
-
-
-})
-
-
-.catch((error)=>{
-
-
-document.getElementById("sonuc").innerHTML =
-"Hata: "+error.message;
-
-
-});
-
-
-});
-
-
-
-
-
-
-document.getElementById("logoutBtn")
-.addEventListener("click",()=>{
-
-
-signOut(auth);
-
-
-document.getElementById("panel").style.display="none";
-
-document.getElementById("login").style.display="block";
-
-
-});
-
-
-
-
-</script>
-
+  <header>
+    <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
+    <a href="index.html" class="ana-sayfa-btn"><i class="fa-solid fa-house"></i> Ana Sayfaya Dön</a>
+  </header>
+
+  <div class="tablo-kutu">
+    <table>
+      <thead>
+        <tr>
+          <th>Tarih</th>
+          <th>Öğrenci Ad Soyad</th>
+          <th>Telefon</th>
+          <th>Sınıf</th>
+          <th>Mesaj</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody id="basvuruListesi">
+        <tr>
+          <td colspan="6" class="yukleniyor">Veriler yükleniyor...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FIREBASE BAĞLANTISI VE VERİLERİ ÇEKME KODU -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+      authDomain: "weffg5-b84a8.firebaseapp.com",
+      projectId: "weffg5-b84a8",
+      storageBucket: "weffg5-b84a8.firebasestorage.app",
+      messagingSenderId: "979023738185",
+      appId: "1:979023738185:web:6327d7ba34be220de91698",
+      measurementId: "G-P80RPZCSE7"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Başvuruları Getir
+    async function basvurulariGetir() {
+      const liste = document.getElementById("basvuruListesi");
+      liste.innerHTML = "";
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "basvurular"));
+        
+        if (querySnapshot.empty) {
+          liste.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Henüz hiç başvuru yok.</td></tr>";
+          return;
+        }
+
+        querySnapshot.forEach((documentItem) => {
+          const data = documentItem.data();
+          const id = documentItem.id;
+
+          liste.innerHTML += `
+            <tr>
+              <td>${data.tarih || '-'}</td>
+              <td><b>${data.ad}</b></td>
+              <td><a href="tel:${data.tel}" style="color:#ff7a00; text-decoration:none;">${data.tel}</a></td>
+              <td>${data.sinif}</td>
+              <td>${data.mesaj || '-'}</td>
+              <td><button class="sil-btn" onclick="basvuruSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button></td>
+            </tr>
+          `;
+        });
+      } catch (error) {
+        liste.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Veriler çekilirken hata oluştu: ${error.message}</td></tr>`;
+      }
+    }
+
+    // Başvuru Silme Fonksiyonu
+    window.basvuruSil = async function(id) {
+      if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
+        try {
+          await deleteDoc(doc(db, "basvurular", id));
+          alert("Başvuru silindi.");
+          basvurulariGetir(); // Tabloyu yenile
+        } catch (error) {
+          alert("Silinirken hata oluştu: " + error.message);
+        }
+      }
+    };
+
+    // Sayfa açıldığında başvuruları getir
+    basvurulariGetir();
+  </script>
 
 </body>
 </html>
