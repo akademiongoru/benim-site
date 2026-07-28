@@ -50,7 +50,7 @@
     .giris-kutu button:hover { background: white; color: #ff7a00; }
     .hata-mesaji { color: #ff3333; margin-top: 15px; display: none; }
 
-    /* YÖNETİCİ PANELİ STİLİ (Giriş yapılınca açılacak) */
+    /* YÖNETİCİ PANELİ (Giriş yapılana kadar gizli) */
     #panelAlan { display: none; }
 
     header {
@@ -107,11 +107,11 @@
   <div id="girisEkrani" class="giris-kutu">
     <h2><i class="fa-solid fa-lock"></i> Yönetici Girişi</h2>
     <input type="password" id="sifreInput" placeholder="Şifrenizi Girin">
-    <button onclick="sifreKontrol()"><i class="fa-solid fa-right-to-bracket"></i> Giriş Yap</button>
+    <button id="girisBtn"><i class="fa-solid fa-right-to-bracket"></i> Giriş Yap</button>
     <p id="hataText" class="hata-mesaji">Hatalı şifre! Tekrar deneyin.</p>
   </div>
 
-  <!-- 2. BAŞVURULAR TABLOSU (Giriş başarılı olunca gözükecek) -->
+  <!-- 2. BAŞVURULAR TABLOSU (Şifre doğru olunca gösterilecek) -->
   <div id="panelAlan">
     <header>
       <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
@@ -139,23 +139,7 @@
     </div>
   </div>
 
-  <!-- ŞİFRE KONTROL JS -->
-  <script>
-    function sifreKontrol() {
-      const girilenSifre = document.getElementById("sifreInput").value;
-      
-      // YÖNETİCİ ŞİFRENİZ: Ongoru34+
-      if (girilenSifre === "Ongoru34+") {
-        document.getElementById("girisEkrani").style.display = "none";
-        document.getElementById("panelAlan").style.display = "block";
-        basvurulariGetir(); // Verileri yükle
-      } else {
-        document.getElementById("hataText").style.display = "block";
-      }
-    }
-  </script>
-
-  <!-- FIREBASE VERİ ÇEKME SCRIPT -->
+  <!-- FIREBASE VE ŞİFRE KONTROL JS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -173,7 +157,29 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    window.basvurulariGetir = async function() {
+    // Şifre Kontrol Butonu
+    document.getElementById("girisBtn").addEventListener("click", function() {
+      const girilenSifre = document.getElementById("sifreInput").value;
+      
+      // YÖNETİCİ ŞİFRENİZ: 1234
+      if (girilenSifre === "1234") {
+        document.getElementById("girisEkrani").style.display = "none";
+        document.getElementById("panelAlan").style.display = "block";
+        basvurulariGetir(); // Sadece şifre doğruysa verileri getir
+      } else {
+        document.getElementById("hataText").style.display = "block";
+      }
+    });
+
+    // Enter tuşuna basınca da giriş yapsın
+    document.getElementById("sifreInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        document.getElementById("girisBtn").click();
+      }
+    });
+
+    // Başvuruları Getirme Fonksiyonu
+    async function basvurulariGetir() {
       const liste = document.getElementById("basvuruListesi");
       liste.innerHTML = "";
 
@@ -203,8 +209,9 @@
       } catch (error) {
         liste.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Hata oluştu: ${error.message}</td></tr>`;
       }
-    };
+    }
 
+    // Başvuru Silme Fonksiyonu
     window.basvuruSil = async function(id) {
       if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
         try {
