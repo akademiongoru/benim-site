@@ -1,153 +1,69 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<title>
-Öngörü Akademi Yönetici Paneli
-</title>
-
+<title>Öngörü Akademi Yönetici Paneli</title>
 
 <style>
 
-
-*{
-
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-
-}
-
-
-
 body{
-
-background:#2f2f2f;
-color:white;
-padding:30px;
-
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#2f2f2f;
+    color:white;
 }
 
-
-
-.kutu{
-
-max-width:1000px;
-margin:auto;
-background:#383838;
-padding:30px;
-border-radius:20px;
-
+.container{
+    width:90%;
+    max-width:500px;
+    margin:80px auto;
+    background:#242424;
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
 }
 
-
-
-h1,h2{
-
-color:#ff7a00;
-margin-bottom:20px;
-
+h1{
+    color:#ff7a00;
 }
-
-
 
 input{
-
-width:100%;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-border:none;
-background:#222;
-color:white;
-
+    width:90%;
+    padding:15px;
+    margin:10px;
+    border:none;
+    border-radius:8px;
+    background:#111;
+    color:white;
 }
-
 
 
 button{
 
-padding:12px 20px;
-background:#ff7a00;
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
+    width:95%;
+    padding:15px;
+    background:#ff7a00;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
 
 }
-
 
 
 button:hover{
-
-background:white;
-color:#ff7a00;
-
+    background:white;
+    color:#ff7a00;
 }
-
 
 
 #panel{
-
-display:none;
-
+    display:none;
 }
-
-
-
-.kayit{
-
-background:#222;
-padding:20px;
-margin-bottom:20px;
-border-radius:15px;
-border-left:4px solid #ff7a00;
-
-}
-
-
-
-.kayit p{
-
-line-height:1.8;
-
-}
-
-
-
-.sil{
-
-background:#d60000;
-margin-top:15px;
-
-}
-
-
-
-.sil:hover{
-
-background:white;
-color:red;
-
-}
-
-
-
-.cikis{
-
-background:#555;
-margin-left:10px;
-
-}
-
 
 
 </style>
@@ -155,54 +71,33 @@ margin-left:10px;
 </head>
 
 
-
 <body>
 
 
-
-<div class="kutu">
-
+<div class="container" id="login">
 
 
-<div id="giris">
-
-
-<h1>
-
-Öngörü Akademi
-
-</h1>
-
-
-<h2>
-
-Yönetici Girişi
-
-</h2>
-
-
+<h1>Yönetici Girişi</h1>
 
 
 <input 
-type="text"
-id="kullanici"
-placeholder="Kullanıcı Adı">
+type="email"
+id="email"
+placeholder="E-posta">
 
 
-
-<input 
+<input
 type="password"
-id="sifre"
+id="password"
 placeholder="Şifre">
 
 
-
-<button onclick="giris()">
-
+<button id="loginBtn">
 Giriş Yap
-
 </button>
 
+
+<p id="sonuc"></p>
 
 
 </div>
@@ -210,263 +105,143 @@ Giriş Yap
 
 
 
-
-
-
-<div id="panel">
+<div class="container" id="panel">
 
 
 <h1>
-
-Gelen Ön Kayıtlar
-
+Öngörü Akademi Yönetim Paneli
 </h1>
 
 
+<p>
+Giriş başarılı.
+</p>
 
-<button onclick="cikis()" class="cikis">
 
-Çıkış
-
+<button id="logoutBtn">
+Çıkış Yap
 </button>
 
 
-<hr><br>
-
-
-
-<div id="liste">
-
-</div>
-
-
-
 </div>
 
 
 
 
 
-</div>
+<script type="module">
+
+
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+
+
+import { 
+getAuth,
+signInWithEmailAndPassword,
+signOut
+} 
+from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 
 
 
 
+const firebaseConfig = {
+
+
+apiKey: "AIzaSyCrT2ExfWOb5K5d4vL7oAoUHMRogqL4JzY",
+
+authDomain: "ongoruakademi-73303-70a6a.firebaseapp.com",
+
+projectId: "ongoruakademi-73303-70a6a",
+
+storageBucket: "ongoruakademi-73303-70a6a.firebasestorage.app",
+
+messagingSenderId: "406134243362",
+
+appId: "1:406134243362:web:a88e82e2a2b835b259ca7b"
+
+};
+
+
+
+const app = initializeApp(firebaseConfig);
+
+
+const auth = getAuth(app);
 
 
 
 
-<script>
+
+document.getElementById("loginBtn")
+.addEventListener("click",()=>{
 
 
-function giris(){
+let email =
+document.getElementById("email").value;
 
 
-let kullanici =
-document.getElementById("kullanici").value;
-
-
-let sifre =
-document.getElementById("sifre").value;
+let password =
+document.getElementById("password").value;
 
 
 
-if(
-kullanici=="akademiongoru+" &&
-sifre=="26072026"
-){
+signInWithEmailAndPassword(
+auth,
+email,
+password
+)
 
 
-document.getElementById("giris").style.display="none";
+.then(()=>{
 
+
+document.getElementById("login").style.display="none";
 
 document.getElementById("panel").style.display="block";
 
 
-kayitlariGetir();
+})
 
 
+.catch((error)=>{
 
-}
 
-else{
+document.getElementById("sonuc").innerHTML =
+"Hata: "+error.message;
 
 
-alert("Kullanıcı adı veya şifre yanlış");
-
-
-}
-
-
-
-}
-
-
-
-
-
-
-
-function kayitlariGetir(){
-
-
-
-let liste =
-document.getElementById("liste");
-
-
-
-let kayitlar =
-JSON.parse(localStorage.getItem("basvurular")) || [];
-
-
-
-liste.innerHTML="";
-
-
-
-
-if(kayitlar.length==0){
-
-
-liste.innerHTML=
-
-"<p>Henüz kayıt bulunmamaktadır.</p>";
-
-
-return;
-
-
-}
-
-
-
-
-kayitlar.forEach(function(kayit,index){
-
-
-
-liste.innerHTML += `
-
-
-<div class="kayit">
-
-
-<p>
-<b>Öğrenci:</b>
-${kayit.adsoyad}
-</p>
-
-
-<p>
-<b>Telefon:</b>
-${kayit.telefon}
-</p>
-
-
-
-<p>
-<b>Sınıf:</b>
-${kayit.sinif}
-</p>
-
-
-
-<p>
-<b>Mesaj:</b>
-${kayit.mesaj}
-</p>
-
-
-
-<p>
-<b>Tarih:</b>
-${kayit.tarih}
-</p>
-
-
-
-<button class="sil" onclick="sil(${index})">
-
-Kaydı Sil
-
-</button>
-
-
-
-</div>
-
-
-`;
-
+});
 
 
 });
 
 
 
-}
 
 
 
+document.getElementById("logoutBtn")
+.addEventListener("click",()=>{
 
 
+signOut(auth);
 
 
+document.getElementById("panel").style.display="none";
+
+document.getElementById("login").style.display="block";
 
 
-function sil(index){
+});
 
-
-
-let kayitlar =
-JSON.parse(localStorage.getItem("basvurular")) || [];
-
-
-
-kayitlar.splice(index,1);
-
-
-
-localStorage.setItem(
-
-"basvurular",
-
-JSON.stringify(kayitlar)
-
-);
-
-
-
-kayitlariGetir();
-
-
-
-}
-
-
-
-
-
-
-
-
-function cikis(){
-
-
-location.reload();
-
-
-}
 
 
 
 </script>
 
 
-
 </body>
-
-
 </html>
