@@ -4,172 +4,89 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Öngörü Akademi | Eğitim Merkezi</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<title>
+Öngörü Akademi Yönetici Paneli
+</title>
 
 
 <style>
 
+
 *{
+
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Poppins',sans-serif;
+font-family:Arial,sans-serif;
+
 }
 
-
-html{
-scroll-behavior:smooth;
-}
 
 
 body{
+
 background:#2f2f2f;
 color:white;
-}
-
-
-/* HEADER */
-
-header{
-
-background:#1f1f1f;
-padding:20px 8%;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-bottom:3px solid #ff7a00;
+padding:30px;
 
 }
 
 
-.logo{
 
-display:flex;
-align-items:center;
-gap:15px;
+.kutu{
 
-}
-
-
-.logo img{
-
-width:80px;
-height:80px;
-background:white;
-padding:8px;
-border-radius:50%;
-object-fit:contain;
+max-width:1000px;
+margin:auto;
+background:#383838;
+padding:30px;
+border-radius:20px;
 
 }
 
 
-.logo h1{
+
+h1,h2{
 
 color:#ff7a00;
-font-size:28px;
-
-}
-
-
-.logo p{
-
-color:#ddd;
-
-}
-
-
-/* MENU */
-
-
-nav{
-
-background:#151515;
-padding:15px 8%;
-display:flex;
-justify-content:center;
-gap:30px;
-position:sticky;
-top:0;
-z-index:99;
-
-}
-
-
-nav a{
-
-color:white;
-text-decoration:none;
-font-weight:bold;
-
-}
-
-
-nav a:hover{
-
-color:#ff7a00;
+margin-bottom:20px;
 
 }
 
 
 
-/* ANA ALAN */
+input{
 
-
-.hero{
-
-text-align:center;
-padding:90px 20px;
-
-background:
-linear-gradient(
-rgba(0,0,0,.7),
-rgba(0,0,0,.7)
-),
-url("https://images.unsplash.com/photo-1523240795612-9a054b0db644")
-center/cover;
-
-
-}
-
-
-.hero h2{
-
-font-size:42px;
-color:#ff7a00;
-
-}
-
-
-.hero p{
-
-margin:20px;
-font-size:18px;
-
-}
-
-
-
-.btn{
-
-background:#ff7a00;
-color:white;
-padding:14px 30px;
+width:100%;
+padding:15px;
+margin-bottom:15px;
 border-radius:10px;
-text-decoration:none;
-font-weight:bold;
 border:none;
+background:#222;
+color:white;
+
+}
+
+
+
+button{
+
+padding:12px 20px;
+background:#ff7a00;
+border:none;
+border-radius:10px;
+color:white;
+font-weight:bold;
 cursor:pointer;
 
 }
 
 
-.btn:hover{
+
+button:hover{
 
 background:white;
 color:#ff7a00;
@@ -178,127 +95,56 @@ color:#ff7a00;
 
 
 
-/* GİRİŞ */
+#panel{
 
-.login-section{
-
-background:#1f1f1f;
-padding:40px 20px;
-text-align:center;
-
-}
-
-
-.login-buttons{
-
-display:flex;
-justify-content:center;
-gap:20px;
-margin-top:20px;
-flex-wrap:wrap;
-
-}
-
-
-.login-btn{
-
-width:200px;
-padding:15px;
-border-radius:10px;
-color:white;
-text-decoration:none;
-font-weight:bold;
-
-}
-
-
-.student{
-
-background:#007bff;
-
-}
-
-
-.teacher{
-
-background:#28a745;
-
-}
-
-
-.admin{
-
-background:#ff7a00;
+display:none;
 
 }
 
 
 
-/* KARTLAR */
+.kayit{
 
-
-.container{
-
-max-width:1100px;
-margin:auto;
-padding:60px 20px;
-
-}
-
-
-.title{
-
-text-align:center;
-color:#ff7a00;
-font-size:32px;
-margin-bottom:35px;
-
-}
-
-
-.cards{
-
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:25px;
-
-}
-
-
-.card{
-
-background:#242424;
-padding:30px;
+background:#222;
+padding:20px;
+margin-bottom:20px;
 border-radius:15px;
-text-align:center;
+border-left:4px solid #ff7a00;
 
 }
 
 
-.card i{
 
-font-size:40px;
-color:#ff7a00;
-margin-bottom:15px;
+.kayit p{
 
-}
-
-
-.card p{
-
-color:#ccc;
-line-height:1.7;
+line-height:1.8;
 
 }
 
 
-@media(max-width:900px){
 
-.cards{
+.sil{
 
-grid-template-columns:1fr;
+background:#d60000;
+margin-top:15px;
 
 }
+
+
+
+.sil:hover{
+
+background:white;
+color:red;
+
+}
+
+
+
+.cikis{
+
+background:#555;
+margin-left:10px;
 
 }
 
@@ -309,559 +155,148 @@ grid-template-columns:1fr;
 </head>
 
 
+
 <body>
 
 
 
-<header>
-
-
-<div class="logo">
-
-<img src="logo.png">
-
-<div>
-
-<h1>Öngörü Akademi</h1>
-
-<p>Arnavutköy Eğitim Merkezi</p>
-
-</div>
-
-</div>
+<div class="kutu">
 
 
 
-<img src="meb-logo.png" width="70">
+<div id="giris">
 
 
-</header>
+<h1>
 
+Öngörü Akademi
 
-
-<nav>
-
-<a href="#anasayfa">Ana Sayfa</a>
-
-<a href="#hakkimizda">Hakkımızda</a>
-
-<a href="#dersler">Dersler</a>
-
-<a href="#kayit">Bilgi Al</a>
-
-</nav>
-
-
-
-<section class="hero" id="anasayfa">
+</h1>
 
 
 <h2>
 
-Geleceğinizi Öngörü İle İnşa Edin
+Yönetici Girişi
 
 </h2>
 
-
-<p>
-
-Uzman kadro ve kaliteli eğitim anlayışıyla başarıya hazırlıyoruz.
-
-</p>
-
-
-<a href="#kayit" class="btn">
-
-Hemen Bilgi Al
-
-</a>
-
-
-</section>
-
-
-
-
-<section class="login-section">
-
-
-<h2 style="color:#ff7a00">
-
-Hızlı Giriş
-
-</h2>
-
-
-<div class="login-buttons">
-
-
-<a href="ogrenci.html" class="login-btn student">
-
-Öğrenci
-
-</a>
-
-
-<a href="ogretmen.html" class="login-btn teacher">
-
-Öğretmen
-
-</a>
-
-
-<a href="yonetici.html" class="login-btn admin">
-
-Yönetici
-
-</a>
-
-
-</div>
-
-
-</section>
-
-
-
-
-<section class="container" id="hakkimizda">
-
-
-<h2 class="title">
-
-Neden Öngörü Akademi?
-
-</h2>
-
-
-<div class="cards">
-
-
-<div class="card">
-
-<i class="fa-solid fa-chalkboard-user"></i>
-
-<h3>Uzman Kadro</h3>
-
-<p>
-Alanında deneyimli öğretmenlerle kaliteli eğitim.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<i class="fa-solid fa-book"></i>
-
-<h3>Yayın Desteği</h3>
-
-<p>
-Güncel kaynaklarla sınava hazırlık.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<i class="fa-solid fa-chart-line"></i>
-
-<h3>Takip Sistemi</h3>
-
-<p>
-Öğrencilerimizin gelişimini takip ediyoruz.
-</p>
-
-</div>
-
-
-</div>
-
-
-</section>
-<!-- EĞİTİMLER -->
-
-<section class="container" id="dersler">
-
-<h2 class="title">
-Eğitim Programlarımız
-</h2>
-
-
-<div class="cards">
-
-
-<div class="card">
-
-<i class="fa-solid fa-graduation-cap"></i>
-
-<h3>LGS Hazırlık</h3>
-
-<p>
-8. sınıf öğrencilerine özel sınava hazırlık programı.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<i class="fa-solid fa-university"></i>
-
-<h3>YKS Hazırlık</h3>
-
-<p>
-TYT - AYT üniversite hazırlık çalışmaları.
-</p>
-
-</div>
-
-
-
-<div class="card">
-
-<i class="fa-solid fa-school"></i>
-
-<h3>Ara Sınıflar</h3>
-
-<p>
-5,6,7,9,10 ve 11. sınıf destek eğitimleri.
-</p>
-
-</div>
-
-
-</div>
-
-
-</section>
-
-
-
-
-
-<!-- FORM -->
-
-
-<section class="container" id="kayit">
-
-
-<h2 class="title">
-
-Ön Kayıt & Bilgi Formu
-
-</h2>
-
-
-
-<div style="
-background:#242424;
-padding:35px;
-border-radius:15px;
-max-width:600px;
-margin:auto;
-">
-
-
-<form id="contactForm">
 
 
 
 <input 
-id="studentName"
 type="text"
-placeholder="Öğrenci Ad Soyad"
-required
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111;
-border:none;
-border-radius:8px;
-color:white;
-">
+id="kullanici"
+placeholder="Kullanıcı Adı">
 
 
 
 <input 
-id="studentPhone"
-type="tel"
-placeholder="Telefon Numarası"
-required
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111;
-border:none;
-border-radius:8px;
-color:white;
-">
+type="password"
+id="sifre"
+placeholder="Şifre">
 
 
 
+<button onclick="giris()">
 
-
-<select
-id="studentClass"
-required
-style="
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#111;
-border:none;
-border-radius:8px;
-color:white;
-">
-
-
-<option value="">
-Sınıf Seçiniz
-</option>
-
-<option>
-5. Sınıf
-</option>
-
-<option>
-6. Sınıf
-</option>
-
-<option>
-7. Sınıf
-</option>
-
-<option>
-8. Sınıf LGS
-</option>
-
-<option>
-9. Sınıf
-</option>
-
-<option>
-10. Sınıf
-</option>
-
-<option>
-11. Sınıf
-</option>
-
-<option>
-12. Sınıf YKS
-</option>
-
-<option>
-Mezun
-</option>
-
-
-</select>
-
-
-
-
-<textarea
-
-id="studentMessage"
-
-placeholder="Mesajınız"
-
-style="
-width:100%;
-height:120px;
-padding:15px;
-background:#111;
-border:none;
-border-radius:8px;
-color:white;
-margin-bottom:15px;
-"
-
-></textarea>
-
-
-
-
-<button 
-type="submit"
-class="btn"
-style="width:100%;"
->
-
-Başvuruyu Gönder
+Giriş Yap
 
 </button>
 
 
 
-</form>
+</div>
+
+
+
+
+
+
+
+<div id="panel">
+
+
+<h1>
+
+Gelen Ön Kayıtlar
+
+</h1>
+
+
+
+<button onclick="cikis()" class="cikis">
+
+Çıkış
+
+</button>
+
+
+<hr><br>
+
+
+
+<div id="liste">
+
+</div>
+
 
 
 </div>
 
 
 
-</section>
 
 
+</div>
 
 
 
-<footer style="
-background:#111;
-padding:30px;
-text-align:center;
-border-top:3px solid #ff7a00;
-">
 
 
-<h2 style="color:#ff7a00">
 
-ÖNGÖRÜ AKADEMİ
 
-</h2>
 
 
-<p>
+<script>
 
-Geleceği Öngör, Bilginle Yön Ver.
 
-</p>
+function giris(){
 
 
-<p>
+let kullanici =
+document.getElementById("kullanici").value;
 
-☎ 0530 660 94 80
 
-</p>
+let sifre =
+document.getElementById("sifre").value;
 
 
-</footer>
 
+if(
+kullanici=="akademiongoru+" &&
+sifre=="26072026"
+){
 
 
+document.getElementById("giris").style.display="none";
 
 
-<!-- FIREBASE -->
+document.getElementById("panel").style.display="block";
 
 
-<script type="module">
+kayitlariGetir();
 
 
-import { initializeApp } 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
+}
 
-import { getFirestore, collection, addDoc } 
-from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+else{
 
 
+alert("Kullanıcı adı veya şifre yanlış");
 
 
-
-const firebaseConfig = {
-
-
-apiKey: "AizaSyBCmbxjAvWQdSXklyrNYIfnEF",
-
-authDomain: "ongoruakademi-73303.firebaseapp.com",
-
-projectId: "ongoruakademi-73303",
-
-storageBucket: "ongoruakademi-73303.appspot.com",
-
-messagingSenderId: "669321176691",
-
-appId: "1:669321176691:web:855e66c74c73"
-
-
-};
-
-
-
-
-
-const app = initializeApp(firebaseConfig);
-
-
-const db = getFirestore(app);
-
-
-
-
-
-
-document
-.getElementById("contactForm")
-.addEventListener("submit", async function(e){
-
-
-
-e.preventDefault();
-
-
-
-
-let kayit = {
-
-
-adSoyad:
-document.getElementById("studentName").value,
-
-
-telefon:
-document.getElementById("studentPhone").value,
-
-
-sinif:
-document.getElementById("studentClass").value,
-
-
-mesaj:
-document.getElementById("studentMessage").value,
-
-
-tarih:
-new Date().toLocaleString("tr-TR")
-
-
-
-};
-
-
-
-
-
-try{
-
-
-await addDoc(
-
-collection(db,"basvurular"),
-
-kayit
-
-);
-
-
-
-
-alert(
-"Başvurunuz başarıyla alındı."
-);
-
-
-
-document
-.getElementById("contactForm")
-.reset();
+}
 
 
 
@@ -869,21 +304,161 @@ document
 
 
 
-catch(error){
 
 
-alert(
-"Hata oluştu: "+error.message
-);
 
+
+function kayitlariGetir(){
+
+
+
+let liste =
+document.getElementById("liste");
+
+
+
+let kayitlar =
+JSON.parse(localStorage.getItem("basvurular")) || [];
+
+
+
+liste.innerHTML="";
+
+
+
+
+if(kayitlar.length==0){
+
+
+liste.innerHTML=
+
+"<p>Henüz kayıt bulunmamaktadır.</p>";
+
+
+return;
 
 
 }
 
+
+
+
+kayitlar.forEach(function(kayit,index){
+
+
+
+liste.innerHTML += `
+
+
+<div class="kayit">
+
+
+<p>
+<b>Öğrenci:</b>
+${kayit.adsoyad}
+</p>
+
+
+<p>
+<b>Telefon:</b>
+${kayit.telefon}
+</p>
+
+
+
+<p>
+<b>Sınıf:</b>
+${kayit.sinif}
+</p>
+
+
+
+<p>
+<b>Mesaj:</b>
+${kayit.mesaj}
+</p>
+
+
+
+<p>
+<b>Tarih:</b>
+${kayit.tarih}
+</p>
+
+
+
+<button class="sil" onclick="sil(${index})">
+
+Kaydı Sil
+
+</button>
+
+
+
+</div>
+
+
+`;
 
 
 
 });
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function sil(index){
+
+
+
+let kayitlar =
+JSON.parse(localStorage.getItem("basvurular")) || [];
+
+
+
+kayitlar.splice(index,1);
+
+
+
+localStorage.setItem(
+
+"basvurular",
+
+JSON.stringify(kayitlar)
+
+);
+
+
+
+kayitlariGetir();
+
+
+
+}
+
+
+
+
+
+
+
+
+function cikis(){
+
+
+location.reload();
+
+
+}
 
 
 
@@ -892,5 +467,6 @@ alert(
 
 
 </body>
+
 
 </html>
