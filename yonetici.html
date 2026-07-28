@@ -159,7 +159,11 @@
       <form id="contactForm">
         <div class="form-group">
           <label><i class="fa-solid fa-user"></i> Öğrenci Ad Soyad</label>
-          <input type="text" id="studentName" placeholder="Adınız ve Soyadınız" required>
+          <input 
+type="text"
+id="studentName"
+placeholder="Öğrenci Ad Soyad"
+required>
         </div>
         <div class="form-group">
           <label><i class="fa-solid fa-phone"></i> Telefon Numarası</label>
@@ -234,6 +238,67 @@
         alert('Hata oluştu: ' + error.message);
       }
     });
+    <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "AizaSyBCmbxjAvWQdSXklyrNYIfnEF",
+  authDomain: "ongoruakademi-73303.firebaseapp.com",
+  projectId: "ongoruakademi-73303",
+  storageBucket: "ongoruakademi-73303.appspot.com",
+  messagingSenderId: "669321176691",
+  appId: "1:669321176691:web:855e66c74c73"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+
+document.getElementById("contactForm").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+
+let adSoyad = document.getElementById("studentName").value;
+let telefon = document.getElementById("studentPhone").value;
+let sinif = document.getElementById("studentClass").value;
+let mesaj = document.getElementById("studentMessage").value;
+
+
+try {
+
+await addDoc(collection(db,"basvurular"),{
+
+adSoyad: adSoyad,
+telefon: telefon,
+sinif: sinif,
+mesaj: mesaj,
+tarih: new Date().toLocaleString("tr-TR")
+
+});
+
+
+alert("Başvurunuz başarıyla alındı. En kısa sürede dönüş yapılacaktır.");
+
+document.getElementById("contactForm").reset();
+
+
+}
+
+catch(error){
+
+alert("Hata oluştu: " + error.message);
+
+}
+
+
+});
+
+</script>
   </script>
 </body>
 </html>
