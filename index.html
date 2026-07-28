@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 
 <head>
@@ -6,9 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>
-Öngörü Akademi | Eğitim Merkezi
-</title>
+<title>Öngörü Akademi | Eğitim Merkezi</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -260,12 +258,144 @@ margin-bottom:15px;
 line-height:1.8;
 }
 
+.galeri{
+padding:50px 8%;
+}
+
+.baslik{
+text-align:center;
+color:#ff7a00;
+font-size:35px;
+margin-bottom:35px;
+}
+
+.galeri-grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+}
+
+.galeri-grid img{
+width:100%;
+height:250px;
+object-fit:cover;
+border-radius:20px;
+cursor:pointer;
+transition:.4s;
+}
+
+.galeri-grid img:hover{
+transform:scale(1.05);
+}
+
+.kayit{
+padding:50px 8%;
+background:#1f1f1f;
+}
+
+.kayit-alan{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:30px;
+}
+
+.form-kutu{
+background:#383838;
+padding:30px;
+border-radius:20px;
+}
+
+.form-kutu h2{
+color:#ff7a00;
+margin-bottom:25px;
+}
+
+.form-kutu input,
+.form-kutu textarea,
+.form-kutu select{
+width:100%;
+padding:15px;
+margin-bottom:15px;
+background:#2f2f2f;
+border:none;
+border-radius:10px;
+color:white;
+}
+
+.form-kutu textarea{
+height:120px;
+resize:none;
+}
+
+.form-kutu button{
+width:100%;
+padding:15px;
+background:#ff7a00;
+color:white;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.form-kutu button:hover{
+background:white;
+color:#ff7a00;
+}
+
+.harita{
+background:#383838;
+padding:30px;
+border-radius:20px;
+}
+
+.harita iframe{
+width:100%;
+height:350px;
+border:0;
+border-radius:15px;
+}
+
+footer{
+background:#151515;
+padding:40px 20px;
+text-align:center;
+border-top:3px solid #ff7a00;
+line-height:2;
+}
+
+footer h2{
+color:#ff7a00;
+}
+
+.whatsapp{
+position:fixed;
+right:25px;
+bottom:25px;
+width:60px;
+height:60px;
+background:#25D366;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:35px;
+color:white;
+text-decoration:none;
+z-index:999;
+}
+
 @media(max-width:1000px){
 .ana-alan{
 grid-template-columns:1fr;
 }
 
 .kartlar{
+grid-template-columns:1fr;
+}
+
+.galeri-grid,
+.kayit-alan{
 grid-template-columns:1fr;
 }
 }
@@ -464,115 +594,6 @@ Proje Okulları Hazırlık
 
 </section>
 
-<style>
-
-.galeri{
-padding:50px 8%;
-}
-
-.baslik{
-text-align:center;
-color:#ff7a00;
-font-size:35px;
-margin-bottom:35px;
-}
-
-.galeri-grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:25px;
-}
-
-.galeri-grid img{
-width:100%;
-height:250px;
-object-fit:cover;
-border-radius:20px;
-cursor:pointer;
-transition:.4s;
-}
-
-.galeri-grid img:hover{
-transform:scale(1.05);
-}
-
-.kayit{
-padding:50px 8%;
-background:#1f1f1f;
-}
-
-.kayit-alan{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:30px;
-}
-
-.form-kutu{
-background:#383838;
-padding:30px;
-border-radius:20px;
-}
-
-.form-kutu h2{
-color:#ff7a00;
-margin-bottom:25px;
-}
-
-.form-kutu input,
-.form-kutu textarea,
-.form-kutu select{
-width:100%;
-padding:15px;
-margin-bottom:15px;
-background:#2f2f2f;
-border:none;
-border-radius:10px;
-color:white;
-}
-
-.form-kutu textarea{
-height:120px;
-resize:none;
-}
-
-.form-kutu button{
-width:100%;
-padding:15px;
-background:#ff7a00;
-color:white;
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.form-kutu button:hover{
-background:white;
-color:#ff7a00;
-}
-
-.harita{
-background:#383838;
-padding:30px;
-border-radius:20px;
-}
-
-.harita iframe{
-width:100%;
-height:350px;
-border:0;
-border-radius:15px;
-}
-
-@media(max-width:900px){
-.galeri-grid,
-.kayit-alan{
-grid-template-columns:1fr;
-}
-}
-
-</style>
-
 <section class="galeri">
 
 <h2 class="baslik">
@@ -613,7 +634,7 @@ grid-template-columns:1fr;
 Bilgi Al
 </h2>
 
- <form id="contactForm">
+<form id="contactForm">
 
 <input 
 type="text"
@@ -737,42 +758,8 @@ target="_blank">
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-<style>
-
-footer{
-background:#151515;
-padding:40px 20px;
-text-align:center;
-border-top:3px solid #ff7a00;
-line-height:2;
-}
-
-footer h2{
-color:#ff7a00;
-}
-
-.whatsapp{
-position:fixed;
-right:25px;
-bottom:25px;
-width:60px;
-height:60px;
-background:#25D366;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:35px;
-color:white;
-text-decoration:none;
-z-index:999;
-}
-
-</style>
-
+<!-- SLIDER VE GALERI KODLARI -->
 <script>
-
-// SLIDER
 
 let sliderlar = document.querySelectorAll(".slide");
 let index=0;
@@ -808,8 +795,6 @@ index=0;
 sliderGoster(index);
 },4000);
 
-// GALERİ FOTOĞRAF BÜYÜTME
-
 let fotograflar = document.querySelectorAll(".galeri-grid img");
 
 fotograflar.forEach(function(resim){
@@ -818,6 +803,48 @@ window.open(this.src, "_blank");
 }
 });
 
+</script>
+
+<!-- FIREBASE BAĞLANTISI VE VERİ TABANINA KAYIT KODU -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+    authDomain: "weffg5-b84a8.firebaseapp.com",
+    projectId: "weffg5-b84a8",
+    storageBucket: "weffg5-b84a8.firebasestorage.app",
+    messagingSenderId: "979023738185",
+    appId: "1:979023738185:web:6327d7ba34be220de91698",
+    measurementId: "G-P80RPZCSE7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  document.getElementById("contactForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const ad = this.querySelector('[name="Ogrenci_Ad_Soyad"]').value;
+    const tel = this.querySelector('[name="Telefon"]').value;
+    const sinif = this.querySelector('[name="Sinif"]').value;
+    const mesaj = this.querySelector('[name="Mesaj"]').value;
+
+    try {
+      await addDoc(collection(db, "basvurular"), {
+        ad: ad,
+        tel: tel,
+        sinif: sinif,
+        mesaj: mesaj,
+        tarih: new Date().toLocaleDateString('tr-TR')
+      });
+      alert("Başvurunuz başarıyla kaydedildi!");
+      this.reset();
+    } catch (error) {
+      alert("Bir hata oluştu: " + error.message);
+    }
+  });
 </script>
 
 </body>
