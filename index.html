@@ -409,7 +409,7 @@ grid-template-columns:1fr;
 <header>
 
 <div class="logo">
-<img src="images/logo.png">
+<img src="images/logo.png" alt="Logo">
 <div>
 <h1>
 Öngörü Akademi
@@ -421,7 +421,7 @@ Arnavutköy Eğitim Merkezi
 </div>
 
 <div class="meb">
-<img src="images/meb.png">
+<img src="images/meb.png" alt="MEB Logo">
 </div>
 
 </header>
@@ -636,19 +636,11 @@ Bilgi Al
 
 <form id="contactForm">
 
-<input 
-type="text"
-name="Ogrenci_Ad_Soyad"
-placeholder="Öğrenci Ad Soyad"
-required>
+<input type="text" id="ogrenciAd" name="Ogrenci_Ad_Soyad" placeholder="Öğrenci Ad Soyad" required>
 
-<input 
-type="tel"
-name="Telefon"
-placeholder="Telefon Numarası"
-required>
+<input type="tel" id="ogrenciTel" name="Telefon" placeholder="Telefon Numarası" required>
 
-<select name="Sinif" required>
+<select id="ogrenciSinif" name="Sinif" required>
 
 <option value="">
 Sınıf Seçiniz
@@ -688,11 +680,9 @@ Sınıf Seçiniz
 
 </select>
 
-<textarea 
-name="Mesaj"
-placeholder="Mesajınız"></textarea>
+<textarea id="ogrenciMesaj" name="Mesaj" placeholder="Mesajınız"></textarea>
 
-<button type="submit">
+<button type="submit" id="gonderBtn">
 Başvuru Gönder
 </button>
 
@@ -707,8 +697,7 @@ Başvuru Gönder
 Konum
 </h2>
 
-<iframe
-src="https://maps.google.com/maps?q=Arnavutkoy%20Istanbul&t=&z=13&ie=UTF8&iwloc=&output=embed">
+<iframe src="https://maps.google.com/maps?q=Arnavutkoy%20Istanbul&t=&z=13&ie=UTF8&iwloc=&output=embed">
 </iframe>
 
 </div>
@@ -752,9 +741,7 @@ Tüm Hakları Saklıdır.
 
 </footer>
 
-<a href="https://wa.me/905306609480"
-class="whatsapp"
-target="_blank">
+<a href="https://wa.me/905306609480" class="whatsapp" target="_blank">
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
@@ -823,28 +810,42 @@ window.open(this.src, "_blank");
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  document.getElementById("contactForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
+  const form = document.getElementById("contactForm");
 
-    const ad = this.querySelector('[name="Ogrenci_Ad_Soyad"]').value;
-    const tel = this.querySelector('[name="Telefon"]').value;
-    const sinif = this.querySelector('[name="Sinif"]').value;
-    const mesaj = this.querySelector('[name="Mesaj"]').value;
+  if (form) {
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
 
-    try {
-      await addDoc(collection(db, "basvurular"), {
-        ad: ad,
-        tel: tel,
-        sinif: sinif,
-        mesaj: mesaj,
-        tarih: new Date().toLocaleDateString('tr-TR')
-      });
-      alert("Başvurunuz başarıyla kaydedildi!");
-      this.reset();
-    } catch (error) {
-      alert("Bir hata oluştu: " + error.message);
-    }
-  });
+      const btn = document.getElementById("gonderBtn");
+      btn.innerText = "Gönderiliyor...";
+      btn.disabled = true;
+
+      const ad = document.getElementById("ogrenciAd").value;
+      const tel = document.getElementById("ogrenciTel").value;
+      const sinif = document.getElementById("ogrenciSinif").value;
+      const mesaj = document.getElementById("ogrenciMesaj").value;
+
+      const bugun = new Date();
+      const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+
+      try {
+        await addDoc(collection(db, "basvurular"), {
+          ad: ad,
+          tel: tel,
+          sinif: sinif,
+          mesaj: mesaj,
+          tarih: tarihStr
+        });
+        alert("Başvurunuz başarıyla gönderildi!");
+        form.reset();
+      } catch (error) {
+        alert("Başvuru gönderilirken hata oluştu: " + error.message);
+      } finally {
+        btn.innerText = "Başvuru Gönder";
+        btn.disabled = false;
+      }
+    });
+  }
 </script>
 
 </body>
