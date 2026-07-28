@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Sayfanın Önbelleğe Alınmasını Engeller -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <title>Yönetici Girişi | Öngörü Akademi</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -11,7 +16,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body { background: #2f2f2f; color: white; padding: 40px 8%; min-height: 100vh; }
     
-    /* GİRİŞ EKRANI STİLİ */
+    /* GİRİŞ EKRANI */
     .giris-kutu {
       max-width: 400px;
       margin: 80px auto;
@@ -50,8 +55,8 @@
     .giris-kutu button:hover { background: white; color: #ff7a00; }
     .hata-mesaji { color: #ff3333; margin-top: 15px; display: none; }
 
-    /* YÖNETİCİ PANELİ (Giriş yapılana kadar gizli) */
-    #panelAlan { display: none; }
+    /* YÖNETİCİ PANELİ (VARSAYILAN OLARAK GİZLİ) */
+    #panelAlan { display: none !important; }
 
     header {
       display: flex;
@@ -106,12 +111,12 @@
   <!-- 1. GİRİŞ FORMU EKRANI -->
   <div id="girisEkrani" class="giris-kutu">
     <h2><i class="fa-solid fa-lock"></i> Yönetici Girişi</h2>
-    <input type="password" id="sifreInput" placeholder="Şifrenizi Girin">
+    <input type="password" id="sifreInput" placeholder="Şifrenizi Girin" autocomplete="off">
     <button id="girisBtn"><i class="fa-solid fa-right-to-bracket"></i> Giriş Yap</button>
     <p id="hataText" class="hata-mesaji">Hatalı şifre! Tekrar deneyin.</p>
   </div>
 
-  <!-- 2. BAŞVURULAR TABLOSU (Şifre doğru olunca gösterilecek) -->
+  <!-- 2. BAŞVURULAR TABLOSU (Gizli) -->
   <div id="panelAlan">
     <header>
       <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
@@ -157,28 +162,28 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Şifre Kontrol Butonu
+    // Giriş Butonuna Basıldığında
     document.getElementById("girisBtn").addEventListener("click", function() {
       const girilenSifre = document.getElementById("sifreInput").value;
       
       // YÖNETİCİ ŞİFRENİZ: 1234
       if (girilenSifre === "1234") {
         document.getElementById("girisEkrani").style.display = "none";
-        document.getElementById("panelAlan").style.display = "block";
-        basvurulariGetir(); // Sadece şifre doğruysa verileri getir
+        document.getElementById("panelAlan").style.setProperty("display", "block", "important");
+        basvurulariGetir();
       } else {
         document.getElementById("hataText").style.display = "block";
       }
     });
 
-    // Enter tuşuna basınca da giriş yapsın
+    // Enter Tuşu İle Giriş Yapma
     document.getElementById("sifreInput").addEventListener("keypress", function(e) {
       if (e.key === "Enter") {
         document.getElementById("girisBtn").click();
       }
     });
 
-    // Başvuruları Getirme Fonksiyonu
+    // Verileri Getir
     async function basvurulariGetir() {
       const liste = document.getElementById("basvuruListesi");
       liste.innerHTML = "";
@@ -211,7 +216,7 @@
       }
     }
 
-    // Başvuru Silme Fonksiyonu
+    // Silme İşlemi
     window.basvuruSil = async function(id) {
       if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
         try {
