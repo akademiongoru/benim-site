@@ -30,19 +30,20 @@
     .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
     .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
 
-    /* DOSYA YÜKLEME ALANI */
-    .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 12px; cursor: pointer; }
+    /* GERÇEK DOSYA YÜKLEME ALANI */
+    .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
+    .dosya-alani:hover { background: #1f1f1f; }
     .dosya-alani input[type="file"] { display: none; }
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
-    /* PAYLAŞIM LİSTESİ */
+    /* PAYLAŞIM LİSTESİ STİLİ */
     .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
     .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
     .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
     .kart p { font-size: 13px; color: #ddd; margin-bottom: 8px; white-space: pre-wrap; }
     .kart-bilgi { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; }
     
-    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #ff7a00; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 5px; }
+    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #ff7a00; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 5px; }
     .dosya-indir-btn:hover { background: white; color: #ff7a00; }
 
     .sil-btn { background: #ff3333; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
@@ -86,23 +87,15 @@
         <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
       </select>
 
-      <!-- SINIF SEÇİM KUTUSU (Giriş menüsündeki sınıfların birebir aynısı) -->
+      <!-- YÖNETİCİ PANELİNDEKİ KURUMLARDAN DİNAMİK DOLAN SINIF SEÇİMİ -->
       <div id="sinifSecimKutu" style="display:none;">
         <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
         <select id="hedefSinif">
-          <option value="">Sınıf Seçin</option>
-          <option value="1. Sınıf">1. Sınıf</option>
-          <option value="2. Sınıf">2. Sınıf</option>
-          <option value="3. Sınıf">3. Sınıf</option>
-          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
-          <option value="5. Sınıf">5. Sınıf</option>
-          <option value="6. Sınıf">6. Sınıf</option>
-          <option value="7. Sınıf">7. Sınıf</option>
-          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+          <option value="">Sınıf Yükleniyor...</option>
         </select>
       </div>
 
-      <!-- ÖĞRENCİ SEÇİM KUTUSU (Firebase'den otomatik çekilir) -->
+      <!-- DİNAMİK ÖĞRENCİ SEÇİMİ -->
       <div id="ogrenciSecimKutu" style="display:none;">
         <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
         <select id="hedefOgrenci">
@@ -113,7 +106,7 @@
       <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <!-- GERÇEK DOSYA YÜKLEME ALANI (PDF, WORD, RESİM) -->
+      <!-- DOSYA YÜKLEME KISMI (PDF, WORD, JPG, PNG) -->
       <label style="font-size:12px; color:#aaa;">Dosya Ekle (PDF, Word, JPG, PNG - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
@@ -127,7 +120,7 @@
     </form>
   </div>
 
-  <!-- SAĞ BÖLÜM: PAYLAŞILAN ÖDEVLER VE NOTLAR -->
+  <!-- SAĞ BÖLÜM: PAYLAŞILAN NOTLAR VE ÖDEVLER -->
   <div class="kutu">
     <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
     <div class="liste" id="paylasimListesi">
@@ -137,7 +130,7 @@
 
 </div>
 
-<!-- FIREBASE SİSTEMİ -->
+<!-- FIREBASE ENTEGRASYONU -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -159,7 +152,7 @@
 
   let aktifOgretmen = null;
 
-  // DOSYA SEÇİMİ VE ADI GÖSTERİMİ
+  // DOSYA SEÇİMİ BİLGİLENDİRMESİ
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
 
@@ -171,7 +164,7 @@
     }
   });
 
-  // HEDEF SEÇİM DİNLEMESİ (SINIF / ÖĞRENCİ AÇMA GİZLEME)
+  // HEDEF SEÇİM DİNLEYİCİSİ
   const hedefTuru = document.getElementById("hedefTuru");
   const sinifKutu = document.getElementById("sinifSecimKutu");
   const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
@@ -192,14 +185,14 @@
 
   // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
-    const kayıtlı = localStorage.getItem("ongoru_ogretmen");
-    if (kayıtlı) {
-      aktifOgretmen = JSON.parse(kayıtlı);
+    const kayitli = localStorage.getItem("ongoru_ogretmen");
+    if (kayitli) {
+      aktifOgretmen = JSON.parse(kayitli);
       paneliAc();
     }
   });
 
-  // GİRİŞ FORMU
+  // ÖĞRETMEN GİRİŞİ
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
@@ -227,7 +220,7 @@
     document.getElementById("panelAlani").style.display = "grid";
     document.getElementById("cikisBtn").style.display = "inline-flex";
 
-    ogrencileriYukle();
+    verileriYukle();
     paylasimlariCanliIzle();
   }
 
@@ -236,23 +229,41 @@
     location.reload();
   });
 
-  // ÖĞRENCİLERİ DROPDOWN'A YÜKLEME
-  async function ogrencileriYukle() {
-    const select = document.getElementById("hedefOgrenci");
-    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
+  // SINIFLARI VE ÖĞRENCİLERİ VERİTABANINDAN DİNAMİK ÇEKME
+  async function verileriYukle() {
+    const sinifSelect = document.getElementById("hedefSinif");
+    const ogrenciSelect = document.getElementById("hedefOgrenci");
+
+    sinifSelect.innerHTML = "<option value=''>Sınıf Seçiniz</option>";
+    ogrenciSelect.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
+
+    // Yönetici panelindeki standart sınıf listesi sabit tanımı
+    const standartSiniflar = [
+      "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf Proje OKULLARI",
+      "5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf LGS"
+    ];
+
     try {
       const q = query(collection(db, "kullanicilar"), where("rol", "==", "ogrenci"));
       const snap = await getDocs(q);
+
+      // Sınıfları dinamik doldur
+      standartSiniflar.forEach(sinifAdi => {
+        sinifSelect.innerHTML += `<option value="${sinifAdi}">${sinifAdi}</option>`;
+      });
+
+      // Öğrencileri dinamik doldur
       snap.forEach(docSnap => {
         const u = docSnap.data();
-        select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
+        ogrenciSelect.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
       });
+
     } catch (err) {
-      console.error("Öğrenciler çekilemedi:", err);
+      console.error("Veriler çekilemedi:", err);
     }
   }
 
-  // ÖDEV / NOT PAYLAŞMA
+  // ÖDEV / DERS NOTU PAYLAŞMA
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
@@ -275,7 +286,7 @@
       let dosyaUrl = "";
       let dosyaAdi = "";
 
-      // Eğer dosya seçildiyse Firebase Storage'a yükle
+      // Cihazdan yüklenen dosyayı Firebase Storage'a aktarma
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
         dosyaAdi = file.name;
@@ -312,7 +323,7 @@
     }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ VE SİLME
+  // CANLI PAYLAŞIM LİSTESİ DİNLEME VE SİLME
   function paylasimlariCanliIzle() {
     const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
     onSnapshot(q, (snapshot) => {
@@ -336,7 +347,7 @@
           <div class="kart">
             <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
             <p>${p.aciklama}</p>
-            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir / Görüntüle'}</a>` : ''}
+            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
             <div class="kart-bilgi">
               <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
               <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
