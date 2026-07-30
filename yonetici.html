@@ -8,159 +8,401 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body { background: #2f2f2f; color: white; padding: 40px 8%; min-height: 100vh; }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+    body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; }
     
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 3px solid #ff7a00;
-      padding-bottom: 20px;
-      margin-bottom: 30px;
-    }
+    header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { color:#ff7a00; font-size:24px; }
+    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
 
-    h1 { color: #ff7a00; font-size: 28px; }
+    /* GİRİŞ EKRANI */
+    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
+    .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
 
-    .ana-sayfa-btn {
-      background: #ff7a00;
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: bold;
-      transition: .3s;
-    }
+    .sifre-kutu { position: relative; width: 100%; margin-bottom: 12px; }
+    .sifre-kutu input { margin-bottom: 0; padding-right: 45px; }
+    .sifre-kutu i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; font-size: 16px; transition: .3s; }
+    .sifre-kutu i:hover { color: #ff7a00; }
 
-    .ana-sayfa-btn:hover { background: white; color: #ff7a00; }
+    input, select, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; outline: none; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+    button:hover { background:white; color:#ff7a00; }
 
-    .tablo-kutu {
-      background: #383838;
-      padding: 20px;
-      border-radius: 15px;
-      overflow-x: auto;
-    }
+    /* PANEL EKRANI */
+    .panel { display:none; flex-direction:column; gap:20px; }
+    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
+    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
 
+    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+    @media(max-width:900px){ .grid-2 { grid-template-columns: 1fr; } }
+
+    /* TABLO STİLLERİ */
+    .tablo-kutu { overflow-x:auto; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { padding: 15px; text-align: left; border-bottom: 1px solid #4f4f4f; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #4f4f4f; font-size: 14px; }
     th { background: #1f1f1f; color: #ff7a00; }
     tr:hover { background: #444; }
 
-    .sil-btn {
-      background: #ff3333;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
+    .sil-btn { background: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: auto; margin:0; }
     .sil-btn:hover { background: #cc0000; }
+
+    /* TIKLANABİLİR LİSTE YAPISI */
+    .liste { margin-top:15px; max-height:350px; overflow-y:auto; padding-right:5px; }
+    .liste-item { background:#252525; border-radius:8px; margin-bottom:8px; border:1px solid #444; overflow:hidden; }
+    
+    .liste-baslik { padding:12px 15px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transition: background .2s; }
+    .liste-baslik:hover { background:#303030; }
+    .liste-baslik strong { color:#fff; font-size:14px; }
+    .liste-baslik .ok-ikon { color:#ff7a00; transition: transform .3s; }
+    .liste-item.aktif .ok-ikon { transform: rotate(180deg); }
+
+    .liste-detay { display:none; padding:15px; background:#1c1c1c; border-top:1px solid #333; font-size:13px; line-height:1.6; }
+    .liste-item.aktif .liste-detay { display:block; }
+    
+    .detay-satir { display:flex; justify-content:space-between; margin-bottom:6px; border-bottom:1px dashed #333; padding-bottom:4px; }
+    .detay-satir span { color:#ff7a00; font-weight:600; }
+    .detay-islem { margin-top:10px; text-align:right; }
   </style>
-
-  <!-- KESİN ŞİFRE KONTROLÜ (SAYFA YÜKLENMEDEN ÇALIŞIR) -->
-  <script>
-    const YONETICI_SIFRESI = "Ongoru34+";
-    let girilenSifre = prompt("Lütfen Yönetici Şifresini Girin:");
-
-    if (girilenSifre !== YONETICI_SIFRESI) {
-      alert("Hatalı şifre girdiğiniz için erişim engellendi!");
-      window.location.href = "index.html"; // Şifre yanlışsa ana sayfaya atar
-    }
-  </script>
 </head>
 <body>
 
-  <header>
-    <h1><i class="fa-solid fa-user-tie"></i> Yönetici Paneli - Gelen Başvurular</h1>
-    <a href="index.html" class="ana-sayfa-btn"><i class="fa-solid fa-house"></i> Ana Sayfaya Dön</a>
-  </header>
+<header>
+  <h1><i class="fa-solid fa-user-shield"></i> Öngörü Akademi - Yönetici Paneli</h1>
+  <div>
+    <a href="index.html"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+    <button class="cikis-btn" id="cikisBtn" style="display:none; margin-left:10px;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
+  </div>
+</header>
 
-  <div class="tablo-kutu">
-    <table>
-      <thead>
-        <tr>
-          <th>Tarih</th>
-          <th>Öğrenci Ad Soyad</th>
-          <th>Telefon</th>
-          <th>Sınıf</th>
-          <th>Mesaj</th>
-          <th>İşlem</th>
-        </tr>
-      </thead>
-      <tbody id="basvuruListesi">
-        <tr>
-          <td colspan="6" style="text-align:center;">Veriler yükleniyor...</td>
-        </tr>
-      </tbody>
-    </table>
+<!-- GİRİŞ EKRANI -->
+<div class="giris-kutu" id="girisAlani">
+  <h2>Yönetici Girişi</h2>
+  <form id="yoneticiGirisForm">
+    <div class="sifre-kutu">
+      <input type="password" id="adminSifre" placeholder="Yönetici Şifreniz" required autofocus>
+      <i class="fa-solid fa-eye" id="sifreGosterGoz" onclick="sifreGosterToggle()"></i>
+    </div>
+    <button type="submit">Giriş Yap</button>
+  </form>
+</div>
+
+<!-- PANEL ALANI (GİRİŞ YAPILINCA AÇILIR) -->
+<div class="panel" id="panelAlani">
+  
+  <!-- 1. BÖLÜM: GELEN BAŞVURULAR (BİLGİ FORMU) -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-envelope-open-text"></i> Gelen Başvurular (Bilgi Formu)</h2>
+    <div class="tablo-kutu">
+      <table>
+        <thead>
+          <tr>
+            <th>Tarih</th>
+            <th>Öğrenci Ad Soyad</th>
+            <th>Telefon</th>
+            <th>Sınıf</th>
+            <th>Mesaj</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="basvuruListesi">
+          <tr><td colspan="6" style="text-align:center;">Veriler yükleniyor...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- FIREBASE VERİ ÇEKME KODLARI -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  <!-- 2. BÖLÜM: ÖĞRETMEN VE ÖĞRENCİ EKLEME -->
+  <div class="grid-2">
+    <!-- ÖĞRETMEN EKLEME FORMU VE LİSTESİ -->
+    <div class="kutu">
+      <h2><i class="fa-solid fa-chalkboard-user"></i> Yeni Öğretmen Kaydı</h2>
+      <form id="ogretmenForm">
+        <input type="text" id="ogretmenAd" placeholder="Öğretmen Ad Soyad" required>
+        <input type="text" id="ogretmenKullanici" placeholder="Kullanıcı Adı (Örn: ahmet.hoca)" required>
+        <input type="text" id="ogretmenSifre" placeholder="Şifre" required>
+        <input type="text" id="ogretmenBrans" placeholder="Branş (Örn: Matematik)" required>
+        <button type="submit" id="ogretmenBtn">Öğretmen Kaydet</button>
+      </form>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
-      authDomain: "weffg5-b84a8.firebaseapp.com",
-      projectId: "weffg5-b84a8",
-      storageBucket: "weffg5-b84a8.firebasestorage.app",
-      messagingSenderId: "979023738185",
-      appId: "1:979023738185:web:6327d7ba34be220de91698",
-      measurementId: "G-P80RPZCSE7"
-    };
+      <h3 style="margin-top:20px; color:#ff7a00;"><i class="fa-solid fa-list"></i> Kayıtlı Öğretmenler</h3>
+      <div class="liste" id="ogretmenListesi">Yükleniyor...</div>
+    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    <!-- ÖĞRENCİ EKLEME FORMU VE LİSTESİ -->
+    <div class="kutu">
+      <h2><i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı</h2>
+      <form id="ogrenciForm">
+        <input type="text" id="ogrenciAd" placeholder="Öğrenci Ad Soyad" required>
+        <input type="text" id="ogrenciKullanici" placeholder="Kullanıcı Adı / T.C. No" required>
+        <input type="text" id="ogrenciSifre" placeholder="Şifre" required>
+        <select id="ogrenciSinif" required>
+          <option value="">Sınıf Seçiniz</option>
+          <option value="1. Sınıf">1. Sınıf</option>
+          <option value="2. Sınıf">2. Sınıf</option>
+          <option value="3. Sınıf">3. Sınıf</option>
+          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+          <option value="5. Sınıf">5. Sınıf</option>
+          <option value="6. Sınıf">6. Sınıf</option>
+          <option value="7. Sınıf">7. Sınıf</option>
+          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+        </select>
+        <button type="submit" id="ogrenciBtn">Öğrenci Kaydet</button>
+      </form>
 
-    async function basvurulariGetir() {
-      const liste = document.getElementById("basvuruListesi");
-      liste.innerHTML = "";
+      <h3 style="margin-top:20px; color:#ff7a00;"><i class="fa-solid fa-list"></i> Kayıtlı Öğrenciler</h3>
+      <div class="liste" id="ogrenciListesi">Yükleniyor...</div>
+    </div>
+  </div>
 
+</div>
+
+<!-- ŞİFRE GÖSTER / GİZLE VE LİSTE AÇMA/KAPAMA SCRIPT -->
+<script>
+  function sifreGosterToggle() {
+    const input = document.getElementById("adminSifre");
+    const ikon = document.getElementById("sifreGosterGoz");
+    if (input.type === "password") {
+      input.type = "text";
+      ikon.classList.remove("fa-eye");
+      ikon.classList.add("fa-eye-slash");
+    } else {
+      input.type = "password";
+      ikon.classList.remove("fa-eye-slash");
+      ikon.classList.add("fa-eye");
+    }
+  }
+
+  function detayAcKapasin(element) {
+    const parent = element.parentElement;
+    parent.classList.toggle("aktif");
+  }
+</script>
+
+<!-- FIREBASE SİSTEMİ -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+    authDomain: "weffg5-b84a8.firebaseapp.com",
+    projectId: "weffg5-b84a8",
+    storageBucket: "weffg5-b84a8.firebasestorage.app",
+    messagingSenderId: "979023738185",
+    appId: "1:979023738185:web:6327d7ba34be220de91698",
+    measurementId: "G-P80RPZCSE7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const YONETICI_SIFRESI = "Ongoru34+";
+
+  // GİRİŞ KONTROLÜ
+  document.getElementById("yoneticiGirisForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const girilen = document.getElementById("adminSifre").value;
+
+    if (girilen === YONETICI_SIFRESI) {
+      document.getElementById("girisAlani").style.display = "none";
+      document.getElementById("panelAlani").style.display = "flex";
+      document.getElementById("cikisBtn").style.display = "inline-block";
+      
+      basvurulariGetir();
+      canliKullanicilariGetir();
+    } else {
+      alert("Hatalı şifre!");
+    }
+  });
+
+  document.getElementById("cikisBtn").addEventListener("click", () => {
+    location.reload();
+  });
+
+  // 1. GELEN BAŞVURULARI ÇEKME VE SİLME
+  async function basvurulariGetir() {
+    const liste = document.getElementById("basvuruListesi");
+    liste.innerHTML = "";
+
+    try {
+      const querySnapshot = await getDocs(collection(db, "basvurular"));
+      if (querySnapshot.empty) {
+        liste.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Henüz hiç başvuru yok.</td></tr>";
+        return;
+      }
+
+      querySnapshot.forEach((documentItem) => {
+        const data = documentItem.data();
+        const id = documentItem.id;
+
+        liste.innerHTML += `
+          <tr>
+            <td>${data.tarih || '-'}</td>
+            <td><b>${data.ad || '-'}</b></td>
+            <td><a href="tel:${data.tel || ''}" style="color:#ff7a00; text-decoration:none;">${data.tel || '-'}</a></td>
+            <td>${data.sinif || '-'}</td>
+            <td>${data.mesaj || '-'}</td>
+            <td><button class="sil-btn" onclick="basvuruSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button></td>
+          </tr>
+        `;
+      });
+    } catch (error) {
+      liste.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Hata oluştu: ${error.message}</td></tr>`;
+    }
+  }
+
+  window.basvuruSil = async function(id) {
+    if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
       try {
-        const querySnapshot = await getDocs(collection(db, "basvurular"));
-        
-        if (querySnapshot.empty) {
-          liste.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Henüz hiç başvuru yok.</td></tr>";
-          return;
-        }
-
-        querySnapshot.forEach((documentItem) => {
-          const data = documentItem.data();
-          const id = documentItem.id;
-
-          liste.innerHTML += `
-            <tr>
-              <td>${data.tarih || '-'}</td>
-              <td><b>${data.ad}</b></td>
-              <td><a href="tel:${data.tel}" style="color:#ff7a00; text-decoration:none;">${data.tel}</a></td>
-              <td>${data.sinif}</td>
-              <td>${data.mesaj || '-'}</td>
-              <td><button class="sil-btn" onclick="basvuruSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button></td>
-            </tr>
-          `;
-        });
+        await deleteDoc(doc(db, "basvurular", id));
+        alert("Başvuru silindi.");
+        basvurulariGetir();
       } catch (error) {
-        liste.innerHTML = `<tr><td colspan='6' style='text-align:center; color:red;'>Hata oluştu: ${error.message}</td></tr>`;
+        alert("Silinirken hata oluştu: " + error.message);
       }
     }
+  };
 
-    window.basvuruSil = async function(id) {
-      if (confirm("Bu başvuruyu silmek istediğinize emin misiniz?")) {
-        try {
-          await deleteDoc(doc(db, "basvurular", id));
-          alert("Başvuru silindi.");
-          basvurulariGetir();
-        } catch (error) {
-          alert("Silinirken hata oluştu: " + error.message);
-        }
+  // 2. ÖĞRETMEN EKLEME
+  document.getElementById("ogretmenForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("ogretmenBtn");
+    btn.disabled = true; 
+    btn.innerText = "Kaydediliyor...";
+
+    try {
+      const ad = document.getElementById("ogretmenAd").value.trim();
+      const kullanici = document.getElementById("ogretmenKullanici").value.toLowerCase().trim();
+      const sifre = document.getElementById("ogretmenSifre").value.trim();
+      const brans = document.getElementById("ogretmenBrans").value.trim();
+
+      await addDoc(collection(db, "kullanicilar"), {
+        adSoyad: ad,
+        kullaniciAdi: kullanici,
+        sifre: sifre,
+        brans: brans,
+        rol: "ogretmen",
+        kayitTarihi: new Date().toLocaleDateString('tr-TR')
+      });
+
+      alert("Öğretmen başarıyla eklendi!");
+      document.getElementById("ogretmenForm").reset();
+    } catch (err) { 
+      console.error("Öğretmen Ekleme Hatası:", err);
+      alert("Öğretmen eklenirken hata oluştu: " + err.message); 
+    } finally { 
+      btn.disabled = false; 
+      btn.innerText = "Öğretmen Kaydet"; 
+    }
+  });
+
+  // 3. ÖĞRENCİ EKLEME
+  document.getElementById("ogrenciForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("ogrenciBtn");
+    btn.disabled = true; 
+    btn.innerText = "Kaydediliyor...";
+
+    try {
+      const ad = document.getElementById("ogrenciAd").value.trim();
+      const kullanici = document.getElementById("ogrenciKullanici").value.toLowerCase().trim();
+      const sifre = document.getElementById("ogrenciSifre").value.trim();
+      const sinif = document.getElementById("ogrenciSinif").value;
+
+      await addDoc(collection(db, "kullanicilar"), {
+        adSoyad: ad,
+        kullaniciAdi: kullanici,
+        sifre: sifre,
+        sinif: sinif,
+        rol: "ogrenci",
+        kayitTarihi: new Date().toLocaleDateString('tr-TR')
+      });
+
+      alert("Öğrenci başarıyla eklendi!");
+      document.getElementById("ogrenciForm").reset();
+    } catch (err) { 
+      console.error("Öğrenci Ekleme Hatası:", err);
+      alert("Öğrenci eklenirken hata oluştu: " + err.message); 
+    } finally { 
+      btn.disabled = false; 
+      btn.innerText = "Öğrenci Kaydet"; 
+    }
+  });
+
+  // 4. KULLANICI SİLME İŞLEMİ
+  window.kullaniciSil = async function(id) {
+    if (confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) {
+      try {
+        await deleteDoc(doc(db, "kullanicilar", id));
+        alert("Kullanıcı silindi.");
+      } catch (error) {
+        alert("Silinirken hata oluştu: " + error.message);
       }
-    };
+    }
+  };
 
-    basvurulariGetir();
-  </script>
+  // 5. CANLI ÖĞRETMEN / ÖĞRENCİ LİSTESİ (AÇILIR-KAPANIR YAPIDA)
+  function canliKullanicilariGetir() {
+    onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
+      const ogretmenDiv = document.getElementById("ogretmenListesi");
+      const ogrenciDiv = document.getElementById("ogrenciListesi");
+      ogretmenDiv.innerHTML = ""; 
+      ogrenciDiv.innerHTML = "";
+
+      let ogretmenSayisi = 0;
+      let ogrenciSayisi = 0;
+
+      snapshot.forEach((docSnap) => {
+        const u = docSnap.data();
+        const id = docSnap.id;
+
+        if (u.rol === "ogretmen") {
+          ogretmenSayisi++;
+          ogretmenDiv.innerHTML += `
+            <div class="liste-item">
+              <div class="liste-baslik" onclick="detayAcKapasin(this)">
+                <strong><i class="fa-solid fa-user-tie"></i> ${u.adSoyad || 'İsimsiz'}</strong>
+                <i class="fa-solid fa-chevron-down ok-ikon"></i>
+              </div>
+              <div class="liste-detay">
+                <div class="detay-satir"><span>Branş:</span> ${u.brans || '-'}</div>
+                <div class="detay-satir"><span>Kullanıcı Adı:</span> ${u.kullaniciAdi || '-'}</div>
+                <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
+                <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
+                <div class="detay-islem">
+                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Öğretmeni Sil</button>
+                </div>
+              </div>
+            </div>`;
+        } else if (u.rol === "ogrenci") {
+          ogrenciSayisi++;
+          ogrenciDiv.innerHTML += `
+            <div class="liste-item">
+              <div class="liste-baslik" onclick="detayAcKapasin(this)">
+                <strong><i class="fa-solid fa-user-graduate"></i> ${u.adSoyad || 'İsimsiz'}</strong>
+                <i class="fa-solid fa-chevron-down ok-ikon"></i>
+              </div>
+              <div class="liste-detay">
+                <div class="detay-satir"><span>Sınıf:</span> ${u.sinif || '-'}</div>
+                <div class="detay-satir"><span>Kullanıcı Adı:</span> ${u.kullaniciAdi || '-'}</div>
+                <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
+                <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
+                <div class="detay-islem">
+                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Öğrenciyi Sil</button>
+                </div>
+              </div>
+            </div>`;
+        }
+      });
+
+      if (ogretmenSayisi === 0) ogretmenDiv.innerHTML = "<small style='color:#aaa;'>Kayıtlı öğretmen bulunmuyor.</small>";
+      if (ogrenciSayisi === 0) ogrenciDiv.innerHTML = "<small style='color:#aaa;'>Kayıtlı öğrenci bulunmuyor.</small>";
+
+    }, (error) => {
+      console.error("Kullanıcı listesi canlı izleme hatası:", error);
+    });
+  }
+</script>
 
 </body>
 </html>
