@@ -115,7 +115,7 @@
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
       <!-- DOSYA YÜKLEME ALANI -->
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 1 MB - İsteğe Bağlı):</label>
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
@@ -141,7 +141,7 @@
 <!-- FIREBASE UYGULAMASI -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -157,7 +157,7 @@
 
   let aktifOgretmen = null;
 
-  // DOSYA SEÇİMİ VE ADI GÖSTERİMİ
+  // DOSYA SEÇİM HAREKETİ
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
 
@@ -194,7 +194,7 @@
     if (kayitli) {
       try {
         aktifOgretmen = JSON.parse(kayitli);
-        if(aktifOgretmen && aktifOgretmen.id) {
+        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) {
           paneliAc();
         } else {
           cikisYap();
@@ -207,30 +207,36 @@
     }
   });
 
-  // ÖĞRETMEN GİRİŞ FORMU
+  // GİRİŞ FORMU KONTROLÜ
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const gBtn = document.getElementById("girisBtn");
     gBtn.disabled = true;
-    gBtn.innerText = "Kontrol Ediliyor...";
+    gBtn.innerText = "Giriş Yapılıyor...";
 
     const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
     const sifre = document.getElementById("sifre").value.trim();
 
     try {
-      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogretmen"));
-      const snap = await getDocs(q);
+      const snap = await getDocs(collection(db, "kullanicilar"));
+      let eslesenUser = null;
 
-      if (!snap.empty) {
-        const docSnap = snap.docs[0];
-        aktifOgretmen = { id: docSnap.id, ...docSnap.data() };
+      snap.forEach(docSnap => {
+        const u = docSnap.data();
+        if ((u.kullaniciAdi && u.kullaniciAdi.toLowerCase() === kAdi) && u.sifre === sifre && u.rol === "ogretmen") {
+          eslesenUser = { id: docSnap.id, ...u };
+        }
+      });
+
+      if (eslesenUser) {
+        aktifOgretmen = eslesenUser;
         localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
         paneliAc();
       } else {
         alert("Kullanıcı adı veya şifre hatalı!");
       }
     } catch (err) {
-      alert("Giriş Hatası: " + err.message);
+      alert("Giriş sırasında veritabanı hatası oluştu: " + err.message);
     } finally {
       gBtn.disabled = false;
       gBtn.innerText = "Giriş Yap";
@@ -255,23 +261,24 @@
 
   document.getElementById("cikisBtn").addEventListener("click", cikisYap);
 
-  // ÖĞRENCİLERİ SEÇİM KUTUSUNA YÜKLEME
+  // ÖĞRENCİLERİ LİSTELEME
   async function ogrencileriYukle() {
     const select = document.getElementById("hedefOgrenci");
     select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
     try {
-      const q = query(collection(db, "kullanicilar"), where("rol", "==", "ogrenci"));
-      const snap = await getDocs(q);
+      const snap = await getDocs(collection(db, "kullanicilar"));
       snap.forEach(docSnap => {
         const u = docSnap.data();
-        select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
+        if(u.rol === "ogrenci") {
+          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
+        }
       });
     } catch (err) {
-      console.error("Öğrenciler yüklenemedi:", err);
+      console.error("Öğrenciler alınamadı:", err);
     }
   }
 
-  // DOSYA OKUYUCU FONKSİYON
+  // DOSYA METİN OKUYUCU
   function dosyayiOku(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -281,7 +288,7 @@
     });
   }
 
-  // ÖDEV VE NOT PAYLAŞMA
+  // PAYLAŞIM GÖNDERME
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
@@ -316,22 +323,13 @@
 
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-        
-        // 1MB Üstü dosyalar Firestore metin limitine takılabilir, boyut sınırlaması eklendi
-        if (file.size > 1000 * 1024) {
-          alert("Lütfen 1 MB'dan küçük bir dosya veya görsel seçin!");
-          btn.disabled = false;
-          btn.innerText = "Paylaş";
-          return;
-        }
-
         dosyaAdi = file.name;
         dosyaUrl = await dosyayiOku(file);
       }
 
       await addDoc(collection(db, "paylasimlar"), {
-        ogretmenId: aktifOgretmen.id,
-        ogretmenAd: aktifOgretmen.adSoyad,
+        ogretmenId: aktifOgretmen.id || aktifOgretmen.kullaniciAdi,
+        ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
         brans: aktifOgretmen.brans || "",
         baslik: document.getElementById("baslik").value.trim(),
         aciklama: document.getElementById("aciklama").value.trim(),
@@ -350,32 +348,30 @@
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      alert("Hata Oluştu: " + err.message);
+      alert("Gönderim Hatası: " + err.message);
     } finally {
       btn.disabled = false;
       btn.innerText = "Paylaş";
     }
   });
 
-  // PAYLAŞIMLARI ANLIK İZLEME VE SİLME
+  // CANLI PAYLAŞIM LİSTESİ
   function paylasimlariCanliIzle() {
-    if(!aktifOgretmen || !aktifOgretmen.id) return;
-    
-    try {
-      const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
-      onSnapshot(q, (snapshot) => {
-        const liste = document.getElementById("paylasimListesi");
-        liste.innerHTML = "";
+    if(!aktifOgretmen) return;
+    const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
 
-        if (snapshot.empty) {
-          liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
-          return;
-        }
+    onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
+      const liste = document.getElementById("paylasimListesi");
+      liste.innerHTML = "";
 
-        snapshot.forEach((docSnap) => {
-          const p = docSnap.data();
-          const id = docSnap.id;
+      let paylasimVarMi = false;
 
+      snapshot.forEach((docSnap) => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        if (p.ogretmenId === ogretmenId) {
+          paylasimVarMi = true;
           let hedefMetin = "Tüm Okul";
           if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
           if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
@@ -391,13 +387,15 @@
               </div>
             </div>
           `;
-        });
-      }, (err) => {
-        document.getElementById("paylasimListesi").innerHTML = `<p style="color:red; font-size:12px;">Hata: ${err.message}</p>`;
+        }
       });
-    } catch(err) {
-      document.getElementById("paylasimListesi").innerHTML = `<p style="color:red; font-size:12px;">Hata: ${err.message}</p>`;
-    }
+
+      if (!paylasimVarMi) {
+        liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
+      }
+    }, (err) => {
+      document.getElementById("paylasimListesi").innerHTML = `<p style="color:#ff4444; font-size:12px;">Liste Okuma Hatası: ${err.message}</p>`;
+    });
   }
 
   window.paylasimSil = async function(id) {
