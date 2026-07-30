@@ -2,7 +2,7 @@ const ogrenciler = [
 
     {
         id:1,
-        ad:"Ahmet Yılmaz",
+        ad:"EMRAH GİRAY",
         sinif:"8-A",
         puan:90,
         veli:"Mehmet Yılmaz",
@@ -12,7 +12,7 @@ const ogrenciler = [
 
     {
         id:2,
-        ad:"Ayşe Demir",
+        ad:"NACİYE CİHANGİR ",
         sinif:"8-B",
         puan:85,
         veli:"Ali Demir",
@@ -22,7 +22,7 @@ const ogrenciler = [
 
     {
         id:3,
-        ad:"Mehmet Kaya",
+        ad:"FATMA BÖREKÇİ",
         sinif:"8-A",
         puan:88,
         veli:"Hasan Kaya",
@@ -35,18 +35,31 @@ const ogrenciler = [
 
 
 
-const ogretmenler = [
+const ogretmenler = [,
+                    
 
     {
         id:1,
-        ad:"Ahmet Öğretmen",
+        ad:"ÖZLEM YARGIÇ",
         brans:"Matematik"
+    },
+
+    {
+        id:1,
+        ad:"EMRAH GİRAY",
+        brans:"SOSYAL BİLGİLER"
+    },
+
+    {
+        id:1,
+        ad:"FATMA BÖREKÇİ",
+        brans:"İNGİLİZCE"
     },
 
 
     {
         id:2,
-        ad:"Ayşe Öğretmen",
+        ad:"NACİYE CİHANGİR",
         brans:"Türkçe"
     },
 
