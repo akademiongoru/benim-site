@@ -87,15 +87,23 @@
         <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
       </select>
 
-      <!-- YÖNETİCİ PANELİNDEKİ KURUMLARDAN DİNAMİK DOLAN SINIF SEÇİMİ -->
+      <!-- SINIF SEÇİM KUTUSU -->
       <div id="sinifSecimKutu" style="display:none;">
         <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
         <select id="hedefSinif">
-          <option value="">Sınıf Yükleniyor...</option>
+          <option value="">Sınıf Seçin</option>
+          <option value="1. Sınıf">1. Sınıf</option>
+          <option value="2. Sınıf">2. Sınıf</option>
+          <option value="3. Sınıf">3. Sınıf</option>
+          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+          <option value="5. Sınıf">5. Sınıf</option>
+          <option value="6. Sınıf">6. Sınıf</option>
+          <option value="7. Sınıf">7. Sınıf</option>
+          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
         </select>
       </div>
 
-      <!-- DİNAMİK ÖĞRENCİ SEÇİMİ -->
+      <!-- ÖĞRENCİ SEÇİM KUTUSU -->
       <div id="ogrenciSecimKutu" style="display:none;">
         <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
         <select id="hedefOgrenci">
@@ -106,7 +114,7 @@
       <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <!-- DOSYA YÜKLEME KISMI (PDF, WORD, JPG, PNG) -->
+      <!-- DOSYA YÜKLEME ALANI -->
       <label style="font-size:12px; color:#aaa;">Dosya Ekle (PDF, Word, JPG, PNG - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
@@ -120,7 +128,7 @@
     </form>
   </div>
 
-  <!-- SAĞ BÖLÜM: PAYLAŞILAN NOTLAR VE ÖDEVLER -->
+  <!-- SAĞ BÖLÜM: PAYLAŞILAN ÖDEVLER VE NOTLAR -->
   <div class="kutu">
     <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
     <div class="liste" id="paylasimListesi">
@@ -152,7 +160,7 @@
 
   let aktifOgretmen = null;
 
-  // DOSYA SEÇİMİ BİLGİLENDİRMESİ
+  // DOSYA SEÇİMİ VE ADI GÖSTERİMİ
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
 
@@ -164,7 +172,7 @@
     }
   });
 
-  // HEDEF SEÇİM DİNLEYİCİSİ
+  // HEDEF SEÇİM DİNLEMESİ
   const hedefTuru = document.getElementById("hedefTuru");
   const sinifKutu = document.getElementById("sinifSecimKutu");
   const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
@@ -192,7 +200,7 @@
     }
   });
 
-  // ÖĞRETMEN GİRİŞİ
+  // ÖĞRETMEN GİRİŞ FORMU
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
@@ -220,7 +228,7 @@
     document.getElementById("panelAlani").style.display = "grid";
     document.getElementById("cikisBtn").style.display = "inline-flex";
 
-    verileriYukle();
+    ogrencileriYukle();
     paylasimlariCanliIzle();
   }
 
@@ -229,41 +237,23 @@
     location.reload();
   });
 
-  // SINIFLARI VE ÖĞRENCİLERİ VERİTABANINDAN DİNAMİK ÇEKME
-  async function verileriYukle() {
-    const sinifSelect = document.getElementById("hedefSinif");
-    const ogrenciSelect = document.getElementById("hedefOgrenci");
-
-    sinifSelect.innerHTML = "<option value=''>Sınıf Seçiniz</option>";
-    ogrenciSelect.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
-
-    // Yönetici panelindeki standart sınıf listesi sabit tanımı
-    const standartSiniflar = [
-      "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf Proje OKULLARI",
-      "5. Sınıf", "6. Sınıf", "7. Sınıf", "8. Sınıf LGS"
-    ];
-
+  // ÖĞRENCİLERİ DROPDOWN'A YÜKLEME
+  async function ogrencileriYukle() {
+    const select = document.getElementById("hedefOgrenci");
+    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
     try {
       const q = query(collection(db, "kullanicilar"), where("rol", "==", "ogrenci"));
       const snap = await getDocs(q);
-
-      // Sınıfları dinamik doldur
-      standartSiniflar.forEach(sinifAdi => {
-        sinifSelect.innerHTML += `<option value="${sinifAdi}">${sinifAdi}</option>`;
-      });
-
-      // Öğrencileri dinamik doldur
       snap.forEach(docSnap => {
         const u = docSnap.data();
-        ogrenciSelect.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
+        select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
       });
-
     } catch (err) {
-      console.error("Veriler çekilemedi:", err);
+      console.error("Öğrenciler çekilemedi:", err);
     }
   }
 
-  // ÖDEV / DERS NOTU PAYLAŞMA
+  // ÖDEV / NOT PAYLAŞMA (KİLİTLENMEYİ ÖNLEYEN GÜVENLİ KOD)
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
@@ -277,20 +267,30 @@
 
       if (tur === "sinif") {
         hedefSinifVal = document.getElementById("hedefSinif").value;
-        if (!hedefSinifVal) { alert("Lütfen bir sınıf seçin!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
+        if (!hedefSinifVal) { 
+          alert("Lütfen bir sınıf seçin!"); 
+          return; 
+        }
       } else if (tur === "ogrenci") {
         hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
-        if (!hedefOgrenciVal) { alert("Lütfen bir öğrenci seçin!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
+        if (!hedefOgrenciVal) { 
+          alert("Lütfen bir öğrenci seçin!"); 
+          return; 
+        }
       }
 
       let dosyaUrl = "";
       let dosyaAdi = "";
 
-      // Cihazdan yüklenen dosyayı Firebase Storage'a aktarma
+      // Eğer dosya seçildiyse Firebase Storage'a yükle
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
         dosyaAdi = file.name;
-        const storageRef = ref(storage, `odevler/${Date.now()}_${file.name}`);
+        
+        // Türkçe/özel karakter kaynaklı Storage hatalarını önleyen filtre
+        const temizAd = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+        const storageRef = ref(storage, `odevler/${Date.now()}_${temizAd}`);
+
         const uploadTask = await uploadBytes(storageRef, file);
         dosyaUrl = await getDownloadURL(uploadTask.ref);
       }
@@ -316,14 +316,16 @@
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      alert("Paylaşım hatası: " + err.message);
+      console.error("Paylaşım Hatası Detayı:", err);
+      alert("Paylaşım sırasında bir hata oluştu:\n" + err.message);
     } finally {
+      // İşlem bitse de hata alsa da buton kilidini kaldırır
       btn.disabled = false;
       btn.innerText = "Paylaş";
     }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ DİNLEME VE SİLME
+  // CANLI PAYLAŞIM LİSTESİ VE SİLME
   function paylasimlariCanliIzle() {
     const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
     onSnapshot(q, (snapshot) => {
