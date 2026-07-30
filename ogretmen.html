@@ -1,401 +1,215 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-<title>Öğretmen Girişi | Öngörü Akademi</title>
-
-
-<script src="guvenlik.js"></script>
-
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-
-
-<style>
-
-
-*{
-
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-
-}
-
-
-
-body{
-
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#2f2f2f;
-color:white;
-
-}
-
-
-
-.login-box{
-
-width:420px;
-background:#1f1f1f;
-padding:45px;
-border-radius:25px;
-border:2px solid #ff7a00;
-text-align:center;
-box-shadow:0 15px 40px rgba(0,0,0,.4);
-
-}
-
-
-
-.logo{
-
-width:95px;
-height:95px;
-background:white;
-padding:8px;
-border-radius:50%;
-margin-bottom:20px;
-
-}
-
-
-
-h1{
-
-color:#ff7a00;
-margin-bottom:10px;
-
-}
-
-
-
-h2{
-
-font-size:17px;
-font-weight:400;
-color:#ddd;
-margin-bottom:30px;
-
-}
-
-
-
-.input-box{
-
-position:relative;
-margin-bottom:20px;
-
-}
-
-
-
-.input-box i{
-
-position:absolute;
-left:15px;
-top:17px;
-color:#ff7a00;
-
-}
-
-
-
-input{
-
-width:100%;
-padding:15px 15px 15px 45px;
-background:#383838;
-border:none;
-border-radius:10px;
-color:white;
-outline:none;
-
-}
-
-
-
-input:focus{
-
-border:1px solid #ff7a00;
-
-}
-
-
-
-button{
-
-width:100%;
-padding:15px;
-background:#ff7a00;
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
-transition:.3s;
-
-}
-
-
-
-button:hover{
-
-background:white;
-color:#ff7a00;
-
-}
-
-
-
-.back{
-
-display:block;
-margin-top:20px;
-color:white;
-text-decoration:none;
-
-}
-
-
-
-.back:hover{
-
-color:#ff7a00;
-
-}
-
-
-
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Öğretmen Paneli | Öngörü Akademi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+    body { background:#2f2f2f; color:white; padding:20px; }
+    header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { color:#ff7a00; font-size:24px; }
+    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
+    
+    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
+    .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
+    
+    input, select, textarea, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; }
+    textarea { height:100px; resize:none; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+    button:hover { background:white; color:#ff7a00; }
+    
+    .panel { display:none; grid-template-columns: 1fr 1fr; gap:20px; }
+    @media(max-width:900px){ .panel { grid-template-columns: 1fr; } }
+    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
+    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
+    
+    .liste { margin-top:15px; max-height:300px; overflow-y:auto; }
+    .liste-eleman { background:#252525; padding:12px; border-radius:8px; margin-bottom:8px; border-left:3px solid #ff7a00; }
+    .liste-eleman h4 { color:#ff7a00; margin-bottom:5px; }
+    .liste-eleman p { font-size:13px; color:#ddd; line-height:1.5; }
+    .liste-eleman small { color:#aaa; font-size:11px; display:block; margin-top:5px; }
+  </style>
 </head>
 <body>
 
+<header>
+  <h1><i class="fa-solid fa-chalkboard-user"></i> Öngörü Akademi - Öğretmen Paneli</h1>
+  <div>
+    <span id="ogretmenIsmi" style="margin-right:15px; font-weight:bold; color:#ff7a00;"></span>
+    <a href="index.html" id="anaSayfaBtn"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+    <button class="cikis-btn" id="cikisBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
+  </div>
+</header>
 
-<div class="login-box">
+<!-- ÖĞRETMEN GİRİŞ FORMU -->
+<div class="giris-kutu" id="girisAlani">
+  <h2>Öğretmen Girişi</h2>
+  <form id="ogretmenGirisForm">
+    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı" required>
+    <input type="password" id="gSifre" placeholder="Şifre" required>
+    <button type="submit" id="girisBtn">Giriş Yap</button>
+  </form>
+</div>
 
+<!-- ÖĞRETMEN PANEL ALANI (Giriş yaptıktan sonra görünecek) -->
+<div class="panel" id="panelAlani">
+  
+  <!-- DERS NOTU / ÖDEV YÜKLEME FORMU -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-file-arrow-up"></i> Ders Notu / Ödev Paylaş</h2>
+    <form id="notEkleForm">
+      <select id="hedefOgrenci" required>
+        <option value="">Öğrenci Seçiniz</option>
+      </select>
+      
+      <input type="text" id="notBaslik" placeholder="Not / Ödev Başlığı" required>
+      <textarea id="notIcerik" placeholder="Açıklama, ödev detayı veya indirme linki..." required></textarea>
+      
+      <button type="submit" id="notGonderBtn">Paylaş</button>
+    </form>
+  </div>
 
-
-<img src="images/logo.png" class="logo">
-
-
-
-
-
-<h1>
-Öğretmen Girişi
-</h1>
-
-
-
-
-<h2>
-Öngörü Akademi Eğitim Portalı
-</h2>
-
-
-
-
-
-
-
-<div class="input-box">
-
-<i class="fa-solid fa-chalkboard-user"></i>
-
-
-<input
-id="kullanici"
-type="text"
-placeholder="Öğretmen Kullanıcı Adı">
-
+  <!-- GEÇMİŞ PAYLAŞIMLAR -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
+    <div class="liste" id="notlarListesi">Yükleniyor...</div>
+  </div>
 
 </div>
 
-
-
-
-
-
-
-
-<div class="input-box">
-
-
-<i class="fa-solid fa-lock"></i>
-
-
-
-<input
-id="sifre"
-type="password"
-placeholder="Şifre">
-
-
-</div>
-
-
-
-
-
-
-
-<button onclick="ogretmenGiris()">
-
-
-
-<i class="fa-solid fa-right-to-bracket"></i>
-
-
-
-Giriş Yap
-
-
-
-</button>
-
-
-
-
-
-
-
-<a href="index.html" class="back">
-
-
-← Ana Sayfaya Dön
-
-
-</a>
-
-
-
-
-
-
-</div>
-
-
-
-
-
-
-
-
-
-<script>
-
-
-
-function ogretmenGiris(){
-
-
-
-let kullanici =
-
-document.getElementById("kullanici").value.trim();
-
-
-
-
-let sifre =
-
-document.getElementById("sifre").value.trim();
-
-
-
-
-
-
-
-if(kullanici==="" || sifre===""){
-
-
-alert(
-"Kullanıcı adı ve şifre giriniz!"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-
-if(
-kullanici==="ogretmen" &&
-sifre==="1234"
-
-){
-
-
-
-oturumAc(
-
-"ogretmen",
-
-"ogretmen"
-
-);
-
-
-
-
-
-
-window.location.href =
-
-"ogretmen-paneli.html";
-
-
-
-}
-
-else{
-
-
-alert(
-
-"Öğretmen kullanıcı adı veya şifre hatalı!"
-
-);
-
-
-}
-
-
-
-}
-
-
-
-
+<!-- FIREBASE VERİTABANI BAĞLANTISI -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+    authDomain: "weffg5-b84a8.firebaseapp.com",
+    projectId: "weffg5-b84a8",
+    storageBucket: "weffg5-b84a8.firebasestorage.app",
+    messagingSenderId: "979023738185",
+    appId: "1:979023738185:web:6327d7ba34be220de91698",
+    measurementId: "G-P80RPZCSE7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let aktifOgretmen = null;
+
+  // 1. ÖĞRETMEN GİRİŞİ
+  document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const kAdi = document.getElementById("gKullaniciAdi").value.toLowerCase().trim();
+    const sifre = document.getElementById("gSifre").value.trim();
+    const btn = document.getElementById("girisBtn");
+    btn.disabled = true; btn.innerText = "Kontrol Ediliyor...";
+
+    try {
+      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogretmen"));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        alert("Kullanıcı adı veya şifre hatalı!");
+      } else {
+        snapshot.forEach(doc => {
+          aktifOgretmen = { id: doc.id, ...doc.data() };
+        });
+        
+        // Paneli Aç
+        document.getElementById("girisAlani").style.display = "none";
+        document.getElementById("panelAlani").style.display = "grid";
+        document.getElementById("cikisBtn").style.display = "inline-block";
+        document.getElementById("ogretmenIsmi").innerText = "Hoş geldin, " + aktifOgretmen.adSoyad;
+
+        ogrencileriYukle();
+        notlariYukle();
+      }
+    } catch (err) { alert("Hata: " + err.message); }
+    finally { btn.disabled = false; btn.innerText = "Giriş Yap"; }
+  });
+
+  // ÇIKIŞ BUTONU
+  document.getElementById("cikisBtn").addEventListener("click", () => {
+    location.reload();
+  });
+
+  // 2. ÖĞRENCİLERİ SEÇİM KUTUSUNA YÜKLE
+  async function ogrencileriYukle() {
+    const select = document.getElementById("hedefOgrenci");
+    select.innerHTML = '<option value="">Öğrenci Seçiniz (Veya Tüm Sınıf)</option>';
+
+    const q = query(collection(db, "kullanicilar"), where("rol", "==", "ogrenci"));
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach(doc => {
+      const ogrenci = doc.data();
+      select.innerHTML += `<option value="${doc.id}">${ogrenci.adSoyad} (${ogrenci.sinif})</option>`;
+    });
+  }
+
+  // 3. DERS NOTU / ÖDEV EKLEME
+  document.getElementById("notEkleForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const ogrenciId = document.getElementById("hedefOgrenci").value;
+    const ogrenciText = document.getElementById("hedefOgrenci").options[document.getElementById("hedefOgrenci").selectedIndex].text;
+    const baslik = document.getElementById("notBaslik").value;
+    const icerik = document.getElementById("notIcerik").value;
+    const btn = document.getElementById("notGonderBtn");
+
+    btn.disabled = true; btn.innerText = "Paylaşılıyor...";
+
+    const bugun = new Date();
+    const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+
+    try {
+      await addDoc(collection(db, "dersNotlari"), {
+        ogretmenId: aktifOgretmen.id,
+        ogretmenAd: aktifOgretmen.adSoyad,
+        brans: aktifOgretmen.brans || "",
+        ogrenciId: ogrenciId,
+        ogrenciAd: ogrenciText,
+        baslik: baslik,
+        icerik: icerik,
+        tarih: tarihStr
+      });
+
+      alert("Ders notu/ödev başarıyla gönderildi!");
+      document.getElementById("notEkleForm").reset();
+    } catch (err) { alert("Hata: " + err.message); }
+    finally { btn.disabled = false; btn.innerText = "Paylaş"; }
+  });
+
+  // 4. CANLI NOTLARI YÜKLE
+  function notlariYukle() {
+    const q = query(collection(db, "dersNotlari"), where("ogretmenId", "==", aktifOgretmen.id));
+    
+    onSnapshot(q, (snapshot) => {
+      const listeDiv = document.getElementById("notlarListesi");
+      listeDiv.innerHTML = "";
+
+      if(snapshot.empty) {
+        listeDiv.innerHTML = "<p style='color:#aaa;'>Henüz not veya ödev paylaşmadınız.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        listeDiv.innerHTML += `
+          <div class="liste-eleman">
+            <h4>${item.baslik}</h4>
+            <p><strong>Alıcı:</strong> ${item.ogrenciAd}</p>
+            <p style="margin-top:5px;">${item.icerik}</p>
+            <small><i class="fa-regular fa-clock"></i> ${item.tarih}</small>
+          </div>
+        `;
+      });
+    });
+  }
 </script>
 
-
-
-
-
 </body>
-
 </html>
