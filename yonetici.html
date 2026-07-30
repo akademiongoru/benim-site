@@ -45,6 +45,9 @@
 
     .sil-btn { background: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: auto; margin:0; }
     .sil-btn:hover { background: #cc0000; }
+    
+    .duzenle-btn { background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; width: auto; margin-right: 5px; }
+    .duzenle-btn:hover { background: #0b7dda; }
 
     /* TIKLANABİLİR LİSTE YAPISI */
     .liste { margin-top:15px; max-height:350px; overflow-y:auto; padding-right:5px; }
@@ -61,7 +64,14 @@
     
     .detay-satir { display:flex; justify-content:space-between; margin-bottom:6px; border-bottom:1px dashed #333; padding-bottom:4px; }
     .detay-satir span { color:#ff7a00; font-weight:600; }
-    .detay-islem { margin-top:10px; text-align:right; }
+    .detay-islem { margin-top:10px; text-align:right; display:flex; justify-content:flex-end; }
+
+    /* POPUP MODAL (DÜZENLEME PENCERESİ) */
+    .modal-arka { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
+    .modal-kutu { background:#383838; padding:25px; border-radius:12px; width:90%; max-width:450px; border-top:4px solid #ff7a00; position:relative; }
+    .modal-kutu h3 { color:#ff7a00; margin-bottom:15px; }
+    .modal-kapat { position:absolute; right:15px; top:15px; color:#aaa; font-size:20px; cursor:pointer; }
+    .modal-kapat:hover { color:white; }
   </style>
 </head>
 <body>
@@ -156,7 +166,51 @@
 
 </div>
 
-<!-- ŞİFRE GÖSTER / GİZLE VE LİSTE AÇMA/KAPAMA SCRIPT -->
+<!-- DÜZENLEME MODAL PENCERESİ -->
+<div class="modal-arka" id="duzenleModal">
+  <div class="modal-kutu">
+    <i class="fa-solid fa-xmark modal-kapat" onclick="modalKapats()"></i>
+    <h3>Kullanıcı Bilgilerini Düzenle</h3>
+    <form id="duzenleForm">
+      <input type="hidden" id="editId">
+      <input type="hidden" id="editRol">
+      
+      <label style="font-size:12px; color:#aaa;">Ad Soyad:</label>
+      <input type="text" id="editAd" required>
+
+      <label style="font-size:12px; color:#aaa;">Kullanıcı Adı:</label>
+      <input type="text" id="editKullanici" required>
+
+      <label style="font-size:12px; color:#aaa;">Şifre:</label>
+      <input type="text" id="editSifre" required>
+
+      <!-- Branş (Sadece öğretmen için açılır) -->
+      <div id="editBransKutu" style="display:none;">
+        <label style="font-size:12px; color:#aaa;">Branş:</label>
+        <input type="text" id="editBrans">
+      </div>
+
+      <!-- Sınıf (Sadece öğrenci için açılır) -->
+      <div id="editSinifKutu" style="display:none;">
+        <label style="font-size:12px; color:#aaa;">Sınıf:</label>
+        <select id="editSinif">
+          <option value="1. Sınıf">1. Sınıf</option>
+          <option value="2. Sınıf">2. Sınıf</option>
+          <option value="3. Sınıf">3. Sınıf</option>
+          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+          <option value="5. Sınıf">5. Sınıf</option>
+          <option value="6. Sınıf">6. Sınıf</option>
+          <option value="7. Sınıf">7. Sınıf</option>
+          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+        </select>
+      </div>
+
+      <button type="submit" id="guncelleBtn">Güncelle</button>
+    </form>
+  </div>
+</div>
+
+<!-- SCRIPT BÖLÜMÜ -->
 <script>
   function sifreGosterToggle() {
     const input = document.getElementById("adminSifre");
@@ -176,12 +230,16 @@
     const parent = element.parentElement;
     parent.classList.toggle("aktif");
   }
+
+  function modalKapats() {
+    document.getElementById("duzenleModal").style.display = "none";
+  }
 </script>
 
 <!-- FIREBASE SİSTEMİ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -329,7 +387,66 @@
     }
   });
 
-  // 4. KULLANICI SİLME İŞLEMİ
+  // 4. KULLANICI DÜZENLEME MODALI AÇMA
+  window.duzenleAc = function(id, ad, kullanici, sifre, rol, ekstra) {
+    document.getElementById("editId").value = id;
+    document.getElementById("editRol").value = rol;
+    document.getElementById("editAd").value = ad;
+    document.getElementById("editKullanici").value = kullanici;
+    document.getElementById("editSifre").value = sifre;
+
+    if (rol === "ogretmen") {
+      document.getElementById("editBransKutu").style.display = "block";
+      document.getElementById("editSinifKutu").style.display = "none";
+      document.getElementById("editBrans").value = ekstra;
+    } else {
+      document.getElementById("editBransKutu").style.display = "none";
+      document.getElementById("editSinifKutu").style.display = "block";
+      document.getElementById("editSinif").value = ekstra;
+    }
+
+    document.getElementById("duzenleModal").style.display = "flex";
+  };
+
+  // 5. KULLANICI BİLGİLERİNİ GÜNCELLEME (UPDATE)
+  document.getElementById("duzenleForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("guncelleBtn");
+    btn.disabled = true;
+    btn.innerText = "Güncelleniyor...";
+
+    const id = document.getElementById("editId").value;
+    const rol = document.getElementById("editRol").value;
+    const ad = document.getElementById("editAd").value.trim();
+    const kullanici = document.getElementById("editKullanici").value.toLowerCase().trim();
+    const sifre = document.getElementById("editSifre").value.trim();
+
+    const guncelVeri = {
+      adSoyad: ad,
+      kullaniciAdi: kullanici,
+      sifre: sifre
+    };
+
+    if (rol === "ogretmen") {
+      guncelVeri.brans = document.getElementById("editBrans").value.trim();
+    } else {
+      guncelVeri.sinif = document.getElementById("editSinif").value;
+    }
+
+    try {
+      const userRef = doc(db, "kullanicilar", id);
+      await updateDoc(userRef, guncelVeri);
+      alert("Kullanıcı bilgileri başarıyla güncellendi!");
+      window.modalKapats();
+    } catch (error) {
+      alert("Güncelleme hatası: " + error.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Güncelle";
+    }
+  });
+
+  // 6. KULLANICI SİLME İŞLEMİ
   window.kullaniciSil = async function(id) {
     if (confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) {
       try {
@@ -341,7 +458,7 @@
     }
   };
 
-  // 5. CANLI ÖĞRETMEN / ÖĞRENCİ LİSTESİ (AÇILIR-KAPANIR YAPIDA)
+  // 7. CANLI ÖĞRETMEN / ÖĞRENCİ LİSTESİ
   function canliKullanicilariGetir() {
     onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
       const ogretmenDiv = document.getElementById("ogretmenListesi");
@@ -370,7 +487,8 @@
                 <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
                 <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
                 <div class="detay-islem">
-                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Öğretmeni Sil</button>
+                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${u.adSoyad || ''}', '${u.kullaniciAdi || ''}', '${u.sifre || ''}', 'ogretmen', '${u.brans || ''}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
                 </div>
               </div>
             </div>`;
@@ -388,7 +506,8 @@
                 <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
                 <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
                 <div class="detay-islem">
-                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Öğrenciyi Sil</button>
+                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${u.adSoyad || ''}', '${u.kullaniciAdi || ''}', '${u.sifre || ''}', 'ogrenci', '${u.sinif || ''}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                  <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
                 </div>
               </div>
             </div>`;
