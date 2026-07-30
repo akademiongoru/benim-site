@@ -86,7 +86,7 @@
 
   let aktifOgrenci = null;
 
-  // OTURUM KONTROLÜ (Sayfa Yenilendiğinde Girişi Korur)
+  // OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
     const kayitli = localStorage.getItem("ongoru_ogrenci");
     if (kayitli) {
@@ -159,9 +159,6 @@
         const item = docSnap.data();
         
         // FİLTRELEME MANTIĞI
-        // 1. Herkese açıksa (hepsi)
-        // 2. Sınıfa özel atılmışsa ve öğrencinin sınıfı ile aynıysa
-        // 3. Tek öğrenciye atılmışsa ve öğrencinin veritabanı ID'si tutuyorsa
         const herkeseAcik = item.hedefTuru === "hepsi";
         const sinifaOzel = (item.hedefTuru === "sinif" && item.hedefSinif === aktifOgrenci.sinif);
         const kisiyeOzel = (item.hedefTuru === "ogrenci" && item.hedefOgrenciId === aktifOgrenci.id);
