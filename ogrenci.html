@@ -173,7 +173,7 @@
               </div>
               <h3>${item.baslik}</h3>
               <p>${item.aciklama}</p>
-              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" download="${item.dosyaAdi || 'ekli-dosya'}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${item.dosyaAdi || 'Ekli Dosyayı / Ödevi İndir'}</a>` : ''}
+              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${item.dosyaAdi || 'Ekli Dosyayı Gör / İndir'}</a>` : ''}
             </div>
           `;
         }
