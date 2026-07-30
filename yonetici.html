@@ -16,7 +16,7 @@
     header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
 
     /* GİRİŞ EKRANI */
-    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
+    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border:2px solid #ff7a00; text-align:center; }
     .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
 
     .sifre-kutu { position: relative; width: 100%; margin-bottom: 12px; }
@@ -24,13 +24,14 @@
     .sifre-kutu i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #888; font-size: 16px; transition: .3s; }
     .sifre-kutu i:hover { color: #ff7a00; }
 
-    input, select, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; outline: none; }
-    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+    input, select, button { width:100%; padding:12px; margin-bottom:12px; background:#252525; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline: none; }
+    input:focus, select:focus { border-color:#ff7a00; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; color:white; }
     button:hover { background:white; color:#ff7a00; }
 
     /* PANEL EKRANI */
     .panel { display:none; flex-direction:column; gap:20px; }
-    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
+    .kutu { background:#383838; padding:25px; border-radius:15px; border:2px solid #ff7a00; }
     .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
 
     .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
@@ -50,12 +51,12 @@
     .duzenle-btn:hover { background: #0b7dda; }
 
     /* TIKLANABİLİR LİSTE YAPISI */
-    .liste { margin-top:15px; max-height:350px; overflow-y:auto; padding-right:5px; }
+    .liste { margin-top:15px; max-height:400px; overflow-y:auto; padding-right:5px; }
     .liste-item { background:#252525; border-radius:8px; margin-bottom:8px; border:1px solid #444; overflow:hidden; }
     
     .liste-baslik { padding:12px 15px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; user-select:none; transition: background .2s; }
     .liste-baslik:hover { background:#303030; }
-    .liste-baslik strong { color:#fff; font-size:14px; }
+    .liste-baslik strong { color:#fff; font-size:14px; display:flex; align-items:center; gap:10px; }
     .liste-baslik .ok-ikon { color:#ff7a00; transition: transform .3s; }
     .liste-item.aktif .ok-ikon { transform: rotate(180deg); }
 
@@ -66,9 +67,15 @@
     .detay-satir span { color:#ff7a00; font-weight:600; }
     .detay-islem { margin-top:10px; text-align:right; display:flex; justify-content:flex-end; }
 
+    /* KÜÇÜK PROFİL FOTOĞRAFI ALANI */
+    .foto-yukleme-alani { display:flex; align-items:center; gap:15px; background:#252525; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #444; }
+    .profil-foto-kucuk { width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #ff7a00; background:#1a1a1a; flex-shrink:0; }
+    .foto-input-wrapper { display:flex; flex-direction:column; font-size:12px; color:#aaa; width:100%; }
+    .foto-input-wrapper input { padding:4px; margin-bottom:0; font-size:11px; background:transparent; border:none; }
+
     /* POPUP MODAL (DÜZENLEME PENCERESİ) */
     .modal-arka { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
-    .modal-kutu { background:#383838; padding:25px; border-radius:12px; width:90%; max-width:450px; border-top:4px solid #ff7a00; position:relative; }
+    .modal-kutu { background:#383838; padding:25px; border-radius:12px; width:90%; max-width:480px; border:2px solid #ff7a00; position:relative; max-height:90vh; overflow-y:auto; }
     .modal-kutu h3 { color:#ff7a00; margin-bottom:15px; }
     .modal-kapat { position:absolute; right:15px; top:15px; color:#aaa; font-size:20px; cursor:pointer; }
     .modal-kapat:hover { color:white; }
@@ -138,13 +145,25 @@
       <div class="liste" id="ogretmenListesi">Yükleniyor...</div>
     </div>
 
-    <!-- ÖĞRENCİ EKLEME FORMU VE LİSTESİ -->
+    <!-- YENİ ÖĞRENCİ KAYDI (TÜM İSTEDİĞİN ALANLAR EKLENDİ) -->
     <div class="kutu">
       <h2><i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı</h2>
       <form id="ogrenciForm">
+        
+        <!-- Küçük Fotoğraf Yükleme Alanı -->
+        <div class="foto-yukleme-alani">
+          <img id="ogrenciFotoOnizleme" src="https://via.placeholder.com/45?text=Foto" class="profil-foto-kucuk" alt="Profil">
+          <div class="foto-input-wrapper">
+            <label for="ogrenciFoto">Öğrenci Fotoğrafı Seç (Küçük Profil)</label>
+            <input type="file" id="ogrenciFoto" accept="image/*" onchange="fotoOnizle(event, 'ogrenciFotoOnizleme')">
+          </div>
+        </div>
+
         <input type="text" id="ogrenciAd" placeholder="Öğrenci Ad Soyad" required>
+        <input type="text" id="ogrenciOkul" placeholder="Okulu" required>
         <input type="text" id="ogrenciKullanici" placeholder="Kullanıcı Adı / T.C. No" required>
         <input type="text" id="ogrenciSifre" placeholder="Şifre" required>
+        
         <select id="ogrenciSinif" required>
           <option value="">Sınıf Seçiniz</option>
           <option value="1. Sınıf">1. Sınıf</option>
@@ -156,6 +175,19 @@
           <option value="7. Sınıf">7. Sınıf</option>
           <option value="8. Sınıf LGS">8. Sınıf LGS</option>
         </select>
+
+        <!-- Başarı Düzeyi Alanı -->
+        <select id="ogrenciBasari" required>
+          <option value="">Başarı Düzeyi Seçiniz</option>
+          <option value="Kötü">Kötü</option>
+          <option value="Orta">Orta</option>
+          <option value="İyi">İyi</option>
+          <option value="Çok İyi">Çok İyi</option>
+        </select>
+
+        <input type="text" id="ogrenciAnneAd" placeholder="Anne Adı Soyadı" required>
+        <input type="tel" id="ogrenciCepTel" placeholder="Cep Telefonu (05XX...)" required>
+
         <button type="submit" id="ogrenciBtn">Öğrenci Kaydet</button>
       </form>
 
@@ -175,6 +207,14 @@
       <input type="hidden" id="editId">
       <input type="hidden" id="editRol">
       
+      <div id="editFotoKutu" class="foto-yukleme-alani" style="display:none;">
+        <img id="editFotoOnizleme" src="https://via.placeholder.com/45?text=Foto" class="profil-foto-kucuk" alt="Profil">
+        <div class="foto-input-wrapper">
+          <label for="editFoto">Fotoğrafı Değiştir</label>
+          <input type="file" id="editFoto" accept="image/*" onchange="fotoOnizle(event, 'editFotoOnizleme')">
+        </div>
+      </div>
+
       <label style="font-size:12px; color:#aaa;">Ad Soyad:</label>
       <input type="text" id="editAd" required>
 
@@ -184,14 +224,15 @@
       <label style="font-size:12px; color:#aaa;">Şifre:</label>
       <input type="text" id="editSifre" required>
 
-      <!-- Branş (Sadece öğretmen için açılır) -->
       <div id="editBransKutu" style="display:none;">
         <label style="font-size:12px; color:#aaa;">Branş:</label>
         <input type="text" id="editBrans">
       </div>
 
-      <!-- Sınıf (Sadece öğrenci için açılır) -->
-      <div id="editSinifKutu" style="display:none;">
+      <div id="editOgrenciAlanlari" style="display:none;">
+        <label style="font-size:12px; color:#aaa;">Okul:</label>
+        <input type="text" id="editOkul">
+
         <label style="font-size:12px; color:#aaa;">Sınıf:</label>
         <select id="editSinif">
           <option value="1. Sınıf">1. Sınıf</option>
@@ -203,6 +244,20 @@
           <option value="7. Sınıf">7. Sınıf</option>
           <option value="8. Sınıf LGS">8. Sınıf LGS</option>
         </select>
+
+        <label style="font-size:12px; color:#aaa;">Başarı Düzeyi:</label>
+        <select id="editBasari">
+          <option value="Kötü">Kötü</option>
+          <option value="Orta">Orta</option>
+          <option value="İyi">İyi</option>
+          <option value="Çok İyi">Çok İyi</option>
+        </select>
+
+        <label style="font-size:12px; color:#aaa;">Anne Adı Soyadı:</label>
+        <input type="text" id="editAnneAd">
+
+        <label style="font-size:12px; color:#aaa;">Cep Telefonu:</label>
+        <input type="tel" id="editCepTel">
       </div>
 
       <button type="submit" id="guncelleBtn">Güncelle</button>
@@ -210,7 +265,6 @@
   </div>
 </div>
 
-<!-- SCRIPT BÖLÜMÜ -->
 <script>
   function sifreGosterToggle() {
     const input = document.getElementById("adminSifre");
@@ -233,6 +287,16 @@
 
   function modalKapats() {
     document.getElementById("duzenleModal").style.display = "none";
+  }
+
+  function fotoOnizle(event, targetId) {
+    const reader = new FileReader();
+    reader.onload = function() {
+      document.getElementById(targetId).src = reader.result;
+    };
+    if(event.target.files[0]) {
+      reader.readAsDataURL(event.target.files[0]);
+    }
   }
 </script>
 
@@ -363,21 +427,32 @@
 
     try {
       const ad = document.getElementById("ogrenciAd").value.trim();
+      const okul = document.getElementById("ogrenciOkul").value.trim();
       const kullanici = document.getElementById("ogrenciKullanici").value.toLowerCase().trim();
       const sifre = document.getElementById("ogrenciSifre").value.trim();
       const sinif = document.getElementById("ogrenciSinif").value;
+      const basari = document.getElementById("ogrenciBasari").value;
+      const anneAd = document.getElementById("ogrenciAnneAd").value.trim();
+      const cepTel = document.getElementById("ogrenciCepTel").value.trim();
+      const fotoSrc = document.getElementById("ogrenciFotoOnizleme").src;
 
       await addDoc(collection(db, "kullanicilar"), {
         adSoyad: ad,
+        okul: okul,
         kullaniciAdi: kullanici,
         sifre: sifre,
         sinif: sinif,
+        basari: basari,
+        anneAdSoyad: anneAd,
+        cepTel: cepTel,
+        foto: fotoSrc.includes("via.placeholder") ? "" : fotoSrc,
         rol: "ogrenci",
         kayitTarihi: new Date().toLocaleDateString('tr-TR')
       });
 
       alert("Öğrenci başarıyla eklendi!");
       document.getElementById("ogrenciForm").reset();
+      document.getElementById("ogrenciFotoOnizleme").src = "https://via.placeholder.com/45?text=Foto";
     } catch (err) { 
       console.error("Öğrenci Ekleme Hatası:", err);
       alert("Öğrenci eklenirken hata oluştu: " + err.message); 
@@ -388,21 +463,31 @@
   });
 
   // 4. KULLANICI DÜZENLEME MODALI AÇMA
-  window.duzenleAc = function(id, ad, kullanici, sifre, rol, ekstra) {
-    document.getElementById("editId").value = id;
-    document.getElementById("editRol").value = rol;
-    document.getElementById("editAd").value = ad;
-    document.getElementById("editKullanici").value = kullanici;
-    document.getElementById("editSifre").value = sifre;
+  window.duzenleAc = function(id, dataJson) {
+    const data = JSON.parse(decodeURIComponent(dataJson));
 
-    if (rol === "ogretmen") {
+    document.getElementById("editId").value = id;
+    document.getElementById("editRol").value = data.rol;
+    document.getElementById("editAd").value = data.adSoyad || '';
+    document.getElementById("editKullanici").value = data.kullaniciAdi || '';
+    document.getElementById("editSifre").value = data.sifre || '';
+
+    if (data.rol === "ogretmen") {
       document.getElementById("editBransKutu").style.display = "block";
-      document.getElementById("editSinifKutu").style.display = "none";
-      document.getElementById("editBrans").value = ekstra;
+      document.getElementById("editOgrenciAlanlari").style.display = "none";
+      document.getElementById("editFotoKutu").style.display = "none";
+      document.getElementById("editBrans").value = data.brans || '';
     } else {
       document.getElementById("editBransKutu").style.display = "none";
-      document.getElementById("editSinifKutu").style.display = "block";
-      document.getElementById("editSinif").value = ekstra;
+      document.getElementById("editOgrenciAlanlari").style.display = "block";
+      document.getElementById("editFotoKutu").style.display = "flex";
+      
+      document.getElementById("editOkul").value = data.okul || '';
+      document.getElementById("editSinif").value = data.sinif || '1. Sınıf';
+      document.getElementById("editBasari").value = data.basari || 'Orta';
+      document.getElementById("editAnneAd").value = data.anneAdSoyad || '';
+      document.getElementById("editCepTel").value = data.cepTel || '';
+      document.getElementById("editFotoOnizleme").src = data.foto || "https://via.placeholder.com/45?text=Foto";
     }
 
     document.getElementById("duzenleModal").style.display = "flex";
@@ -430,7 +515,14 @@
     if (rol === "ogretmen") {
       guncelVeri.brans = document.getElementById("editBrans").value.trim();
     } else {
+      guncelVeri.okul = document.getElementById("editOkul").value.trim();
       guncelVeri.sinif = document.getElementById("editSinif").value;
+      guncelVeri.basari = document.getElementById("editBasari").value;
+      guncelVeri.anneAdSoyad = document.getElementById("editAnneAd").value.trim();
+      guncelVeri.cepTel = document.getElementById("editCepTel").value.trim();
+      
+      const fotoSrc = document.getElementById("editFotoOnizleme").src;
+      guncelVeri.foto = fotoSrc.includes("via.placeholder") ? "" : fotoSrc;
     }
 
     try {
@@ -472,6 +564,7 @@
       snapshot.forEach((docSnap) => {
         const u = docSnap.data();
         const id = docSnap.id;
+        const uJson = encodeURIComponent(JSON.stringify(u));
 
         if (u.rol === "ogretmen") {
           ogretmenSayisi++;
@@ -487,26 +580,35 @@
                 <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
                 <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
                 <div class="detay-islem">
-                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${u.adSoyad || ''}', '${u.kullaniciAdi || ''}', '${u.sifre || ''}', 'ogretmen', '${u.brans || ''}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${uJson}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
                   <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
                 </div>
               </div>
             </div>`;
         } else if (u.rol === "ogrenci") {
           ogrenciSayisi++;
+          const profilResmi = u.foto || "https://via.placeholder.com/45?text=Foto";
+
           ogrenciDiv.innerHTML += `
             <div class="liste-item">
               <div class="liste-baslik" onclick="detayAcKapasin(this)">
-                <strong><i class="fa-solid fa-user-graduate"></i> ${u.adSoyad || 'İsimsiz'}</strong>
+                <strong>
+                  <img src="${profilResmi}" class="profil-foto-kucuk" style="width:30px; height:30px;">
+                  ${u.adSoyad || 'İsimsiz'}
+                </strong>
                 <i class="fa-solid fa-chevron-down ok-ikon"></i>
               </div>
               <div class="liste-detay">
+                <div class="detay-satir"><span>Okul:</span> ${u.okul || '-'}</div>
                 <div class="detay-satir"><span>Sınıf:</span> ${u.sinif || '-'}</div>
+                <div class="detay-satir"><span>Başarı Düzeyi:</span> ${u.basari || '-'}</div>
+                <div class="detay-satir"><span>Anne Adı:</span> ${u.anneAdSoyad || '-'}</div>
+                <div class="detay-satir"><span>Cep Tel:</span> ${u.cepTel || '-'}</div>
                 <div class="detay-satir"><span>Kullanıcı Adı:</span> ${u.kullaniciAdi || '-'}</div>
                 <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
                 <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
                 <div class="detay-islem">
-                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${u.adSoyad || ''}', '${u.kullaniciAdi || ''}', '${u.sifre || ''}', 'ogrenci', '${u.sinif || ''}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
+                  <button class="duzenle-btn" onclick="duzenleAc('${id}', '${uJson}')"><i class="fa-solid fa-pen"></i> Düzenle</button>
                   <button class="sil-btn" onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
                 </div>
               </div>
