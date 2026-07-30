@@ -30,13 +30,13 @@
     .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
     .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
 
-    /* GERÇEK DOSYA YÜKLEME ALANI */
+    /* DOSYA YÜKLEME ALANI */
     .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
     .dosya-alani:hover { background: #1f1f1f; }
     .dosya-alani input[type="file"] { display: none; }
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
-    /* PAYLAŞIM LİSTESİ STİLİ */
+    /* PAYLAŞIM LİSTESİ */
     .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
     .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
     .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
@@ -58,7 +58,7 @@
   <h1><i class="fa-solid fa-chalkboard-user"></i> Öngörü Akademi - Öğretmen Paneli</h1>
   <div>
     <a href="index.html"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
-    <button class="cikis-btn" id="cikisBtn" style="display:none; margin-left:10px;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
+    <button class="cikis-btn" id="cikisBtn" style="display:none; margin-left:10px;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
   </div>
 </header>
 
@@ -138,7 +138,7 @@
 
 </div>
 
-<!-- FIREBASE ENTEGRASYONU -->
+<!-- FIREBASE SİSTEMİ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -191,12 +191,22 @@
     }
   });
 
-  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
+  // SAYFA YÜKLENDİĞİNDE GİRİŞ / OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
     const kayitli = localStorage.getItem("ongoru_ogretmen");
     if (kayitli) {
-      aktifOgretmen = JSON.parse(kayitli);
-      paneliAc();
+      try {
+        aktifOgretmen = JSON.parse(kayitli);
+        if(aktifOgretmen && aktifOgretmen.id) {
+          paneliAc();
+        } else {
+          cikisYap();
+        }
+      } catch(e) {
+        cikisYap();
+      }
+    } else {
+      cikisYap();
     }
   });
 
@@ -232,10 +242,14 @@
     paylasimlariCanliIzle();
   }
 
-  document.getElementById("cikisBtn").addEventListener("click", () => {
+  function cikisYap() {
     localStorage.removeItem("ongoru_ogretmen");
-    location.reload();
-  });
+    document.getElementById("girisAlani").style.display = "block";
+    document.getElementById("panelAlani").style.display = "none";
+    document.getElementById("cikisBtn").style.display = "none";
+  }
+
+  document.getElementById("cikisBtn").addEventListener("click", cikisYap);
 
   // ÖĞRENCİLERİ DROPDOWN'A YÜKLEME
   async function ogrencileriYukle() {
@@ -253,7 +267,7 @@
     }
   }
 
-  // ÖDEV / NOT PAYLAŞMA (KİLİTLENMEYİ ÖNLEYEN GÜVENLİ KOD)
+  // ÖDEV / NOT PAYLAŞMA
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
@@ -282,12 +296,10 @@
       let dosyaUrl = "";
       let dosyaAdi = "";
 
-      // Eğer dosya seçildiyse Firebase Storage'a yükle
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
         dosyaAdi = file.name;
         
-        // Türkçe/özel karakter kaynaklı Storage hatalarını önleyen filtre
         const temizAd = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
         const storageRef = ref(storage, `odevler/${Date.now()}_${temizAd}`);
 
@@ -316,10 +328,9 @@
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      console.error("Paylaşım Hatası Detayı:", err);
-      alert("Paylaşım sırasında bir hata oluştu:\n" + err.message);
+      console.error("Paylaşım Hatası:", err);
+      alert("Paylaşım hatası: " + err.message);
     } finally {
-      // İşlem bitse de hata alsa da buton kilidini kaldırır
       btn.disabled = false;
       btn.innerText = "Paylaş";
     }
@@ -327,6 +338,7 @@
 
   // CANLI PAYLAŞIM LİSTESİ VE SİLME
   function paylasimlariCanliIzle() {
+    if(!aktifOgretmen || !aktifOgretmen.id) return;
     const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
     onSnapshot(q, (snapshot) => {
       const liste = document.getElementById("paylasimListesi");
