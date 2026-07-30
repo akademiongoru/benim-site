@@ -36,7 +36,7 @@
     .dosya-alani input[type="file"] { display: none; }
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
-    /* PAYLAŞIM LİSTESİ */
+    /* PAYLAŞIM LİSTESİ STİLİ */
     .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
     .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
     .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
@@ -138,17 +138,15 @@
 
 </div>
 
-<!-- FIREBASE SİSTEMİ -->
+<!-- FIREBASE UYGULAMASI -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
     authDomain: "weffg5-b84a8.firebaseapp.com",
     projectId: "weffg5-b84a8",
-    storageBucket: "weffg5-b84a8.firebasestorage.app",
     messagingSenderId: "979023738185",
     appId: "1:979023738185:web:6327d7ba34be220de91698",
     measurementId: "G-P80RPZCSE7"
@@ -156,7 +154,6 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-  const storage = getStorage(app);
 
   let aktifOgretmen = null;
 
@@ -191,7 +188,7 @@
     }
   });
 
-  // SAYFA YÜKLENDİĞİNDE GİRİŞ / OTURUM KONTROLÜ
+  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
     const kayitli = localStorage.getItem("ongoru_ogretmen");
     if (kayitli) {
@@ -251,7 +248,7 @@
 
   document.getElementById("cikisBtn").addEventListener("click", cikisYap);
 
-  // ÖĞRENCİLERİ DROPDOWN'A YÜKLEME
+  // ÖĞRENCİLERİ SEÇİM KUTUSUNA YÜKLEME
   async function ogrencileriYukle() {
     const select = document.getElementById("hedefOgrenci");
     select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
@@ -267,12 +264,22 @@
     }
   }
 
-  // ÖDEV / NOT PAYLAŞMA
+  // DOSYAYI STORAGE'A İHTİYAÇ DUYMADAN METNE ÇEVİREN YARDIMCI FONKSİYON
+  function dosyayiOku(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // ÖDEV VE NOT PAYLAŞMA
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
     btn.disabled = true;
-    btn.innerText = "Yükleniyor ve Paylaşılıyor...";
+    btn.innerText = "Paylaşılıyor...";
 
     try {
       const tur = hedefTuru.value;
@@ -283,12 +290,16 @@
         hedefSinifVal = document.getElementById("hedefSinif").value;
         if (!hedefSinifVal) { 
           alert("Lütfen bir sınıf seçin!"); 
+          btn.disabled = false; 
+          btn.innerText = "Paylaş"; 
           return; 
         }
       } else if (tur === "ogrenci") {
         hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
         if (!hedefOgrenciVal) { 
           alert("Lütfen bir öğrenci seçin!"); 
+          btn.disabled = false; 
+          btn.innerText = "Paylaş"; 
           return; 
         }
       }
@@ -298,13 +309,17 @@
 
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-        dosyaAdi = file.name;
         
-        const temizAd = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-        const storageRef = ref(storage, `odevler/${Date.now()}_${temizAd}`);
+        // Veritabanı sınırlarını aşmamak için 5MB kontrolü
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Dosya boyutu 5 MB'dan büyük olamaz!");
+          btn.disabled = false;
+          btn.innerText = "Paylaş";
+          return;
+        }
 
-        const uploadTask = await uploadBytes(storageRef, file);
-        dosyaUrl = await getDownloadURL(uploadTask.ref);
+        dosyaAdi = file.name;
+        dosyaUrl = await dosyayiOku(file);
       }
 
       await addDoc(collection(db, "paylasimlar"), {
@@ -328,15 +343,14 @@
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      console.error("Paylaşım Hatası:", err);
-      alert("Paylaşım hatası: " + err.message);
+      alert("Hata oluştu: " + err.message);
     } finally {
       btn.disabled = false;
       btn.innerText = "Paylaş";
     }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ VE SİLME
+  // PAYLAŞIMLARI ANLIK İZLEME VE SİLME
   function paylasimlariCanliIzle() {
     if(!aktifOgretmen || !aktifOgretmen.id) return;
     const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
@@ -361,7 +375,7 @@
           <div class="kart">
             <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
             <p>${p.aciklama}</p>
-            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
+            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
             <div class="kart-bilgi">
               <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
               <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
