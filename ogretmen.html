@@ -23,7 +23,7 @@
     button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
     button:hover { background:white; color:#ff7a00; }
 
-    /* PANEL EKRANI */
+    /* PANEL ALANI */
     .panel { display:none; grid-template-columns: 1fr 1fr; gap:20px; }
     @media(max-width:900px){ .panel { grid-template-columns: 1fr; } }
     
@@ -278,7 +278,7 @@
     }
   }
 
-  // DOSYA METİN OKUYUCU
+  // DOSYA METİN OKUYUCU (Base64)
   function dosyayiOku(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -324,7 +324,6 @@
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
 
-        // 5 MB Sınır
         if (file.size > 5000 * 1024) {
           alert("Lütfen 5 MB'dan küçük bir dosya veya görsel seçin!");
           btn.disabled = false;
