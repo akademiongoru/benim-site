@@ -8,34 +8,48 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-    body { background:#2f2f2f; color:white; padding:20px; }
+    body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; }
+    
     header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
     header h1 { color:#ff7a00; font-size:24px; }
     header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; gap:8px; }
-    
+
+    /* GİRİŞ EKRANI */
     .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
     .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
-    
-    input, select, textarea, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; }
-    textarea { height:100px; resize:none; }
-    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+
+    input, select, textarea, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline: none; }
+    textarea { resize: vertical; min-height: 100px; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
     button:hover { background:white; color:#ff7a00; }
-    
+
+    /* PANEL EKRANI */
     .panel { display:none; grid-template-columns: 1fr 1fr; gap:20px; }
     @media(max-width:900px){ .panel { grid-template-columns: 1fr; } }
+    
     .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
-    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
+    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
+
+    /* DOSYA YÜKLEME ALANI */
+    .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
+    .dosya-alani:hover { background: #1f1f1f; }
+    .dosya-alani input[type="file"] { display: none; }
+    .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
+
+    /* PAYLAŞIM LİSTESİ STİLİ */
+    .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
+    .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
+    .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
+    .kart p { font-size: 13px; color: #ddd; margin-bottom: 8px; white-space: pre-wrap; }
+    .kart-bilgi { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; }
     
-    .liste { margin-top:15px; max-height:450px; overflow-y:auto; }
-    .liste-eleman { background:#252525; padding:15px; border-radius:8px; margin-bottom:12px; border-left:4px solid #ff7a00; position:relative; }
-    .liste-eleman h4 { color:#ff7a00; margin-bottom:5px; padding-right:30px; }
-    .liste-eleman p { font-size:13px; color:#ddd; line-height:1.5; white-space:pre-wrap; }
-    .liste-eleman small { color:#aaa; font-size:11px; display:block; margin-top:8px; }
+    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #ff7a00; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 5px; }
+    .dosya-indir-btn:hover { background: white; color: #ff7a00; }
+
+    .sil-btn { background: #ff3333; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
+    .sil-btn:hover { background: #cc0000; }
     
-    .sil-btn { position:absolute; top:12px; right:12px; background:none; border:none; color:#ff4d4d; width:auto; padding:5px; margin:0; cursor:pointer; font-size:14px; }
-    .sil-btn:hover { background:none; color:white; }
-    
-    .dosya-link { display:inline-block; margin-top:6px; color:#ff7a00; font-size:12px; text-decoration:underline; word-break:break-all; }
+    .hedef-rozet { background: #444; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #ff7a00; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -43,75 +57,96 @@
 <header>
   <h1><i class="fa-solid fa-chalkboard-user"></i> Öngörü Akademi - Öğretmen Paneli</h1>
   <div>
-    <span id="ogretmenIsmi" style="margin-right:15px; font-weight:bold; color:#ff7a00;"></span>
-    <a href="index.html" id="anaSayfaBtn"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
-    <button class="cikis-btn" id="cikisBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
+    <a href="index.html"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+    <button class="cikis-btn" id="cikisBtn" style="display:none; margin-left:10px;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
   </div>
 </header>
 
-<!-- ÖĞRETMEN GİRİŞ FORMU -->
+<!-- GİRİŞ EKRANI -->
 <div class="giris-kutu" id="girisAlani">
   <h2>Öğretmen Girişi</h2>
   <form id="ogretmenGirisForm">
-    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı" required>
-    <input type="password" id="gSifre" placeholder="Şifre" required>
+    <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" required autofocus>
+    <input type="password" id="sifre" placeholder="Şifreniz" required>
     <button type="submit" id="girisBtn">Giriş Yap</button>
   </form>
 </div>
 
-<!-- ÖĞRETMEN PANEL ALANI (Giriş yaptıktan sonra görünecek) -->
+<!-- PANEL ALANI -->
 <div class="panel" id="panelAlani">
   
-  <!-- DERS NOTU / ÖDEV YÜKLEME FORMU -->
+  <!-- SOL BÖLÜM: DERS NOTU / ÖDEV PAYLAŞ -->
   <div class="kutu">
-    <h2><i class="fa-solid fa-file-arrow-up"></i> Ders Notu / Ödev Paylaş</h2>
-    <form id="notEkleForm">
+    <h2><i class="fa-solid fa-upload"></i> Ders Notu / Ödev Paylaş</h2>
+    <form id="paylasimForm">
       
-      <label style="font-size:12px; color:#aaa; margin-bottom:4px; display:block;">Hedef Seçimi:</label>
-      <select id="hedefTip" required>
+      <label style="font-size:12px; color:#aaa;">Hedef Seçimi:</label>
+      <select id="hedefTuru" required>
         <option value="hepsi">Tüm Öğrenciler (Genel Duyuru)</option>
         <option value="sinif">Belirli Bir Sınıfa Gönder</option>
         <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
       </select>
 
-      <div id="sinifSecimAlani" style="display:none;">
-        <input type="text" id="hedefSinifInput" placeholder="Sınıf Adı (Örn: 9-A, 10-B)">
+      <!-- SINIF SEÇİM KUTUSU -->
+      <div id="sinifSecimKutu" style="display:none;">
+        <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
+        <select id="hedefSinif">
+          <option value="">Sınıf Seçin</option>
+          <option value="1. Sınıf">1. Sınıf</option>
+          <option value="2. Sınıf">2. Sınıf</option>
+          <option value="3. Sınıf">3. Sınıf</option>
+          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+          <option value="5. Sınıf">5. Sınıf</option>
+          <option value="6. Sınıf">6. Sınıf</option>
+          <option value="7. Sınıf">7. Sınıf</option>
+          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+        </select>
       </div>
 
-      <div id="ogrenciSecimAlani" style="display:none;">
+      <!-- ÖĞRENCİ SEÇİM KUTUSU -->
+      <div id="ogrenciSecimKutu" style="display:none;">
+        <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
         <select id="hedefOgrenci">
           <option value="">Öğrenci Yükleniyor...</option>
         </select>
       </div>
 
-      <input type="text" id="notBaslik" placeholder="Not / Ödev Başlığı" required>
-      <textarea id="notIcerik" placeholder="Açıklama, ödev detayları..." required></textarea>
-      
-      <input type="url" id="dosyaUrl" placeholder="Ek Dosya Linki (PDF/Drive Linki - İsteğe Bağlı)">
-      <input type="text" id="dosyaAdi" placeholder="Dosya Adı (Örn: Matematik_Odev1.pdf - İsteğe Bağlı)">
+      <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
+      <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <button type="submit" id="notGonderBtn">Paylaş</button>
+      <!-- DOSYA YÜKLEME ALANI -->
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (İsteğe Bağlı):</label>
+      <div class="dosya-alani">
+        <label for="dosyaInput" id="dosyaEtiket">
+          <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
+          Dosya Seçmek İçin Tıklayın
+        </label>
+        <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
+      </div>
+
+      <button type="submit" id="paylasBtn">Paylaş</button>
     </form>
   </div>
 
-  <!-- GEÇMİŞ PAYLAŞIMLAR -->
+  <!-- SAĞ BÖLÜM: PAYLAŞILAN ÖDEVLER VE NOTLAR -->
   <div class="kutu">
     <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
-    <div class="liste" id="notlarListesi">Yükleniyor...</div>
+    <div class="liste" id="paylasimListesi">
+      <p style="color:#aaa; font-size:13px;">Yükleniyor...</p>
+    </div>
   </div>
 
 </div>
 
-<!-- FIREBASE VERİTABANI BAĞLANTISI -->
+<!-- FIREBASE UYGULAMASI -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
     authDomain: "weffg5-b84a8.firebaseapp.com",
     projectId: "weffg5-b84a8",
-    storageBucket: "weffg5-b84a8.firebasestorage.app",
     messagingSenderId: "979023738185",
     appId: "1:979023738185:web:6327d7ba34be220de91698",
     measurementId: "G-P80RPZCSE7"
@@ -122,190 +157,253 @@
 
   let aktifOgretmen = null;
 
-  // OTURUM KONTROLÜ
-  document.addEventListener("DOMContentLoaded", () => {
-    const saklananKullanici = localStorage.getItem("ongoru_aktif_ogretmen");
-    if (saklananKullanici) {
-      try {
-        aktifOgretmen = JSON.parse(saklananKullanici);
-        paneliAc();
-      } catch (e) {
-        localStorage.removeItem("ongoru_aktif_ogretmen");
-      }
+  // DOSYA SEÇİM HAREKETİ
+  const dosyaInput = document.getElementById("dosyaInput");
+  const dosyaEtiket = document.getElementById("dosyaEtiket");
+
+  dosyaInput.addEventListener("change", (e) => {
+    if (e.target.files.length > 0) {
+      dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#2196F3;"></i><br>${e.target.files[0].name}`;
+    } else {
+      dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
     }
   });
 
-  // HEDEF SEÇİMİ DEĞİŞTİĞİNDE GÖSTER/GİZLE
-  document.getElementById("hedefTip").addEventListener("change", (e) => {
-    const val = e.target.value;
-    document.getElementById("sinifSecimAlani").style.display = val === "sinif" ? "block" : "none";
-    document.getElementById("ogrenciSecimAlani").style.display = val === "ogrenci" ? "block" : "none";
+  // HEDEF SEÇİM DİNLEMESİ
+  const hedefTuru = document.getElementById("hedefTuru");
+  const sinifKutu = document.getElementById("sinifSecimKutu");
+  const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
+
+  hedefTuru.addEventListener("change", () => {
+    const tur = hedefTuru.value;
+    if (tur === "sinif") {
+      sinifKutu.style.display = "block";
+      ogrenciKutu.style.display = "none";
+    } else if (tur === "ogrenci") {
+      sinifKutu.style.display = "none";
+      ogrenciKutu.style.display = "block";
+    } else {
+      sinifKutu.style.display = "none";
+      ogrenciKutu.style.display = "none";
+    }
   });
 
-  // 1. ÖĞRETMEN GİRİŞİ
+  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
+  document.addEventListener("DOMContentLoaded", () => {
+    const kayitli = localStorage.getItem("ongoru_ogretmen");
+    if (kayitli) {
+      try {
+        aktifOgretmen = JSON.parse(kayitli);
+        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) {
+          paneliAc();
+        } else {
+          cikisYap();
+        }
+      } catch(e) {
+        cikisYap();
+      }
+    } else {
+      cikisYap();
+    }
+  });
+
+  // GİRİŞ FORMU KONTROLÜ
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const kAdi = document.getElementById("gKullaniciAdi").value.toLowerCase().trim();
-    const sifre = document.getElementById("gSifre").value.trim();
-    const btn = document.getElementById("girisBtn");
-    btn.disabled = true; btn.innerText = "Kontrol Ediliyor...";
+    const gBtn = document.getElementById("girisBtn");
+    gBtn.disabled = true;
+    gBtn.innerText = "Giriş Yapılıyor...";
+
+    const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
+    const sifre = document.getElementById("sifre").value.trim();
 
     try {
-      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogretmen"));
-      const snapshot = await getDocs(q);
+      const snap = await getDocs(collection(db, "kullanicilar"));
+      let eslesenUser = null;
 
-      if (snapshot.empty) {
-        alert("Kullanıcı adı veya şifre hatalı!");
-      } else {
-        snapshot.forEach(doc => {
-          aktifOgretmen = { id: doc.id, ...doc.data() };
-        });
-        
-        localStorage.setItem("ongoru_aktif_ogretmen", JSON.stringify(aktifOgretmen));
+      snap.forEach(docSnap => {
+        const u = docSnap.data();
+        if ((u.kullaniciAdi && u.kullaniciAdi.toLowerCase() === kAdi) && u.sifre === sifre && u.rol === "ogretmen") {
+          eslesenUser = { id: docSnap.id, ...u };
+        }
+      });
+
+      if (eslesenUser) {
+        aktifOgretmen = eslesenUser;
+        localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
         paneliAc();
+      } else {
+        alert("Kullanıcı adı veya şifre hatalı!");
       }
-    } catch (err) { alert("Hata: " + err.message); }
-    finally { btn.disabled = false; btn.innerText = "Giriş Yap"; }
+    } catch (err) {
+      alert("Giriş sırasında veritabanı hatası oluştu: " + err.message);
+    } finally {
+      gBtn.disabled = false;
+      gBtn.innerText = "Giriş Yap";
+    }
   });
 
   function paneliAc() {
     document.getElementById("girisAlani").style.display = "none";
     document.getElementById("panelAlani").style.display = "grid";
     document.getElementById("cikisBtn").style.display = "inline-flex";
-    document.getElementById("ogretmenIsmi").innerText = "Hoş geldin, " + aktifOgretmen.adSoyad;
 
     ogrencileriYukle();
-    notlariYukle();
+    paylasimlariCanliIzle();
   }
 
-  // ÇIKIŞ BUTONU
-  document.getElementById("cikisBtn").addEventListener("click", () => {
-    localStorage.removeItem("ongoru_aktif_ogretmen");
-    location.reload();
-  });
+  function cikisYap() {
+    localStorage.removeItem("ongoru_ogretmen");
+    document.getElementById("girisAlani").style.display = "block";
+    document.getElementById("panelAlani").style.display = "none";
+    document.getElementById("cikisBtn").style.display = "none";
+  }
 
-  // 2. ÖĞRENCİLERİ SEÇİM KUTUSUNA YÜKLE
+  document.getElementById("cikisBtn").addEventListener("click", cikisYap);
+
+  // ÖĞRENCİLERİ LİSTELEME
   async function ogrencileriYukle() {
     const select = document.getElementById("hedefOgrenci");
-    select.innerHTML = '<option value="">Öğrenci Seçiniz</option>';
-
+    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
     try {
-      const q = query(collection(db, "kullanicilar"), where("rol", "==", "ogrenci"));
-      const snapshot = await getDocs(q);
-
-      snapshot.forEach(doc => {
-        const ogrenci = doc.data();
-        select.innerHTML += `<option value="${doc.id}">${ogrenci.adSoyad} ${ogrenci.sinif ? '(' + ogrenci.sinif + ')' : ''}</option>`;
+      const snap = await getDocs(collection(db, "kullanicilar"));
+      snap.forEach(docSnap => {
+        const u = docSnap.data();
+        if(u.rol === "ogrenci") {
+          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
+        }
       });
-    } catch (e) {
-      console.error("Öğrenciler yüklenirken hata:", e);
+    } catch (err) {
+      console.error("Öğrenciler alınamadı:", err);
     }
   }
 
-  // 3. DERS NOTU / ÖDEV EKLEME
-  document.getElementById("notEkleForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    const hedefTip = document.getElementById("hedefTip").value;
-    let ogrenciId = "";
-    let ogrenciText = "Tüm Öğrenciler";
-    let hedefSinif = "";
-
-    if (hedefTip === "sinif") {
-      hedefSinif = document.getElementById("hedefSinifInput").value.trim();
-      if (!hedefSinif) {
-        alert("Lütfen hedef sınıfı giriniz!");
-        return;
-      }
-      ogrenciText = hedefSinif + " Sınıfı";
-    } else if (hedefTip === "ogrenci") {
-      ogrenciId = document.getElementById("hedefOgrenci").value;
-      if (!ogrenciId) {
-        alert("Lütfen hedef öğrenciyi seçiniz!");
-        return;
-      }
-      ogrenciText = document.getElementById("hedefOgrenci").options[document.getElementById("hedefOgrenci").selectedIndex].text;
-    }
-
-    const baslik = document.getElementById("notBaslik").value;
-    const icerik = document.getElementById("notIcerik").value;
-    const dosyaUrl = document.getElementById("dosyaUrl").value.trim();
-    const dosyaAdi = document.getElementById("dosyaAdi").value.trim();
-    const btn = document.getElementById("notGonderBtn");
-
-    btn.disabled = true; btn.innerText = "Paylaşılıyor...";
-
-    const bugun = new Date();
-    const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
-
-    try {
-      await addDoc(collection(db, "dersNotlari"), {
-        ogretmenId: aktifOgretmen.id,
-        ogretmenAd: aktifOgretmen.adSoyad,
-        brans: aktifOgretmen.brans || "",
-        hedefTip: hedefTip,
-        hedefSinif: hedefSinif,
-        ogrenciId: ogrenciId,
-        ogrenciAd: ogrenciText,
-        baslik: baslik,
-        icerik: icerik,
-        dosyaUrl: dosyaUrl,
-        dosyaAdi: dosyaAdi,
-        tarih: tarihStr
-      });
-
-      alert("Ders notu/ödev başarıyla paylaşıldı!");
-      document.getElementById("notEkleForm").reset();
-      document.getElementById("sinifSecimAlani").style.display = "none";
-      document.getElementById("ogrenciSecimAlani").style.display = "none";
-    } catch (err) { alert("Hata: " + err.message); }
-    finally { btn.disabled = false; btn.innerText = "Paylaş"; }
-  });
-
-  // 4. CANLI NOTLARI YÜKLE
-  function notlariYukle() {
-    const q = query(collection(db, "dersNotlari"), where("ogretmenId", "==", aktifOgretmen.id));
-    
-    onSnapshot(q, (snapshot) => {
-      const listeDiv = document.getElementById("notlarListesi");
-      listeDiv.innerHTML = "";
-
-      if(snapshot.empty) {
-        listeDiv.innerHTML = "<p style='color:#aaa;'>Henüz not veya ödev paylaşmadınız.</p>";
-        return;
-      }
-
-      snapshot.forEach(docSnap => {
-        const item = docSnap.data();
-        const docId = docSnap.id;
-        
-        let dosyaHtml = "";
-        if (item.dosyaUrl) {
-          dosyaHtml = `<br><a href="${item.dosyaUrl}" target="_blank" class="dosya-link"><i class="fa-solid fa-paperclip"></i> ${item.dosyaAdi || 'Ekli Dosyayı Aç'}</a>`;
-        }
-
-        listeDiv.innerHTML += `
-          <div class="liste-eleman">
-            <button class="sil-btn" onclick="notSil('${docId}')" title="Sil"><i class="fa-solid fa-trash"></i></button>
-            <h4>${item.baslik}</h4>
-            <p><strong>Alıcı:</strong> ${item.ogrenciAd}</p>
-            <p style="margin-top:5px;">${item.icerik}</p>
-            ${dosyaHtml}
-            <small><i class="fa-regular fa-clock"></i> ${item.tarih}</small>
-          </div>
-        `;
-      });
+  // DOSYA METİN OKUYUCU
+  function dosyayiOku(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
     });
   }
 
-  // SILME FONKSIYONU
-  window.notSil = async function(notId) {
-    if (confirm("Bu notu/ödevi silmek istediğinize emin misiniz?")) {
+  // PAYLAŞIM GÖNDERME
+  document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("paylasBtn");
+    btn.disabled = true;
+    btn.innerText = "Paylaşılıyor...";
+
+    try {
+      const tur = hedefTuru.value;
+      let hedefSinifVal = "";
+      let hedefOgrenciVal = "";
+
+      if (tur === "sinif") {
+        hedefSinifVal = document.getElementById("hedefSinif").value;
+        if (!hedefSinifVal) { 
+          alert("Lütfen bir sınıf seçin!"); 
+          btn.disabled = false; 
+          btn.innerText = "Paylaş"; 
+          return; 
+        }
+      } else if (tur === "ogrenci") {
+        hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
+        if (!hedefOgrenciVal) { 
+          alert("Lütfen bir öğrenci seçin!"); 
+          btn.disabled = false; 
+          btn.innerText = "Paylaş"; 
+          return; 
+        }
+      }
+
+      let dosyaUrl = "";
+      let dosyaAdi = "";
+
+      if (dosyaInput.files.length > 0) {
+        const file = dosyaInput.files[0];
+        dosyaAdi = file.name;
+        dosyaUrl = await dosyayiOku(file);
+      }
+
+      await addDoc(collection(db, "paylasimlar"), {
+        ogretmenId: aktifOgretmen.id || aktifOgretmen.kullaniciAdi,
+        ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
+        brans: aktifOgretmen.brans || "",
+        baslik: document.getElementById("baslik").value.trim(),
+        aciklama: document.getElementById("aciklama").value.trim(),
+        hedefTuru: tur,
+        hedefSinif: hedefSinifVal,
+        hedefOgrenciId: hedefOgrenciVal,
+        dosyaUrl: dosyaUrl,
+        dosyaAdi: dosyaAdi,
+        tarih: new Date().toLocaleString('tr-TR')
+      });
+
+      alert("Paylaşım başarıyla gönderildi!");
+      document.getElementById("paylasimForm").reset();
+      dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
+      sinifKutu.style.display = "none";
+      ogrenciKutu.style.display = "none";
+
+    } catch (err) {
+      alert("Gönderim Hatası: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Paylaş";
+    }
+  });
+
+  // CANLI PAYLAŞIM LİSTESİ
+  function paylasimlariCanliIzle() {
+    if(!aktifOgretmen) return;
+    const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
+
+    onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
+      const liste = document.getElementById("paylasimListesi");
+      liste.innerHTML = "";
+
+      let paylasimVarMi = false;
+
+      snapshot.forEach((docSnap) => {
+        const p = docSnap.data();
+        const id = docSnap.id;
+
+        if (p.ogretmenId === ogretmenId) {
+          paylasimVarMi = true;
+          let hedefMetin = "Tüm Okul";
+          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
+          if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
+
+          liste.innerHTML += `
+            <div class="kart">
+              <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
+              <p>${p.aciklama}</p>
+              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
+              <div class="kart-bilgi">
+                <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
+                <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+
+      if (!paylasimVarMi) {
+        liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
+      }
+    }, (err) => {
+      document.getElementById("paylasimListesi").innerHTML = `<p style="color:#ff4444; font-size:12px;">Liste Okuma Hatası: ${err.message}</p>`;
+    });
+  }
+
+  window.paylasimSil = async function(id) {
+    if (confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) {
       try {
-        await deleteDoc(doc(db, "dersNotlari", notId));
-        alert("Not başarıyla silindi.");
+        await deleteDoc(doc(db, "paylasimlar", id));
       } catch (err) {
-        alert("Silme hatası: " + err.message);
+        alert("Silinirken hata oluştu: " + err.message);
       }
     }
   };
