@@ -115,13 +115,13 @@
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
       <!-- DOSYA YÜKLEME ALANI -->
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (İsteğe Bağlı):</label>
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 50 MB - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
           Dosya Seçmek İçin Tıklayın
         </label>
-        <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
+        <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .zip, .rar">
       </div>
 
       <button type="submit" id="paylasBtn">Paylaş</button>
@@ -142,11 +142,13 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
     authDomain: "weffg5-b84a8.firebaseapp.com",
     projectId: "weffg5-b84a8",
+    storageBucket: "weffg5-b84a8.appspot.com",
     messagingSenderId: "979023738185",
     appId: "1:979023738185:web:6327d7ba34be220de91698",
     measurementId: "G-P80RPZCSE7"
@@ -154,6 +156,7 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const storage = getStorage(app);
 
   let aktifOgretmen = null;
 
@@ -278,22 +281,12 @@
     }
   }
 
-  // DOSYA METİN OKUYUCU
-  function dosyayiOku(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // PAYLAŞIM GÖNDERME
+  // PAYLAŞIM GÖNDERME (STORAGE ENTEGRELİ)
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
     btn.disabled = true;
-    btn.innerText = "Paylaşılıyor...";
+    btn.innerText = "Dosya Yükleniyor...";
 
     try {
       const tur = hedefTuru.value;
@@ -321,12 +314,34 @@
       let dosyaUrl = "";
       let dosyaAdi = "";
 
+      // FIREBASE STORAGE YÜKLEME ADIMI
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
+
+        // 50 MB Sınırı
+        if (file.size > 50 * 1024 * 1024) {
+          alert("Lütfen 50 MB'dan küçük bir dosya seçin!");
+          btn.disabled = false;
+          btn.innerText = "Paylaş";
+          return;
+        }
+
         dosyaAdi = file.name;
-        dosyaUrl = await dosyayiOku(file);
+        
+        // Benzersiz dosya ismi oluşturma
+        const dosyaYolu = `paylasimlar/${Date.now()}_${dosyaAdi}`;
+        const storageRef = ref(storage, dosyaYolu);
+
+        // Dosyayı buluta yükle
+        const snapshot = await uploadBytes(storageRef, file);
+        
+        // Dosyanın indirme bağlantısını al
+        dosyaUrl = await getDownloadURL(snapshot.ref);
       }
 
+      btn.innerText = "Kaydediliyor...";
+
+      // VERİTABANINA BİLGİLERİ YAZMA
       await addDoc(collection(db, "paylasimlar"), {
         ogretmenId: aktifOgretmen.id || aktifOgretmen.kullaniciAdi,
         ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
@@ -380,7 +395,7 @@
             <div class="kart">
               <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
               <p>${p.aciklama}</p>
-              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
+              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir / Görüntüle'}</a>` : ''}
               <div class="kart-bilgi">
                 <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
                 <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
