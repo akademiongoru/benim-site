@@ -1,359 +1,157 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-<title>Öğrenci Girişi | Öngörü Akademi</title>
-
-
-<script src="guvenlik.js"></script>
-
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-
-
-<style>
-
-
-*{
-
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-
-}
-
-
-
-body{
-
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#2f2f2f;
-color:white;
-
-}
-
-
-
-.login-box{
-
-width:420px;
-background:#1f1f1f;
-padding:45px;
-border-radius:25px;
-border:2px solid #ff7a00;
-text-align:center;
-box-shadow:0 15px 40px rgba(0,0,0,.4);
-
-}
-
-
-
-.logo{
-
-width:95px;
-height:95px;
-background:white;
-padding:8px;
-border-radius:50%;
-margin-bottom:20px;
-
-}
-
-
-
-h1{
-
-color:#ff7a00;
-margin-bottom:10px;
-
-}
-
-
-
-h2{
-
-font-size:17px;
-font-weight:400;
-color:#ddd;
-margin-bottom:30px;
-
-}
-
-
-
-.input-box{
-
-position:relative;
-margin-bottom:20px;
-
-}
-
-
-
-.input-box i{
-
-position:absolute;
-left:15px;
-top:17px;
-color:#ff7a00;
-
-}
-
-
-
-input{
-
-width:100%;
-padding:15px 15px 15px 45px;
-background:#383838;
-border:none;
-border-radius:10px;
-color:white;
-outline:none;
-
-}
-
-
-
-input:focus{
-
-border:1px solid #ff7a00;
-
-}
-
-
-
-button{
-
-width:100%;
-padding:15px;
-background:#ff7a00;
-border:none;
-border-radius:10px;
-color:white;
-font-weight:bold;
-cursor:pointer;
-transition:.3s;
-
-}
-
-
-
-button:hover{
-
-background:white;
-color:#ff7a00;
-
-}
-
-
-
-.back{
-
-display:block;
-margin-top:20px;
-color:white;
-text-decoration:none;
-
-}
-
-
-
-.back:hover{
-
-color:#ff7a00;
-
-}
-
-
-</style>
-
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Öğrenci Paneli | Öngörü Akademi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+    body { background:#2f2f2f; color:white; padding:20px; }
+    header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { color:#ff7a00; font-size:24px; }
+    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
+    
+    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
+    .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
+    
+    input, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+    button:hover { background:white; color:#ff7a00; }
+    
+    .panel { display:none; max-width:900px; margin:0 auto; }
+    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; margin-bottom:20px; }
+    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
+    
+    .not-kart { background:#252525; padding:18px; border-radius:10px; margin-bottom:15px; border-left:4px solid #ff7a00; }
+    .not-kart .ust-bilgi { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #3a3a3a; padding-bottom:8px; }
+    .not-kart .ogretmen-adi { color:#ff7a00; font-weight:bold; font-size:15px; }
+    .not-kart .tarih { color:#aaa; font-size:12px; }
+    .not-kart h3 { color:white; font-size:16px; margin-bottom:8px; }
+    .not-kart p { color:#ddd; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+  </style>
 </head>
 <body>
 
+<header>
+  <h1><i class="fa-solid fa-user-graduate"></i> Öngörü Akademi - Öğrenci Paneli</h1>
+  <div>
+    <span id="ogrenciIsmi" style="margin-right:15px; font-weight:bold; color:#ff7a00;"></span>
+    <a href="index.html" id="anaSayfaBtn"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+    <button class="cikis-btn" id="cikisBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
+  </div>
+</header>
 
-<div class="login-box">
+<!-- ÖĞRENCİ GİRİŞ FORMU -->
+<div class="giris-kutu" id="girisAlani">
+  <h2>Öğrenci Girişi</h2>
+  <form id="ogrenciGirisForm">
+    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı / T.C. No" required>
+    <input type="password" id="gSifre" placeholder="Şifre" required>
+    <button type="submit" id="girisBtn">Giriş Yap</button>
+  </form>
+</div>
 
-
-<img src="images/logo.png" class="logo">
-
-
-
-<h1>
-Öğrenci Girişi
-</h1>
-
-
-
-<h2>
-Öngörü Akademi Eğitim Portalı
-</h2>
-
-
-
-
-<div class="input-box">
-
-<i class="fa-solid fa-user"></i>
-
-<input 
-id="kullanici"
-type="text"
-placeholder="Kullanıcı Adı">
+<!-- ÖĞRENCİ PANEL ALANI (Giriş yaptıktan sonra görünecek) -->
+<div class="panel" id="panelAlani">
+  
+  <div class="kutu">
+    <h2><i class="fa-solid fa-book-open"></i> Ders Notlarım ve Ödevlerim</h2>
+    <div id="notlarListesi">Yükleniyor...</div>
+  </div>
 
 </div>
 
-
-
-
-
-<div class="input-box">
-
-<i class="fa-solid fa-lock"></i>
-
-<input 
-id="sifre"
-type="password"
-placeholder="Şifre">
-
-</div>
-
-
-
-
-
-
-<button onclick="ogrenciGiris()">
-
-<i class="fa-solid fa-right-to-bracket"></i>
-
-Giriş Yap
-
-</button>
-
-
-
-
-
-<a href="index.html" class="back">
-
-← Ana Sayfaya Dön
-
-</a>
-
-
-
-
-</div>
-
-
-
-
-
-
-
-<script>
-
-
-function ogrenciGiris(){
-
-
-
-let kullanici =
-
-document.getElementById("kullanici").value.trim();
-
-
-
-
-let sifre =
-
-document.getElementById("sifre").value.trim();
-
-
-
-
-
-
-
-if(kullanici==="" || sifre===""){
-
-
-alert(
-"Kullanıcı adı ve şifre giriniz!"
-);
-
-
-return;
-
-
-}
-
-
-
-
-
-
-
-if(
-kullanici==="ogrenci" &&
-sifre==="1234"
-
-){
-
-
-
-oturumAc(
-"ogrenci",
-"ogrenci"
-);
-
-
-
-
-
-window.location.href =
-"ogrenci-paneli.html";
-
-
-
-}
-
-else{
-
-
-alert(
-"Öğrenci kullanıcı adı veya şifre hatalı!"
-);
-
-
-}
-
-
-
-}
-
-
-
+<!-- FIREBASE VERİTABANI BAĞLANTISI -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
+    authDomain: "weffg5-b84a8.firebaseapp.com",
+    projectId: "weffg5-b84a8",
+    storageBucket: "weffg5-b84a8.firebasestorage.app",
+    messagingSenderId: "979023738185",
+    appId: "1:979023738185:web:6327d7ba34be220de91698",
+    measurementId: "G-P80RPZCSE7"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  let aktifOgrenci = null;
+
+  // 1. ÖĞRENCİ GİRİŞİ
+  document.getElementById("ogrenciGirisForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const kAdi = document.getElementById("gKullaniciAdi").value.toLowerCase().trim();
+    const sifre = document.getElementById("gSifre").value.trim();
+    const btn = document.getElementById("girisBtn");
+    btn.disabled = true; btn.innerText = "Kontrol Ediliyor...";
+
+    try {
+      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogrenci"));
+      const snapshot = await getDocs(q);
+
+      if (snapshot.empty) {
+        alert("Kullanıcı adı veya şifre hatalı!");
+      } else {
+        snapshot.forEach(doc => {
+          aktifOgrenci = { id: doc.id, ...doc.data() };
+        });
+        
+        // Paneli Aç
+        document.getElementById("girisAlani").style.display = "none";
+        document.getElementById("panelAlani").style.display = "block";
+        document.getElementById("cikisBtn").style.display = "inline-block";
+        document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + aktifOgrenci.adSoyad + " (" + aktifOgrenci.sinif + ")";
+
+        notlariYukle();
+      }
+    } catch (err) { alert("Hata: " + err.message); }
+    finally { btn.disabled = false; btn.innerText = "Giriş Yap"; }
+  });
+
+  // ÇIKIŞ BUTONU
+  document.getElementById("cikisBtn").addEventListener("click", () => {
+    location.reload();
+  });
+
+  // 2. ÖĞRENCİYE ÖZEL NOTLARI / ÖDEVLERİ CANLI ÇEK
+  function notlariYukle() {
+    onSnapshot(collection(db, "dersNotlari"), (snapshot) => {
+      const listeDiv = document.getElementById("notlarListesi");
+      listeDiv.innerHTML = "";
+
+      let notVarMi = false;
+
+      snapshot.forEach(doc => {
+        const item = doc.data();
+        
+        // Sadece bu öğrenciye gönderilmiş veya genel gönderilmiş notları filtrele
+        if (item.ogrenciId === aktifOgrenci.id || item.ogrenciId === "") {
+          notVarMi = true;
+          listeDiv.innerHTML += `
+            <div class="not-kart">
+              <div class="ust-bilgi">
+                <span class="ogretmen-adi"><i class="fa-solid fa-chalkboard-user"></i> ${item.ogretmenAd} ${item.brans ? '(' + item.brans + ')' : ''}</span>
+                <span class="tarih"><i class="fa-regular fa-clock"></i> ${item.tarih}</span>
+              </div>
+              <h3>${item.baslik}</h3>
+              <p>${item.icerik}</p>
+            </div>
+          `;
+        }
+      });
+
+      if (!notVarMi) {
+        listeDiv.innerHTML = "<p style='color:#aaa; text-align:center; padding:20px;'>Henüz tarafınıza tanımlanmış bir ders notu veya ödev bulunmamaktadır.</p>";
+      }
+    });
+  }
 </script>
 
-
-
 </body>
-
 </html>
