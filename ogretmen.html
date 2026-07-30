@@ -68,7 +68,7 @@
   <form id="ogretmenGirisForm">
     <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" required autofocus>
     <input type="password" id="sifre" placeholder="Şifreniz" required>
-    <button type="submit">Giriş Yap</button>
+    <button type="submit" id="girisBtn">Giriş Yap</button>
   </form>
 </div>
 
@@ -115,7 +115,7 @@
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
       <!-- DOSYA YÜKLEME ALANI -->
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (PDF, Word, JPG, PNG - İsteğe Bağlı):</label>
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 1 MB - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
@@ -210,6 +210,10 @@
   // ÖĞRETMEN GİRİŞ FORMU
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const gBtn = document.getElementById("girisBtn");
+    gBtn.disabled = true;
+    gBtn.innerText = "Kontrol Ediliyor...";
+
     const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
     const sifre = document.getElementById("sifre").value.trim();
 
@@ -226,7 +230,10 @@
         alert("Kullanıcı adı veya şifre hatalı!");
       }
     } catch (err) {
-      alert("Giriş hatası: " + err.message);
+      alert("Giriş Hatası: " + err.message);
+    } finally {
+      gBtn.disabled = false;
+      gBtn.innerText = "Giriş Yap";
     }
   });
 
@@ -260,11 +267,11 @@
         select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad} (${u.sinif || 'Sınıfsız'})</option>`;
       });
     } catch (err) {
-      console.error("Öğrenciler çekilemedi:", err);
+      console.error("Öğrenciler yüklenemedi:", err);
     }
   }
 
-  // DOSYAYI STORAGE'A İHTİYAÇ DUYMADAN METNE ÇEVİREN YARDIMCI FONKSİYON
+  // DOSYA OKUYUCU FONKSİYON
   function dosyayiOku(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -310,9 +317,9 @@
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
         
-        // Veritabanı sınırlarını aşmamak için 5MB kontrolü
-        if (file.size > 5 * 1024 * 1024) {
-          alert("Dosya boyutu 5 MB'dan büyük olamaz!");
+        // 1MB Üstü dosyalar Firestore metin limitine takılabilir, boyut sınırlaması eklendi
+        if (file.size > 1000 * 1024) {
+          alert("Lütfen 1 MB'dan küçük bir dosya veya görsel seçin!");
           btn.disabled = false;
           btn.innerText = "Paylaş";
           return;
@@ -343,7 +350,7 @@
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      alert("Hata oluştu: " + err.message);
+      alert("Hata Oluştu: " + err.message);
     } finally {
       btn.disabled = false;
       btn.innerText = "Paylaş";
@@ -353,37 +360,44 @@
   // PAYLAŞIMLARI ANLIK İZLEME VE SİLME
   function paylasimlariCanliIzle() {
     if(!aktifOgretmen || !aktifOgretmen.id) return;
-    const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
-    onSnapshot(q, (snapshot) => {
-      const liste = document.getElementById("paylasimListesi");
-      liste.innerHTML = "";
+    
+    try {
+      const q = query(collection(db, "paylasimlar"), where("ogretmenId", "==", aktifOgretmen.id));
+      onSnapshot(q, (snapshot) => {
+        const liste = document.getElementById("paylasimListesi");
+        liste.innerHTML = "";
 
-      if (snapshot.empty) {
-        liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
-        return;
-      }
+        if (snapshot.empty) {
+          liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
+          return;
+        }
 
-      snapshot.forEach((docSnap) => {
-        const p = docSnap.data();
-        const id = docSnap.id;
+        snapshot.forEach((docSnap) => {
+          const p = docSnap.data();
+          const id = docSnap.id;
 
-        let hedefMetin = "Tüm Okul";
-        if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
-        if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
+          let hedefMetin = "Tüm Okul";
+          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
+          if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
 
-        liste.innerHTML += `
-          <div class="kart">
-            <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
-            <p>${p.aciklama}</p>
-            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
-            <div class="kart-bilgi">
-              <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
-              <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+          liste.innerHTML += `
+            <div class="kart">
+              <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
+              <p>${p.aciklama}</p>
+              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
+              <div class="kart-bilgi">
+                <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
+                <button class="sil-btn" onclick="paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
+        });
+      }, (err) => {
+        document.getElementById("paylasimListesi").innerHTML = `<p style="color:red; font-size:12px;">Hata: ${err.message}</p>`;
       });
-    });
+    } catch(err) {
+      document.getElementById("paylasimListesi").innerHTML = `<p style="color:red; font-size:12px;">Hata: ${err.message}</p>`;
+    }
   }
 
   window.paylasimSil = async function(id) {
