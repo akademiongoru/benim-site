@@ -145,7 +145,7 @@
       <div class="liste" id="ogretmenListesi">Yükleniyor...</div>
     </div>
 
-    <!-- YENİ ÖĞRENCİ KAYDI (TÜM İSTEDİĞİN ALANLAR EKLENDİ) -->
+    <!-- YENİ ÖĞRENCİ KAYDI -->
     <div class="kutu">
       <h2><i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı</h2>
       <form id="ogrenciForm">
@@ -320,24 +320,38 @@
 
   const YONETICI_SIFRESI = "Ongoru34+";
 
+  // SAYFA YÜKLENDİĞİNDE GİRİŞ DURUMUNU KONTROL ET (OTURUMU KORU)
+  window.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("adminGirisYapildi") === "true") {
+      panelAc();
+    }
+  });
+
+  function panelAc() {
+    document.getElementById("girisAlani").style.display = "none";
+    document.getElementById("panelAlani").style.display = "flex";
+    document.getElementById("cikisBtn").style.display = "inline-block";
+    
+    basvurulariGetir();
+    canliKullanicilariGetir();
+  }
+
   // GİRİŞ KONTROLÜ
   document.getElementById("yoneticiGirisForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const girilen = document.getElementById("adminSifre").value;
 
     if (girilen === YONETICI_SIFRESI) {
-      document.getElementById("girisAlani").style.display = "none";
-      document.getElementById("panelAlani").style.display = "flex";
-      document.getElementById("cikisBtn").style.display = "inline-block";
-      
-      basvurulariGetir();
-      canliKullanicilariGetir();
+      localStorage.setItem("adminGirisYapildi", "true"); // Giriş durumunu hafızaya kaydet
+      panelAc();
     } else {
       alert("Hatalı şifre!");
     }
   });
 
+  // ÇIKIŞ BUTONU (OTURUMU KAPAT)
   document.getElementById("cikisBtn").addEventListener("click", () => {
+    localStorage.removeItem("adminGirisYapildi"); // Hafızadaki oturumu sil
     location.reload();
   });
 
