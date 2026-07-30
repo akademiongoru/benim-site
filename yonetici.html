@@ -73,7 +73,14 @@
     .foto-input-wrapper { display:flex; flex-direction:column; font-size:12px; color:#aaa; width:100%; }
     .foto-input-wrapper input { padding:4px; margin-bottom:0; font-size:11px; background:transparent; border:none; }
 
-    /* POPUP MODAL (DÜZENLEME PENCERESİ) */
+    /* GALERİ YÖNETİMİ STİLLERİ */
+    .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+    .galeri-kart { background: #252525; border-radius: 8px; border: 1px solid #444; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+    .galeri-kart img { width: 100%; height: 100px; object-fit: cover; }
+    .galeri-kart .bilgi { padding: 8px; font-size: 11px; color: #ccc; text-align: center; }
+    .galeri-kart .sil-btn { width: 100%; border-radius: 0; padding: 5px; font-size: 12px; }
+
+    /* POPUP MODAL */
     .modal-arka { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
     .modal-kutu { background:#383838; padding:25px; border-radius:12px; width:90%; max-width:480px; border:2px solid #ff7a00; position:relative; max-height:90vh; overflow-y:auto; }
     .modal-kutu h3 { color:#ff7a00; margin-bottom:15px; }
@@ -105,6 +112,27 @@
 
 <!-- PANEL ALANI (GİRİŞ YAPILINCA AÇILIR) -->
 <div class="panel" id="panelAlani">
+  
+  <!-- 0. BÖLÜM: GALERİ YÖNETİMİ (YENİ EKLENEN KISIM) -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-images"></i> Ana Sayfa Galeri Yönetimi</h2>
+    <form id="galeriForm">
+      <div class="foto-yukleme-alani">
+        <img id="galeriFotoOnizleme" src="https://via.placeholder.com/100?text=Önizleme" style="width:70px; height:50px; border-radius:6px; object-fit:cover;" alt="Önizleme">
+        <div class="foto-input-wrapper">
+          <label for="galeriFoto">Fotoğraf Seç</label>
+          <input type="file" id="galeriFoto" accept="image/*" required onchange="fotoOnizle(event, 'galeriFotoOnizleme')">
+        </div>
+      </div>
+      <input type="text" id="galeriBaslik" placeholder="Fotoğraf Başlığı / Açıklaması (Opsiyonel)">
+      <button type="submit" id="galeriBtn"><i class="fa-solid fa-upload"></i> Galeriye Yükle</button>
+    </form>
+
+    <h3 style="margin-top:20px; color:#ff7a00;"><i class="fa-solid fa-photo-film"></i> Mevcut Fotoğraflar</h3>
+    <div class="galeri-grid" id="galeriListesi">
+      <small style="color:#aaa;">Fotoğraflar yükleniyor...</small>
+    </div>
+  </div>
   
   <!-- 1. BÖLÜM: GELEN BAŞVURULAR (BİLGİ FORMU) -->
   <div class="kutu">
@@ -303,7 +331,7 @@
 <!-- FIREBASE SİSTEMİ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -332,6 +360,7 @@
     document.getElementById("panelAlani").style.display = "flex";
     document.getElementById("cikisBtn").style.display = "inline-block";
     
+    galeriGetir();
     basvurulariGetir();
     canliKullanicilariGetir();
   }
@@ -342,20 +371,93 @@
     const girilen = document.getElementById("adminSifre").value;
 
     if (girilen === YONETICI_SIFRESI) {
-      localStorage.setItem("adminGirisYapildi", "true"); // Giriş durumunu hafızaya kaydet
+      localStorage.setItem("adminGirisYapildi", "true");
       panelAc();
     } else {
       alert("Hatalı şifre!");
     }
   });
 
-  // ÇIKIŞ BUTONU (OTURUMU KAPAT)
+  // ÇIKIŞ BUTONU
   document.getElementById("cikisBtn").addEventListener("click", () => {
-    localStorage.removeItem("adminGirisYapildi"); // Hafızadaki oturumu sil
+    localStorage.removeItem("adminGirisYapildi");
     location.reload();
   });
 
-  // 1. GELEN BAŞVURULARI ÇEKME VE SİLME
+  // --- GALERİ YÖNETİMİ ---
+
+  // 1. GALERİ FOTOĞRAF EKLEME
+  document.getElementById("galeriForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("galeriBtn");
+    const fotoSrc = document.getElementById("galeriFotoOnizleme").src;
+    const baslik = document.getElementById("galeriBaslik").value.trim();
+
+    if (fotoSrc.includes("via.placeholder")) {
+      alert("Lütfen geçerli bir fotoğraf seçin.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Yükleniyor...";
+
+    try {
+      await addDoc(collection(db, "galeri"), {
+        url: fotoSrc,
+        baslik: baslik || "Fotoğraf",
+        tarih: new Date().toISOString()
+      });
+
+      alert("Fotoğraf galeriye eklendi!");
+      document.getElementById("galeriForm").reset();
+      document.getElementById("galeriFotoOnizleme").src = "https://via.placeholder.com/100?text=Önizleme";
+    } catch (err) {
+      alert("Fotoğraf yükleme hatası: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-upload"></i> Galeriye Yükle`;
+    }
+  });
+
+  // 2. GALERİ FOTOĞRAFLARINI ÇEKME VE CANLI İZLEME
+  function galeriGetir() {
+    onSnapshot(collection(db, "galeri"), (snapshot) => {
+      const galeriDiv = document.getElementById("galeriListesi");
+      galeriDiv.innerHTML = "";
+
+      if (snapshot.empty) {
+        galeriDiv.innerHTML = "<small style='color:#aaa;'>Henüz galeriye fotoğraf eklenmedi.</small>";
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        const id = docSnap.id;
+
+        galeriDiv.innerHTML += `
+          <div class="galeri-kart">
+            <img src="${item.url}" alt="${item.baslik}">
+            <div class="bilgi">${item.baslik || ''}</div>
+            <button class="sil-btn" onclick="galeriFotoSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+          </div>
+        `;
+      });
+    });
+  }
+
+  // 3. GALERİ FOTOĞRAF SİLME
+  window.galeriFotoSil = async function(id) {
+    if (confirm("Bu fotoğrafı galeriden silmek istediğinize emin misiniz?")) {
+      try {
+        await deleteDoc(doc(db, "galeri", id));
+        alert("Fotoğraf silindi.");
+      } catch (error) {
+        alert("Silinirken hata oluştu: " + error.message);
+      }
+    }
+  };
+
+  // --- GELEN BAŞVURULAR ---
   async function basvurulariGetir() {
     const liste = document.getElementById("basvuruListesi");
     liste.innerHTML = "";
@@ -399,7 +501,7 @@
     }
   };
 
-  // 2. ÖĞRETMEN EKLEME
+  // --- ÖĞRETMEN EKLEME ---
   document.getElementById("ogretmenForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("ogretmenBtn");
@@ -432,7 +534,7 @@
     }
   });
 
-  // 3. ÖĞRENCİ EKLEME
+  // --- ÖĞRENCİ EKLEME ---
   document.getElementById("ogrenciForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("ogrenciBtn");
@@ -476,7 +578,7 @@
     }
   });
 
-  // 4. KULLANICI DÜZENLEME MODALI AÇMA
+  // --- KULLANICI DÜZENLEME ---
   window.duzenleAc = function(id, dataJson) {
     const data = JSON.parse(decodeURIComponent(dataJson));
 
@@ -507,7 +609,6 @@
     document.getElementById("duzenleModal").style.display = "flex";
   };
 
-  // 5. KULLANICI BİLGİLERİNİ GÜNCELLEME (UPDATE)
   document.getElementById("duzenleForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("guncelleBtn");
@@ -552,7 +653,7 @@
     }
   });
 
-  // 6. KULLANICI SİLME İŞLEMİ
+  // --- KULLANICI SİLME ---
   window.kullaniciSil = async function(id) {
     if (confirm("Bu kullanıcıyı silmek istediğinize emin misiniz?")) {
       try {
@@ -564,7 +665,7 @@
     }
   };
 
-  // 7. CANLI ÖĞRETMEN / ÖĞRENCİ LİSTESİ
+  // --- CANLI ÖĞRETMEN / ÖĞRENCİ LİSTESİ ---
   function canliKullanicilariGetir() {
     onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
       const ogretmenDiv = document.getElementById("ogretmenListesi");
