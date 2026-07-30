@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-    body { background:#2f2f2f; color:white; padding:20px; }
+    body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; }
     header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
     header h1 { color:#ff7a00; font-size:24px; }
     header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
@@ -16,7 +16,7 @@
     .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
     .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
     
-    input, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; }
+    input, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; outline:none; }
     button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
     button:hover { background:white; color:#ff7a00; }
     
@@ -29,7 +29,10 @@
     .not-kart .ogretmen-adi { color:#ff7a00; font-weight:bold; font-size:15px; }
     .not-kart .tarih { color:#aaa; font-size:12px; }
     .not-kart h3 { color:white; font-size:16px; margin-bottom:8px; }
-    .not-kart p { color:#ddd; font-size:14px; line-height:1.6; white-space:pre-wrap; }
+    .not-kart p { color:#ddd; font-size:14px; line-height:1.6; white-space:pre-wrap; margin-bottom:10px; }
+    
+    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 8px; background: #ff7a00; color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; margin-top: 5px; transition: .3s; }
+    .dosya-indir-btn:hover { background: white; color: #ff7a00; }
   </style>
 </head>
 <body>
@@ -47,13 +50,13 @@
 <div class="giris-kutu" id="girisAlani">
   <h2>Öğrenci Girişi</h2>
   <form id="ogrenciGirisForm">
-    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı / T.C. No" required>
+    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı / T.C. No" required autofocus>
     <input type="password" id="gSifre" placeholder="Şifre" required>
     <button type="submit" id="girisBtn">Giriş Yap</button>
   </form>
 </div>
 
-<!-- ÖĞRENCİ PANEL ALANI (Giriş yaptıktan sonra görünecek) -->
+<!-- ÖĞRENCİ PANEL ALANI -->
 <div class="panel" id="panelAlani">
   
   <div class="kutu">
@@ -83,13 +86,29 @@
 
   let aktifOgrenci = null;
 
+  // OTURUM KONTROLÜ (Sayfa Yenilendiğinde Girişi Korur)
+  document.addEventListener("DOMContentLoaded", () => {
+    const kayitli = localStorage.getItem("ongoru_ogrenci");
+    if (kayitli) {
+      try {
+        aktifOgrenci = JSON.parse(kayitli);
+        if (aktifOgrenci && aktifOgrenci.id) {
+          paneliAc();
+        }
+      } catch (e) {
+        localStorage.removeItem("ongoru_ogrenci");
+      }
+    }
+  });
+
   // 1. ÖĞRENCİ GİRİŞİ
   document.getElementById("ogrenciGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const kAdi = document.getElementById("gKullaniciAdi").value.toLowerCase().trim();
     const sifre = document.getElementById("gSifre").value.trim();
     const btn = document.getElementById("girisBtn");
-    btn.disabled = true; btn.innerText = "Kontrol Ediliyor...";
+    btn.disabled = true; 
+    btn.innerText = "Kontrol Ediliyor...";
 
     try {
       const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogrenci"));
@@ -98,49 +117,66 @@
       if (snapshot.empty) {
         alert("Kullanıcı adı veya şifre hatalı!");
       } else {
-        snapshot.forEach(doc => {
-          aktifOgrenci = { id: doc.id, ...doc.data() };
+        snapshot.forEach(docSnap => {
+          aktifOgrenci = { id: docSnap.id, ...docSnap.data() };
         });
         
-        // Paneli Aç
-        document.getElementById("girisAlani").style.display = "none";
-        document.getElementById("panelAlani").style.display = "block";
-        document.getElementById("cikisBtn").style.display = "inline-block";
-        document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + aktifOgrenci.adSoyad + " (" + aktifOgrenci.sinif + ")";
-
-        notlariYukle();
+        localStorage.setItem("ongoru_ogrenci", JSON.stringify(aktifOgrenci));
+        paneliAc();
       }
-    } catch (err) { alert("Hata: " + err.message); }
-    finally { btn.disabled = false; btn.innerText = "Giriş Yap"; }
+    } catch (err) { 
+      alert("Giriş Hatası: " + err.message); 
+    } finally { 
+      btn.disabled = false; 
+      btn.innerText = "Giriş Yap"; 
+    }
   });
+
+  function paneliAc() {
+    document.getElementById("girisAlani").style.display = "none";
+    document.getElementById("panelAlani").style.display = "block";
+    document.getElementById("cikisBtn").style.display = "inline-block";
+    document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + (aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi) + (aktifOgrenci.sinif ? " (" + aktifOgrenci.sinif + ")" : "");
+
+    notlariYukle();
+  }
 
   // ÇIKIŞ BUTONU
   document.getElementById("cikisBtn").addEventListener("click", () => {
+    localStorage.removeItem("ongoru_ogrenci");
     location.reload();
   });
 
   // 2. ÖĞRENCİYE ÖZEL NOTLARI / ÖDEVLERİ CANLI ÇEK
   function notlariYukle() {
-    onSnapshot(collection(db, "dersNotlari"), (snapshot) => {
+    onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
       const listeDiv = document.getElementById("notlarListesi");
       listeDiv.innerHTML = "";
 
       let notVarMi = false;
 
-      snapshot.forEach(doc => {
-        const item = doc.data();
+      snapshot.forEach(docSnap => {
+        const item = docSnap.data();
         
-        // Sadece bu öğrenciye gönderilmiş veya genel gönderilmiş notları filtrele
-        if (item.ogrenciId === aktifOgrenci.id || item.ogrenciId === "") {
+        // FİLTRELEME MANTIĞI
+        // 1. Herkese açıksa (hepsi)
+        // 2. Sınıfa özel atılmışsa ve öğrencinin sınıfı ile aynıysa
+        // 3. Tek öğrenciye atılmışsa ve öğrencinin veritabanı ID'si tutuyorsa
+        const herkeseAcik = item.hedefTuru === "hepsi";
+        const sinifaOzel = (item.hedefTuru === "sinif" && item.hedefSinif === aktifOgrenci.sinif);
+        const kisiyeOzel = (item.hedefTuru === "ogrenci" && item.hedefOgrenciId === aktifOgrenci.id);
+
+        if (herkeseAcik || sinifaOzel || kisiyeOzel) {
           notVarMi = true;
           listeDiv.innerHTML += `
             <div class="not-kart">
               <div class="ust-bilgi">
-                <span class="ogretmen-adi"><i class="fa-solid fa-chalkboard-user"></i> ${item.ogretmenAd} ${item.brans ? '(' + item.brans + ')' : ''}</span>
+                <span class="ogretmen-adi"><i class="fa-solid fa-chalkboard-user"></i> ${item.ogretmenAd || 'Öğretmen'} ${item.brans ? '(' + item.brans + ')' : ''}</span>
                 <span class="tarih"><i class="fa-regular fa-clock"></i> ${item.tarih}</span>
               </div>
               <h3>${item.baslik}</h3>
-              <p>${item.icerik}</p>
+              <p>${item.aciklama}</p>
+              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" download="${item.dosyaAdi || 'ekli-dosya'}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${item.dosyaAdi || 'Ekli Dosyayı / Ödevi İndir'}</a>` : ''}
             </div>
           `;
         }
