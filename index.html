@@ -2,12 +2,10 @@
 <html lang="tr">
 
 <head>
-<title>Öngörü Akademi | Yönetici ve Öğrenci Paneli</title>
-<meta name="description" content="Öngörü Akademi resmi web sitesi. Öğrenci ve öğretmen kayıt paneli.">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Öngörü Akademi | Eğitim Merkezi</title>
+<title>Öngörü Akademi | Yönetici ve Öğrenci Paneli</title>
+<meta name="description" content="Öngörü Akademi resmi web sitesi. Öğrenci ve öğretmen kayıt paneli.">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -529,8 +527,8 @@ Bilgi Al
 <!-- BUTONA TIKLAYINCA BURADA AÇILACAK FORM -->
 <div class="hizli-form-alani" id="hizliFormAlani">
   <form id="hizliContactForm">
-    <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" required>
-    <input type="tel" id="hOgrenciTel" placeholder="Telefon Numarası" required>
+    <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" minlength="3" required>
+    <input type="tel" id="hOgrenciTel" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
     <select id="hOgrenciSinif" required>
       <option value="">Sınıf Seçiniz</option>
       <option value="1. Sınıf">1. Sınıf</option>
@@ -552,27 +550,27 @@ Bilgi Al
 <div class="slider" id="mainSlider">
 
 <div class="slide active">
-<img src="images/kurs1.jpg">
+<img src="images/kurs1.jpg" alt="Kurs Görseli 1">
 </div>
 
 <div class="slide">
-<img src="images/kurs2.jpg">
+<img src="images/kurs2.jpg" alt="Kurs Görseli 2">
 </div>
 
 <div class="slide">
-<img src="images/kurs3.jpg">
+<img src="images/kurs3.jpg" alt="Kurs Görseli 3">
 </div>
 
 <div class="slide">
-<img src="images/kurs4.jpg">
+<img src="images/kurs4.jpg" alt="Kurs Görseli 4">
 </div>
 
 <div class="slide">
-<img src="images/kurs5.jpg">
+<img src="images/kurs5.jpg" alt="Kurs Görseli 5">
 </div>
 
 <div class="slide">
-<img src="images/kurs6.jpg">
+<img src="images/kurs6.jpg" alt="Kurs Görseli 6">
 </div>
 
 <div class="ok sol">
@@ -634,9 +632,9 @@ Bilgi Al
 
 <form id="contactForm">
 
-<input type="text" id="ogrenciAd" name="Ogrenci_Ad_Soyad" placeholder="Öğrenci Ad Soyad" required>
+<input type="text" id="ogrenciAd" name="Ogrenci_Ad_Soyad" placeholder="Öğrenci Ad Soyad" minlength="3" required>
 
-<input type="tel" id="ogrenciTel" name="Telefon" placeholder="Telefon Numarası" required>
+<input type="tel" id="ogrenciTel" name="Telefon" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
 
 <select id="ogrenciSinif" name="Sinif" required>
 
@@ -747,7 +745,7 @@ Fen Bilimleri
  Sosyal Bilgiler 
 </li>
 <li>
-Okuma Yazma ve Anlama
+OKUMA ANLAMA VE YAZMA 
 </li>
 <li>
   Temel Becerileri Geliştirme ve Sosyal Gelişim
@@ -771,18 +769,18 @@ Proje Okulları Hazırlık
 
 <div class="galeri-grid" id="anaGaleriGrid">
 
-<img src="images/kurs1.jpg">
-<img src="images/kurs2.jpg">
-<img src="images/kurs3.jpg">
-<img src="images/kurs4.jpg">
-<img src="images/kurs5.jpg">
-<img src="images/kurs6.jpg">
-<img src="images/kurs7.jpg">
-<img src="images/kurs8.jpg">
-<img src="images/kurs9.jpg">
-<img src="images/kurs10.jpg">
-<img src="images/kurs11.jpg">
-<img src="images/kurs12.jpg">
+<img src="images/kurs1.jpg" alt="Galeri 1">
+<img src="images/kurs2.jpg" alt="Galeri 2">
+<img src="images/kurs3.jpg" alt="Galeri 3">
+<img src="images/kurs4.jpg" alt="Galeri 4">
+<img src="images/kurs5.jpg" alt="Galeri 5">
+<img src="images/kurs6.jpg" alt="Galeri 6">
+<img src="images/kurs7.jpg" alt="Galeri 7">
+<img src="images/kurs8.jpg" alt="Galeri 8">
+<img src="images/kurs9.jpg" alt="Galeri 9">
+<img src="images/kurs10.jpg" alt="Galeri 10">
+<img src="images/kurs11.jpg" alt="Galeri 11">
+<img src="images/kurs12.jpg" alt="Galeri 12">
 
 </div>
 
@@ -823,7 +821,7 @@ Tüm Hakları Saklıdır.
 
 </footer>
 
-<a href="https://wa.me/905306609480" class="whatsapp" target="_blank">
+<a href="https://wa.me/905306609480" class="whatsapp" target="_blank" rel="noopener noreferrer">
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
@@ -915,20 +913,15 @@ bilgiToggleBtn.addEventListener("click", function() {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // --- 1. FIREBASE GALERİ CANLI VERİ ÇEKME ---
+  // --- 1. FIREBASE GALERİ CANLI VERİ ÇEKME (DOM İLE GÜVENLİ OLUŞTURMA) ---
   onSnapshot(collection(db, "galeri"), (snapshot) => {
     const galeriGrid = document.getElementById("anaGaleriGrid");
     const sliderContainer = document.getElementById("mainSlider");
 
     if (!snapshot.empty) {
-      // Galeri ve Slider temizlenip dinamik veriler eklenecek
       galeriGrid.innerHTML = "";
       
-      // Mevcut ok ikonlarını saklamak için slider içinden okları alalım
       const solOk = sliderContainer.querySelector(".ok.sol");
-      const sagOk = sliderContainer.querySelector(".ok.sag");
-      
-      // Slider görsellerini temizle
       const mevcutSlidelar = sliderContainer.querySelectorAll(".slide");
       mevcutSlidelar.forEach(s => s.remove());
 
@@ -937,23 +930,26 @@ bilgiToggleBtn.addEventListener("click", function() {
       snapshot.forEach((docSnap) => {
         const item = docSnap.data();
 
-        // Galeriye Ekle
+        // Galeriye Güvenli Ekleme
         const img = document.createElement("img");
         img.src = item.url;
         img.alt = item.baslik || "Öngörü Akademi Fotoğrafı";
         galeriGrid.appendChild(img);
 
-        // Slider'a Ekle
+        // Slider'a Güvenli Ekleme (XSS Önleme)
         const slideDiv = document.createElement("div");
         slideDiv.className = ilkEl ? "slide active" : "slide";
-        slideDiv.innerHTML = `<img src="${item.url}" alt="${item.baslik || 'Slider Fotoğrafı'}">`;
         
-        // Ok butonlarının arkasına ekle
+        const slideImg = document.createElement("img");
+        slideImg.src = item.url;
+        slideImg.alt = item.baslik || "Slider Fotoğrafı";
+        
+        slideDiv.appendChild(slideImg);
         sliderContainer.insertBefore(slideDiv, solOk);
+        
         ilkEl = false;
       });
 
-      // Slider döngüsünü yenile
       if (window.sliderBaslat) window.sliderBaslat();
     }
   });
