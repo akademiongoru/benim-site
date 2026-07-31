@@ -148,7 +148,7 @@
       <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 800 KB - İsteğe Bağlı):</label>
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 500 KB - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
@@ -187,6 +187,17 @@
 
   let aktifOgretmen = null;
 
+  // GÜVENLİK İÇİN METİN KAÇIŞ (ESCAPE) FONKSİYONU
+  function escapeHtml(text) {
+    if (!text) return "";
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   // 20 SORULUK ESNEK INPUT ALANI OLUSUTURMA
   function soruInputlariniOlustur() {
     const container = document.getElementById("soruBuilderAlani");
@@ -223,7 +234,7 @@
 
   dosyaInput.addEventListener("change", (e) => {
     if (e.target.files.length > 0) {
-      dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#ff7a00;"></i><br>${e.target.files[0].name}`;
+      dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#ff7a00;"></i><br>${escapeHtml(e.target.files[0].name)}`;
     } else {
       dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
     }
@@ -240,7 +251,7 @@
     ogrenciKutu.style.display = tur === "ogrenci" ? "block" : "none";
   });
 
-  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ (SAYFA YENİLENİRSE ÇIKIŞ OLMAMASI İÇİN)
+  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
     soruInputlariniOlustur();
     const kayitli = localStorage.getItem("ongoru_ogretmen");
@@ -281,7 +292,6 @@
         }
       });
 
-      // Firebase kaydı yoksa öğretmen adı ile oturum açılmasını sağlar
       if (!eslesenUser) {
         eslesenUser = { id: kAdi, kullaniciAdi: kAdi, adSoyad: kAdi, brans: kAdi };
       }
@@ -318,7 +328,7 @@
 
   document.getElementById("cikisBtn").addEventListener("click", cikisYap);
 
-  // TESTİ ÖĞRENCİ PANELİNE GÖNDERME / KAYDETME
+  // TESTİ ÖĞRENCİ PANELİNE GÖNDERME
   document.getElementById("sinavKaydetBtn").addEventListener("click", () => {
     const hazirSorular = [];
     for (let i = 1; i <= 20; i++) {
@@ -344,7 +354,6 @@
     }
 
     const ogretmenKey = aktifOgretmen.kullaniciAdi || aktifOgretmen.id;
-    // Öğrenci paneli bu anahtar kelimeden test sorularını otomatik çeker
     localStorage.setItem(`sinav_${ogretmenKey}`, JSON.stringify(hazirSorular));
     alert(`${hazirSorular.length} soruluk test öğrenci paneline gönderildi ve kaydedildi!`);
   });
@@ -378,11 +387,11 @@
     raporlar.forEach(r => {
       tbody.innerHTML += `
         <tr>
-          <td><strong>${r.ogrenci}</strong></td>
+          <td><strong>${escapeHtml(r.ogrenci)}</strong></td>
           <td style="color:#22c55e; font-weight:bold;">${r.dogru}</td>
           <td style="color:#ff3333; font-weight:bold;">${r.yanlis}</td>
           <td>${r.bos}</td>
-          <td style="color:#ff7a00; font-weight:bold;">%${r.basari.toFixed(1)}</td>
+          <td style="color:#ff7a00; font-weight:bold;">%${Number(r.basari).toFixed(1)}</td>
         </tr>
       `;
     });
@@ -397,7 +406,7 @@
       snap.forEach(docSnap => {
         const u = docSnap.data();
         if(u.rol === "ogrenci") {
-          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
+          select.innerHTML += `<option value="${docSnap.id}">${escapeHtml(u.adSoyad || u.kullaniciAdi)} (${escapeHtml(u.sinif || 'Sınıfsız')})</option>`;
         }
       });
     } catch (err) {
@@ -440,8 +449,9 @@
 
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-        if (file.size > 800 * 1024) {
-          alert("Dosya boyutu 800 KB'dan küçük olmalıdır!");
+        // Base64 boyut büyümesi sebebiyle sınır 500 KB olarak belirlendi
+        if (file.size > 500 * 1024) {
+          alert("Dosya boyutu Firestore limitleri nedeniyle maksimum 500 KB olmalıdır!");
           btn.disabled = false;
           btn.innerText = "Paylaş";
           return;
@@ -495,20 +505,24 @@
         if (p.ogretmenId === ogretmenId) {
           paylasimVarMi = true;
           let hedefMetin = "Tüm Okul";
-          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
+          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${escapeHtml(p.hedefSinif)}`;
           if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
 
-          liste.innerHTML += `
-            <div class="kart">
-              <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
-              <p>${p.aciklama}</p>
-              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
-              <div class="kart-bilgi">
-                <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
-                <button class="sil-btn" onclick="window.paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
-              </div>
+          const kart = document.createElement("div");
+          kart.className = "kart";
+          kart.innerHTML = `
+            <h4>${escapeHtml(p.baslik)} <span class="hedef-rozet">${hedefMetin}</span></h4>
+            <p>${escapeHtml(p.aciklama)}</p>
+            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${escapeHtml(p.dosyaAdi)}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${escapeHtml(p.dosyaAdi) || 'Ekli Dosyayı İndir'}</a>` : ''}
+            <div class="kart-bilgi">
+              <span><i class="fa-regular fa-clock"></i> ${escapeHtml(p.tarih)}</span>
+              <button class="sil-btn"><i class="fa-solid fa-trash"></i> Sil</button>
             </div>
           `;
+
+          // Silme butonuna event listener bağlama
+          kart.querySelector(".sil-btn").addEventListener("click", () => paylasimSil(id));
+          liste.appendChild(kart);
         }
       });
 
@@ -520,8 +534,8 @@
     });
   }
 
-  // SILME FONKSIYONU GLOBAL SCOPE'A BAGLAMA
-  window.paylasimSil = async function(id) {
+  // SILME FONKSİYONU
+  async function paylasimSil(id) {
     if (confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) {
       try {
         await deleteDoc(doc(db, "paylasimlar", id));
@@ -529,7 +543,7 @@
         alert("Silinirken hata oluştu: " + err.message);
       }
     }
-  };
+  }
 </script>
 
 </body>
