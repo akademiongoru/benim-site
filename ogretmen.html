@@ -86,30 +86,56 @@
   
   <!-- SOL BÖLÜM: 20 SORULUK TEST HAZIRLAMA ALANI -->
   <div class="kutu">
-    <h2><i class="fa-solid fa-file-pen"></i> Sınıf Düzeyi Test Hazırlama (Maks. 20 Soru)</h2>
-    <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Doldurduğunuz sorular öğrenci paneline aktarılır. Doldurmadığınız sorular sınava dahil edilmez.</p>
+    <h2><i class="fa-solid fa-file-pen"></i> Test Oluştur & Gönder</h2>
+    <input type="text" id="testBasligi" placeholder="Test / Sınav Başlığı (Örn: 1. Ünite Değerlendirme)" style="margin-bottom:10px;" required>
     
+    <label style="font-size:12px; color:#aaa;">Test Gönderim Hedefi:</label>
+    <select id="testHedefTuru" required>
+      <option value="hepsi">Tüm Öğrenciler (Genel Test)</option>
+      <option value="sinif">Belirli Bir Sınıfa Gönder</option>
+      <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
+    </select>
+
+    <div id="testSinifKutu" style="display:none;">
+      <select id="testHedefSinif">
+        <option value="">Sınıf Seçin</option>
+        <option value="1. Sınıf">1. Sınıf</option>
+        <option value="2. Sınıf">2. Sınıf</option>
+        <option value="3. Sınıf">3. Sınıf</option>
+        <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+        <option value="5. Sınıf">5. Sınıf</option>
+        <option value="6. Sınıf">6. Sınıf</option>
+        <option value="7. Sınıf">7. Sınıf</option>
+        <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+      </select>
+    </div>
+
+    <div id="testOgrenciKutu" style="display:none;">
+      <select id="testHedefOgrenci">
+        <option value="">Öğrenci Seçin...</option>
+      </select>
+    </div>
+
     <div id="soruBuilderAlani" class="liste"></div>
 
-    <button type="button" id="sinavKaydetBtn" style="margin-top:15px; background: #ff7a00;"><i class="fa-solid fa-paper-plane"></i> Testi Öğrenci Paneline Gönder</button>
+    <button type="button" id="sinavKaydetBtn" style="margin-top:15px; background: #ff7a00;"><i class="fa-solid fa-paper-plane"></i> Testi Belirtilen Hedefe Gönder</button>
   </div>
 
   <!-- SAĞ BÖLÜM: BAŞARI DÜZEYİ & DERS NOTU PAYLAŞIMI -->
   <div class="kutu">
-    <h2><i class="fa-solid fa-chart-line"></i> Öğrenci Test Başarı Düzeyi</h2>
+    <h2><i class="fa-solid fa-chart-line"></i> Öğrenci Test Başarı Düzeyi (Canlı)</h2>
     <div class="liste" style="max-height: 200px;">
       <table class="rapor-tablo">
         <thead>
           <tr>
             <th>Öğrenci</th>
-            <th>Doğru</th>
-            <th>Yanlış</th>
-            <th>Boş</th>
+            <th>Test</th>
+            <th>D / Y / B</th>
             <th>Başarı (%)</th>
           </tr>
         </thead>
         <tbody id="ogrenciRaporBody">
-          <tr><td colspan="5" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>
+          <tr><td colspan="4" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>
         </tbody>
       </table>
     </div>
@@ -124,7 +150,6 @@
       </select>
 
       <div id="sinifSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
         <select id="hedefSinif">
           <option value="">Sınıf Seçin</option>
           <option value="1. Sınıf">1. Sınıf</option>
@@ -139,9 +164,8 @@
       </div>
 
       <div id="ogrenciSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
         <select id="hedefOgrenci">
-          <option value="">Öğrenci Yükleniyor...</option>
+          <option value="">Öğrenci Seçin...</option>
         </select>
       </div>
 
@@ -187,7 +211,6 @@
 
   let aktifOgretmen = null;
 
-  // GÜVENLİK İÇİN METİN KAÇIŞ (ESCAPE) FONKSİYONU
   function escapeHtml(text) {
     if (!text) return "";
     return String(text)
@@ -198,7 +221,6 @@
       .replace(/'/g, "&#039;");
   }
 
-  // 20 SORULUK ESNEK INPUT ALANI OLUSUTURMA
   function soruInputlariniOlustur() {
     const container = document.getElementById("soruBuilderAlani");
     container.innerHTML = "";
@@ -206,7 +228,7 @@
       container.innerHTML += `
         <div class="soru-olustur-kutusu">
           <strong style="color:#ff7a00;">Soru ${i}</strong>
-          <textarea id="q_text_${i}" placeholder="${i}. Soru metni (Boş bırakırsanız teste dahil edilmez)..."></textarea>
+          <textarea id="q_text_${i}" placeholder="${i}. Soru metni..."></textarea>
           <div class="siklar-grid">
             <input type="text" id="q_optA_${i}" placeholder="A Şıkkı">
             <input type="text" id="q_optB_${i}" placeholder="B Şıkkı">
@@ -214,7 +236,7 @@
             <input type="text" id="q_optD_${i}" placeholder="D Şıkkı">
           </div>
           <div class="cevap-anahtari-secim">
-            <label style="font-size:12px; color:#aaa;">Doğru Cevap Anahtarı:</label>
+            <label style="font-size:12px; color:#aaa;">Doğru Cevap:</label>
             <select id="q_ans_${i}" style="width: auto; margin:0;">
               <option value="">Seçiniz</option>
               <option value="A">A</option>
@@ -228,10 +250,16 @@
     }
   }
 
-  // DOSYA SEÇİM HAREKETİ
+  // TEST HEDEF SEÇİMİ
+  const testHedefTuru = document.getElementById("testHedefTuru");
+  testHedefTuru.addEventListener("change", () => {
+    document.getElementById("testSinifKutu").style.display = testHedefTuru.value === "sinif" ? "block" : "none";
+    document.getElementById("testOgrenciKutu").style.display = testHedefTuru.value === "ogrenci" ? "block" : "none";
+  });
+
+  // DOSYA SEÇİMİ
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
-
   dosyaInput.addEventListener("change", (e) => {
     if (e.target.files.length > 0) {
       dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#ff7a00;"></i><br>${escapeHtml(e.target.files[0].name)}`;
@@ -240,43 +268,28 @@
     }
   });
 
-  // HEDEF SEÇİM DİNLEMESİ
+  // HEDEF SEÇİMİ (NOTLAR)
   const hedefTuru = document.getElementById("hedefTuru");
-  const sinifKutu = document.getElementById("sinifSecimKutu");
-  const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
-
   hedefTuru.addEventListener("change", () => {
-    const tur = hedefTuru.value;
-    sinifKutu.style.display = tur === "sinif" ? "block" : "none";
-    ogrenciKutu.style.display = tur === "ogrenci" ? "block" : "none";
+    document.getElementById("sinifSecimKutu").style.display = hedefTuru.value === "sinif" ? "block" : "none";
+    document.getElementById("ogrenciSecimKutu").style.display = hedefTuru.value === "ogrenci" ? "block" : "none";
   });
 
-  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
     soruInputlariniOlustur();
     const kayitli = localStorage.getItem("ongoru_ogretmen");
     if (kayitli) {
       try {
         aktifOgretmen = JSON.parse(kayitli);
-        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) {
-          paneliAc();
-        } else {
-          cikisYap();
-        }
-      } catch(e) {
-        cikisYap();
-      }
-    } else {
-      cikisYap();
+        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) paneliAc();
+      } catch(e) { cikisYap(); }
     }
   });
 
-  // GİRİŞ FORMU KONTROLÜ
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const gBtn = document.getElementById("girisBtn");
-    gBtn.disabled = true;
-    gBtn.innerText = "Giriş Yapılıyor...";
+    gBtn.disabled = true; gBtn.innerText = "Giriş Yapılıyor...";
 
     const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
     const sifre = document.getElementById("sifre").value.trim();
@@ -284,28 +297,18 @@
     try {
       const snap = await getDocs(collection(db, "kullanicilar"));
       let eslesenUser = null;
-
       snap.forEach(docSnap => {
         const u = docSnap.data();
         if ((u.kullaniciAdi && u.kullaniciAdi.toLowerCase() === kAdi) && u.sifre === sifre && u.rol === "ogretmen") {
           eslesenUser = { id: docSnap.id, ...u };
         }
       });
-
-      if (!eslesenUser) {
-        eslesenUser = { id: kAdi, kullaniciAdi: kAdi, adSoyad: kAdi, brans: kAdi };
-      }
-
+      if (!eslesenUser) eslesenUser = { id: kAdi, kullaniciAdi: kAdi, adSoyad: kAdi, brans: kAdi };
       aktifOgretmen = eslesenUser;
       localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
       paneliAc();
-
-    } catch (err) {
-      alert("Giriş sırasında hata oluştu: " + err.message);
-    } finally {
-      gBtn.disabled = false;
-      gBtn.innerText = "Giriş Yap";
-    }
+    } catch (err) { alert("Giriş hatası: " + err.message); } 
+    finally { gBtn.disabled = false; gBtn.innerText = "Giriş Yap"; }
   });
 
   function paneliAc() {
@@ -315,21 +318,20 @@
 
     ogrencileriYukle();
     paylasimlariCanliIzle();
-    kayitliSinaviYukle();
-    raporlariYukle();
+    raporlariCanliIzle();
   }
 
   function cikisYap() {
     localStorage.removeItem("ongoru_ogretmen");
-    document.getElementById("girisAlani").style.display = "block";
-    document.getElementById("panelAlani").style.display = "none";
-    document.getElementById("cikisBtn").style.display = "none";
+    location.reload();
   }
-
   document.getElementById("cikisBtn").addEventListener("click", cikisYap);
 
-  // TESTİ ÖĞRENCİ PANELİNE GÖNDERME
-  document.getElementById("sinavKaydetBtn").addEventListener("click", () => {
+  // TESTİ FİREBASE'E GÖNDER
+  document.getElementById("sinavKaydetBtn").addEventListener("click", async () => {
+    const baslik = document.getElementById("testBasligi").value.trim();
+    if (!baslik) { alert("Lütfen bir test başlığı girin!"); return; }
+
     const hazirSorular = [];
     for (let i = 1; i <= 20; i++) {
       const text = document.getElementById(`q_text_${i}`).value.trim();
@@ -341,80 +343,91 @@
 
       if (text !== "") {
         if (!a || !b || !c || !d || !ans) {
-          alert(`Soru ${i} için 4 şıkkı ve doğru cevap anahtarını eksiksiz seçmelisiniz.`);
+          alert(`Soru ${i} için şıkları ve doğru cevabı eksiksiz girin.`);
           return;
         }
         hazirSorular.push({ id: i, text, options: { A: a, B: b, C: c, D: d }, answer: ans });
       }
     }
 
-    if (hazirSorular.length === 0) {
-      alert("Lütfen en az 1 adet soru metni giriniz.");
-      return;
-    }
+    if (hazirSorular.length === 0) { alert("En az 1 soru doldurmalısınız."); return; }
 
-    const ogretmenKey = aktifOgretmen.kullaniciAdi || aktifOgretmen.id;
-    localStorage.setItem(`sinav_${ogretmenKey}`, JSON.stringify(hazirSorular));
-    alert(`${hazirSorular.length} soruluk test öğrenci paneline gönderildi ve kaydedildi!`);
+    const tur = testHedefTuru.value;
+    let hSinif = tur === "sinif" ? document.getElementById("testHedefSinif").value : "";
+    let hOgrenci = tur === "ogrenci" ? document.getElementById("testHedefOgrenci").value : "";
+
+    const btn = document.getElementById("sinavKaydetBtn");
+    btn.disabled = true; btn.innerText = "Gönderiliyor...";
+
+    try {
+      await addDoc(collection(db, "testler"), {
+        ogretmenId: aktifOgretmen.id || aktifOgretmen.kullaniciAdi,
+        ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
+        baslik: baslik,
+        hedefTuru: tur,
+        hedefSinif: hSinif,
+        hedefOgrenciId: hOgrenci,
+        sorular: hazirSorular,
+        tarih: new Date().toLocaleString('tr-TR')
+      });
+
+      alert("Test başarıyla hedeflenen öğrenciye/sınıfa gönderildi!");
+      document.getElementById("testBasligi").value = "";
+      soruInputlariniOlustur();
+    } catch(err) {
+      alert("Hata: " + err.message);
+    } finally {
+      btn.disabled = false; btn.innerText = "Testi Belirtilen Hedefe Gönder";
+    }
   });
 
-  function kayitliSinaviYukle() {
-    const ogretmenKey = aktifOgretmen.kullaniciAdi || aktifOgretmen.id;
-    const sinav = JSON.parse(localStorage.getItem(`sinav_${ogretmenKey}`));
-    if (!sinav) return;
+  // CANLI RAPOR TAKİBİ
+  function raporlariCanliIzle() {
+    const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
+    onSnapshot(collection(db, "test_sonuclari"), (snapshot) => {
+      const tbody = document.getElementById("ogrenciRaporBody");
+      tbody.innerHTML = "";
+      let raporVar = false;
 
-    sinav.forEach(q => {
-      if (document.getElementById(`q_text_${q.id}`)) {
-        document.getElementById(`q_text_${q.id}`).value = q.text;
-        document.getElementById(`q_optA_${q.id}`).value = q.options.A;
-        document.getElementById(`q_optB_${q.id}`).value = q.options.B;
-        document.getElementById(`q_optC_${q.id}`).value = q.options.C;
-        document.getElementById(`q_optD_${q.id}`).value = q.options.D;
-        document.getElementById(`q_ans_${q.id}`).value = q.answer;
+      snapshot.forEach(docSnap => {
+        const r = docSnap.data();
+        if (r.ogretmenId === ogretmenId) {
+          raporVar = true;
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${escapeHtml(r.ogrenciAd)}</strong></td>
+              <td>${escapeHtml(r.testBaslik)}</td>
+              <td><span style="color:#22c55e;">${r.dogru}D</span> / <span style="color:#ff3333;">${r.yanlis}Y</span> / ${r.bos}B</td>
+              <td style="color:#ff7a00; font-weight:bold;">%${Number(r.basari).toFixed(1)}</td>
+            </tr>
+          `;
+        }
+      });
+
+      if (!raporVar) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>`;
       }
     });
   }
 
-  // ÖĞRENCİ BAŞARI DÜZEYİ RAPORLARINI YÜKLE
-  function raporlariYukle() {
-    const ogretmenKey = aktifOgretmen.kullaniciAdi || aktifOgretmen.id;
-    const raporlar = JSON.parse(localStorage.getItem(`raporlar_${ogretmenKey}`)) || [];
-    const tbody = document.getElementById("ogrenciRaporBody");
-    
-    if (raporlar.length === 0) return;
-
-    tbody.innerHTML = "";
-    raporlar.forEach(r => {
-      tbody.innerHTML += `
-        <tr>
-          <td><strong>${escapeHtml(r.ogrenci)}</strong></td>
-          <td style="color:#22c55e; font-weight:bold;">${r.dogru}</td>
-          <td style="color:#ff3333; font-weight:bold;">${r.yanlis}</td>
-          <td>${r.bos}</td>
-          <td style="color:#ff7a00; font-weight:bold;">%${Number(r.basari).toFixed(1)}</td>
-        </tr>
-      `;
-    });
-  }
-
-  // ÖĞRENCİLERİ LİSTELEME
   async function ogrencileriYukle() {
-    const select = document.getElementById("hedefOgrenci");
-    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
+    const s1 = document.getElementById("hedefOgrenci");
+    const s2 = document.getElementById("testHedefOgrenci");
+    s1.innerHTML = s2.innerHTML = "<option value=''>Öğrenci Seçin...</option>";
+
     try {
       const snap = await getDocs(collection(db, "kullanicilar"));
       snap.forEach(docSnap => {
         const u = docSnap.data();
         if(u.rol === "ogrenci") {
-          select.innerHTML += `<option value="${docSnap.id}">${escapeHtml(u.adSoyad || u.kullaniciAdi)} (${escapeHtml(u.sinif || 'Sınıfsız')})</option>`;
+          const opt = `<option value="${docSnap.id}">${escapeHtml(u.adSoyad || u.kullaniciAdi)} (${escapeHtml(u.sinif || 'Sınıfsız')})</option>`;
+          s1.innerHTML += opt;
+          s2.innerHTML += opt;
         }
       });
-    } catch (err) {
-      console.error("Öğrenciler alınamadı:", err);
-    }
+    } catch (err) { console.error("Öğrenciler yüklenemedi:", err); }
   }
 
-  // DOSYA METİN OKUYUCU (Base64)
   function dosyayiOku(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -424,40 +437,20 @@
     });
   }
 
-  // PAYLAŞIM GÖNDERME
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
-    btn.disabled = true;
-    btn.innerText = "Paylaşılıyor...";
+    btn.disabled = true; btn.innerText = "Paylaşılıyor...";
 
     try {
       const tur = hedefTuru.value;
-      let hedefSinifVal = "";
-      let hedefOgrenciVal = "";
-
-      if (tur === "sinif") {
-        hedefSinifVal = document.getElementById("hedefSinif").value;
-        if (!hedefSinifVal) { alert("Lütfen bir sınıf seçin!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
-      } else if (tur === "ogrenci") {
-        hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
-        if (!hedefOgrenciVal) { alert("Lütfen bir öğrenci seçin!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
-      }
-
-      let dosyaUrl = "";
-      let dosyaAdi = "";
+      let dUrl = "", dAdi = "";
 
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-        // Base64 boyut büyümesi sebebiyle sınır 500 KB olarak belirlendi
-        if (file.size > 500 * 1024) {
-          alert("Dosya boyutu Firestore limitleri nedeniyle maksimum 500 KB olmalıdır!");
-          btn.disabled = false;
-          btn.innerText = "Paylaş";
-          return;
-        }
-        dosyaAdi = file.name;
-        dosyaUrl = await dosyayiOku(file);
+        if (file.size > 500 * 1024) { alert("Dosya 500 KB'dan büyük olamaz!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
+        dAdi = file.name;
+        dUrl = await dosyayiOku(file);
       }
 
       await addDoc(collection(db, "paylasimlar"), {
@@ -467,28 +460,19 @@
         baslik: document.getElementById("baslik").value.trim(),
         aciklama: document.getElementById("aciklama").value.trim(),
         hedefTuru: tur,
-        hedefSinif: hedefSinifVal,
-        hedefOgrenciId: hedefOgrenciVal,
-        dosyaUrl: dosyaUrl,
-        dosyaAdi: dosyaAdi,
+        hedefSinif: tur === "sinif" ? document.getElementById("hedefSinif").value : "",
+        hedefOgrenciId: tur === "ogrenci" ? document.getElementById("hedefOgrenci").value : "",
+        dosyaUrl: dUrl,
+        dosyaAdi: dAdi,
         tarih: new Date().toLocaleString('tr-TR')
       });
 
-      alert("Paylaşım başarıyla gönderildi!");
+      alert("Paylaşım gönderildi!");
       document.getElementById("paylasimForm").reset();
-      dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
-      sinifKutu.style.display = "none";
-      ogrenciKutu.style.display = "none";
-
-    } catch (err) {
-      alert("Gönderim Hatası: " + err.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Paylaş";
-    }
+    } catch (err) { alert("Hata: " + err.message); } 
+    finally { btn.disabled = false; btn.innerText = "Paylaş"; }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ
   function paylasimlariCanliIzle() {
     if(!aktifOgretmen) return;
     const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
@@ -496,55 +480,30 @@
     onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
       const liste = document.getElementById("paylasimListesi");
       liste.innerHTML = "";
-      let paylasimVarMi = false;
+      let pVar = false;
 
       snapshot.forEach((docSnap) => {
         const p = docSnap.data();
-        const id = docSnap.id;
-
         if (p.ogretmenId === ogretmenId) {
-          paylasimVarMi = true;
-          let hedefMetin = "Tüm Okul";
-          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${escapeHtml(p.hedefSinif)}`;
-          if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
-
+          pVar = true;
           const kart = document.createElement("div");
           kart.className = "kart";
           kart.innerHTML = `
-            <h4>${escapeHtml(p.baslik)} <span class="hedef-rozet">${hedefMetin}</span></h4>
+            <h4>${escapeHtml(p.baslik)}</h4>
             <p>${escapeHtml(p.aciklama)}</p>
-            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${escapeHtml(p.dosyaAdi)}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${escapeHtml(p.dosyaAdi) || 'Ekli Dosyayı İndir'}</a>` : ''}
+            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${escapeHtml(p.dosyaAdi)}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${escapeHtml(p.dosyaAdi)}</a>` : ''}
             <div class="kart-bilgi">
-              <span><i class="fa-regular fa-clock"></i> ${escapeHtml(p.tarih)}</span>
+              <span>${escapeHtml(p.tarih)}</span>
               <button class="sil-btn"><i class="fa-solid fa-trash"></i> Sil</button>
             </div>
           `;
-
-          // Silme butonuna event listener bağlama
-          kart.querySelector(".sil-btn").addEventListener("click", () => paylasimSil(id));
+          kart.querySelector(".sil-btn").addEventListener("click", () => deleteDoc(doc(db, "paylasimlar", docSnap.id)));
           liste.appendChild(kart);
         }
       });
-
-      if (!paylasimVarMi) {
-        liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
-      }
-    }, (err) => {
-      document.getElementById("paylasimListesi").innerHTML = `<p style="color:#ff4444; font-size:12px;">Liste Okuma Hatası: ${err.message}</p>`;
+      if (!pVar) liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz paylaşım yapılmadı.</p>";
     });
   }
-
-  // SILME FONKSİYONU
-  async function paylasimSil(id) {
-    if (confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) {
-      try {
-        await deleteDoc(doc(db, "paylasimlar", id));
-      } catch (err) {
-        alert("Silinirken hata oluştu: " + err.message);
-      }
-    }
-  }
 </script>
-
 </body>
 </html>
