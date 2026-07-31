@@ -46,10 +46,8 @@
     .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #ff7a00; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 5px; }
     .dosya-indir-btn:hover { background: white; color: #ff7a00; }
 
-    .sil-btn { background: #ff3333; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
-    .sil-btn:hover { background: #cc0000; }
-    
-    .hedef-rozet { background: #444; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #ff7a00; font-weight: bold; }
+    .sil-btn { background: #ff3333; color: white; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
+    .sil-btn:hover { background: #cc0000; color: white; }
 
     /* SINAV HAZIRLAMA KUTULARI */
     .soru-olustur-kutusu { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #444; }
@@ -124,7 +122,7 @@
   <!-- SAĞ BÖLÜM: BAŞARI DÜZEYİ & DERS NOTU PAYLAŞIMI -->
   <div class="kutu">
     <h2><i class="fa-solid fa-chart-line"></i> Öğrenci Test Başarı Düzeyi (Canlı)</h2>
-    <div class="liste" style="max-height: 200px;">
+    <div class="liste" style="max-height: 250px;">
       <table class="rapor-tablo">
         <thead>
           <tr>
@@ -132,10 +130,11 @@
             <th>Test</th>
             <th>D / Y / B</th>
             <th>Başarı (%)</th>
+            <th>İşlem</th>
           </tr>
         </thead>
         <tbody id="ogrenciRaporBody">
-          <tr><td colspan="4" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>
+          <tr><td colspan="5" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>
         </tbody>
       </table>
     </div>
@@ -381,7 +380,7 @@
     }
   });
 
-  // CANLI RAPOR TAKİBİ
+  // CANLI RAPOR TAKİBİ VE ÖĞRENCİ SONUCUNU SİLME
   function raporlariCanliIzle() {
     const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
     onSnapshot(collection(db, "test_sonuclari"), (snapshot) => {
@@ -393,19 +392,33 @@
         const r = docSnap.data();
         if (r.ogretmenId === ogretmenId) {
           raporVar = true;
-          tbody.innerHTML += `
-            <tr>
-              <td><strong>${escapeHtml(r.ogrenciAd)}</strong></td>
-              <td>${escapeHtml(r.testBaslik)}</td>
-              <td><span style="color:#22c55e;">${r.dogru}D</span> / <span style="color:#ff3333;">${r.yanlis}Y</span> / ${r.bos}B</td>
-              <td style="color:#ff7a00; font-weight:bold;">%${Number(r.basari).toFixed(1)}</td>
-            </tr>
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${escapeHtml(r.ogrenciAd)}</strong></td>
+            <td>${escapeHtml(r.testBaslik)}</td>
+            <td><span style="color:#22c55e;">${r.dogru}D</span> / <span style="color:#ff3333;">${r.yanlis}Y</span> / ${r.bos}B</td>
+            <td style="color:#ff7a00; font-weight:bold;">%${Number(r.basari).toFixed(1)}</td>
+            <td><button class="sil-btn test-sonuc-sil-btn" title="Sonucu Sil"><i class="fa-solid fa-trash"></i> Sil</button></td>
           `;
+
+          // Öğrencinin Test Sonucunu Silme Olayı
+          tr.querySelector(".test-sonuc-sil-btn").addEventListener("click", async () => {
+            if (confirm(`${r.ogrenciAd} isimli öğrencinin "${r.testBaslik}" test sonucunu silmek istediğinize emin misiniz?`)) {
+              try {
+                await deleteDoc(doc(db, "test_sonuclari", docSnap.id));
+                alert("Test sonucu başarıyla silindi.");
+              } catch (err) {
+                alert("Silme hatası: " + err.message);
+              }
+            }
+          });
+
+          tbody.appendChild(tr);
         }
       });
 
       if (!raporVar) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #aaa;">Henüz çözülen test bulunmuyor.</td></tr>`;
       }
     });
   }
