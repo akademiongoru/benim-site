@@ -732,102 +732,91 @@
   });
 
   async function ogretmenTestleriniYukle() {
-    const select = document.getElementById("testSecimDropdown");
-    select.innerHTML = "<option value=''>Test Seçiniz</option>";
-    
     if(!aktifOgretmen) return;
     const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
+    const select = document.getElementById("testSecimDropdown");
+    select.innerHTML = "<option value=''>Test yükleniyor...</option>";
 
     try {
       const q = query(collection(db, "testler"), where("ogretmenId", "==", ogretmenId));
       const snap = await getDocs(q);
-      
+
+      select.innerHTML = "<option value=''>Lütfen bir test seçin</option>";
+
+      if(snap.empty) {
+        select.innerHTML = "<option value=''>Yayınlanmış testiniz bulunamadı</option>";
+        return;
+      }
+
       snap.forEach(docSnap => {
         const t = docSnap.data();
         select.innerHTML += `<option value="${docSnap.id}">${t.baslik} (${t.hedefSinif}) - ${t.tarih}</option>`;
       });
+
+      select.onchange = (e) => testRaporuGetir(e.target.value);
     } catch(err) {
-      console.error("Testler getirilemedi:", err);
+      console.error("Testler yüklenemedi:", err);
+      select.innerHTML = "<option value=''>Testler yüklenirken hata oluştu</option>";
     }
   }
 
-  document.getElementById("testSecimDropdown").addEventListener("change", async (e) => {
-    const testId = e.target.value;
-    const detayAlani = document.getElementById("testRaporDetayAlani");
-
+  async function testRaporuGetir(testId) {
+    const alan = document.getElementById("testRaporDetayAlani");
     if(!testId) {
-      detayAlani.innerHTML = `<p style="color:#aaa; font-size:13px;">Lütfen detaylarını ve başarı durumunu görmek için yukarıdan bir test seçiniz.</p>`;
+      alan.innerHTML = "<p style='color:#aaa; font-size:13px;'>Lütfen detaylarını ve başarı durumunu görmek için yukarıdan bir test seçiniz.</p>";
       return;
     }
 
-    detayAlani.innerHTML = "<p style='color:#aaa;'><i class='fa-solid fa-spinner fa-spin'></i> Sonuçlar yükleniyor...</p>";
+    alan.innerHTML = "<p style='color:#aaa; font-size:13px;'><i class='fa-solid fa-spinner fa-spin'></i> Rapor ve sonuçlar yükleniyor...</p>";
 
     try {
-      const q = query(collection(db, "test_sonuclari"), where("testId", "==", testId));
+      const q = query(collection(db, "testSonuclari"), where("testId", "==", testId));
       const snap = await getDocs(q);
 
       if(snap.empty) {
-        detayAlani.innerHTML = `<p style="color:#ff7a00; font-size:14px;"><i class="fa-solid fa-info-circle"></i> Bu testi henüz hiçbir öğrenci tamamlamadı.</p>`;
+        alan.innerHTML = "<p style='color:#ffc107; font-size:13px;'>Bu testi henüz hiçbir öğrenci çözmedi.</p>";
         return;
       }
 
-      let toplamPuan = 0;
-      let ogrenciSayisi = 0;
       let tabloHtml = `
         <table class="sonuc-tablo">
           <thead>
             <tr>
               <th>Öğrenci Adı</th>
-              <th>Sınıfı</th>
               <th>Doğru</th>
               <th>Yanlış</th>
               <th>Boş</th>
               <th>Puan</th>
-              <th>Başarı Düzeyi</th>
+              <th>Tamamlama Tarihi</th>
             </tr>
           </thead>
           <tbody>
       `;
 
       snap.forEach(docSnap => {
-        const s = docSnap.data();
-        ogrenciSayisi++;
-        toplamPuan += (s.puan || 0);
-
-        let basariSinif = "basari-dusuk";
-        if(s.puan >= 70) basariSinif = "basari-yuksek";
-        else if(s.puan >= 50) basariSinif = "basari-orta";
+        const r = docSnap.data();
+        let puanSinif = "basari-orta";
+        if(r.puan >= 70) puanSinif = "basari-yuksek";
+        if(r.puan < 45) puanSinif = "basari-dusuk";
 
         tabloHtml += `
           <tr>
-            <td>${s.ogrenciAd || 'Bilinmiyor'}</td>
-            <td>${s.sinif || '-'}</td>
-            <td style="color:#4CAF50; font-weight:bold;">${s.dogruSayisi || 0}</td>
-            <td style="color:#F44336; font-weight:bold;">${s.yanlisSayisi || 0}</td>
-            <td style="color:#aaa;">${s.bosSayisi || 0}</td>
-            <td style="font-weight:bold;">${s.puan || 0} / 100</td>
-            <td class="${basariSinif}">%${s.puan || 0}</td>
+            <td>${r.ogrenciAd || 'Bilinmeyen Öğrenci'}</td>
+            <td style="color:#4CAF50; font-weight:bold;">${r.dogruSayisi || 0}</td>
+            <td style="color:#F44336; font-weight:bold;">${r.yanlisSayisi || 0}</td>
+            <td style="color:#aaa;">${r.bosSayisi || 0}</td>
+            <td class="${puanSinif}">${r.puan || 0}</td>
+            <td style="font-size:11px; color:#aaa;">${r.tarih || '-'}</td>
           </tr>
         `;
       });
 
-      const sinifOrtalamasi = Math.round(toplamPuan / ogrenciSayisi);
-
-      tabloHtml += `
-          </tbody>
-        </table>
-        <div style="margin-top:15px; padding:15px; background:#252525; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
-          <span>Sınava Giren Öğrenci Sayısı: <strong>${ogrenciSayisi}</strong></span>
-          <span>Sınıf Başarı Ortalaması: <strong style="color:#ff7a00; font-size:18px;">%${sinifOrtalamasi}</strong></span>
-        </div>
-      `;
-
-      detayAlani.innerHTML = tabloHtml;
-
+      tabloHtml += "tbody></table>";
+      alan.innerHTML = tabloHtml;
     } catch(err) {
-      detayAlani.innerHTML = `<p style="color:#ff3333;">Sonuçlar alınırken hata oluştu: ${err.message}</p>`;
+      alan.innerHTML = `<p style="color:#F44336; font-size:13px;">Rapor yüklenirken hata oluştu: ${err.message}</p>`;
     }
-  });
+  }
 </script>
 
 </body>
