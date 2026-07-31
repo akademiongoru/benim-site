@@ -121,7 +121,7 @@
   <!-- SEKMELER -->
   <div class="nav-sekmeler">
     <button class="sekme-btn aktif" id="sekmeBtnNot" onclick="sekmeDegistir('notPaylasim')"><i class="fa-solid fa-folder-open"></i> Ders Notu & Ödev Paylaş</button>
-    <button class="sekme-btn" id="sekmeBtnTest" onclick="sekmeDegistir('testOlustur')"><i class="fa-solid fa-file-pen"></i> 25 Soruluk Test Oluştur</button>
+    <button class="sekme-btn" id="sekmeBtnTest" onclick="sekmeDegistir('testOlustur')"><i class="fa-solid fa-file-pen"></i> Online Test Oluştur (20 Soru)</button>
     <button class="sekme-btn" id="sekmeBtnRapor" onclick="sekmeDegistir('testSonuclari')"><i class="fa-solid fa-chart-line"></i> Test Sonuçları & Raporlar</button>
   </div>
 
@@ -192,13 +192,13 @@
 
   <div class="panel-bolum" id="sekme-testOlustur">
     <div class="kutu">
-      <h2><i class="fa-solid fa-list-check"></i> 25 Soruluk Online Test Hazırlama</h2>
+      <h2><i class="fa-solid fa-list-check"></i> Online Test Hazırlama (Maksimum 20 Soru)</h2>
       <form id="testOlusturForm">
         
         <div class="grid-2">
           <div>
             <label style="font-size:12px; color:#aaa;">Test Başlığı:</label>
-            <input type="text" id="testBaslik" placeholder="Örn: 7. Sınıf Matematik 1. Dönem Değerlendirme" required>
+            <input type="text" id="testBaslik" placeholder="Örn: 7. Sınıf Matematik Değerlendirme" required>
           </div>
           <div>
             <label style="font-size:12px; color:#aaa;">Hedef Sınıf Düzeyi:</label>
@@ -218,10 +218,11 @@
 
         <div style="margin-bottom: 15px;">
           <label style="font-size:12px; color:#aaa;">Test Süresi (Dakika):</label>
-          <input type="number" id="testSuresi" value="40" min="5" max="180" required>
+          <input type="number" id="testSuresi" value="30" min="5" max="180" required>
         </div>
 
-        <h3 style="color:#ff7a00; font-size:16px; margin: 15px 0 10px 0;">Sorular ve Cevap Anahtarı (25 Soru)</h3>
+        <h3 style="color:#ff7a00; font-size:16px; margin: 15px 0 5px 0;">Sorular ve Cevap Anahtarı</h3>
+        <p style="font-size:12px; color:#aaa; margin-bottom:12px;">Dilediğiniz kadar soru doldurabilirsiniz (Tüm 20 soruyu doldurma zorunluluğu yoktur).</p>
         
         <!-- HIZLI SORU GEÇİŞ BUTONLARI -->
         <div class="soru-nav-container" id="soruNavGrid"></div>
@@ -230,7 +231,7 @@
         <div id="aktifSoruFormAlani"></div>
 
         <button type="submit" id="testKaydetBtn" style="margin-top: 15px; font-size: 16px; padding: 15px;">
-          <i class="fa-solid fa-paper-plane"></i> 25 Soruluk Testi Yayınla
+          <i class="fa-solid fa-paper-plane"></i> Testi Yayınla
         </button>
       </form>
     </div>
@@ -284,8 +285,9 @@
   let aktifOgretmen = null;
   let tumOgrencilerListesi = [];
 
-  // 25 SORULUK TEST VERİ YAPISI
-  const testSorulariVeri = Array.from({ length: 25 }, (_, index) => ({
+  // 20 SORULUK TEST VERİ YAPISI
+  const MAX_SORU_SAYISI = 20;
+  const testSorulariVeri = Array.from({ length: MAX_SORU_SAYISI }, (_, index) => ({
     soruNo: index + 1,
     soruMetni: "",
     secenekA: "",
@@ -358,6 +360,19 @@
     }
   });
 
+  // OTURUM KONTROLÜ (SAYFA YENİLENDİĞİNDE ŞİFRE İSTEMEMESİ İÇİN)
+  window.addEventListener("DOMContentLoaded", () => {
+    const kayitliOturum = localStorage.getItem("ongoruOgretmenOturum");
+    if (kayitliOturum) {
+      try {
+        aktifOgretmen = JSON.parse(kayitliOturum);
+        panelAc();
+      } catch (e) {
+        localStorage.removeItem("ongoruOgretmenOturum");
+      }
+    }
+  });
+
   document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const kAd = document.getElementById("kullaniciAdi").value.trim();
@@ -372,6 +387,7 @@
         let data = userDoc.data();
         if (data.rol === "ogretmen" || data.rol === "admin") {
           aktifOgretmen = { id: userDoc.id, ...data };
+          localStorage.setItem("ongoruOgretmenOturum", JSON.stringify(aktifOgretmen));
           panelAc();
           return;
         }
@@ -385,9 +401,10 @@
           brans: "Matematik",
           rol: "ogretmen"
         };
+        localStorage.setItem("ongoruOgretmenOturum", JSON.stringify(aktifOgretmen));
         panelAc();
       } else {
-        showToast("Hatalı kullanıcı adı veya şifre! (Varsayılan: ogretmen / 123456)", "#F44336");
+        showToast("Hatalı kullanıcı adı veya şifre!", "#F44336");
       }
     } catch (err) {
       showToast("Giriş yapılırken hata oluştu: " + err.message, "#F44336");
@@ -408,6 +425,7 @@
 
   document.getElementById("cikisBtn").addEventListener("click", () => {
     aktifOgretmen = null;
+    localStorage.removeItem("ongoruOgretmenOturum");
     document.getElementById("panelAlani").style.display = "none";
     document.getElementById("girisAlani").style.display = "block";
     document.getElementById("cikisBtn").style.display = "none";
@@ -513,7 +531,7 @@
         const file = dosyaInput.files[0];
 
         if (file.size > 5000 * 1024) {
-          showToast("Lütfen 5 MB'dan küçük bir dosya veya görsel seçin!", "#F44336");
+          showToast("Lütfen 5 MB'dan küçük bir dosya seçin!", "#F44336");
           btn.disabled = false;
           btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Paylaş`;
           return;
@@ -645,20 +663,20 @@
 
     container.innerHTML = `
       <div class="soru-kutu">
-        <h4 style="color:#ff7a00; margin-bottom:12px;">Soru ${s.soruNo} / 25</h4>
+        <h4 style="color:#ff7a00; margin-bottom:12px;">Soru ${s.soruNo} / 20</h4>
         <label style="font-size:12px; color:#aaa;">Soru Metni:</label>
-        <textarea id="soruMetniInput" placeholder="Soru metnini yazınız..." required>${s.soruMetni}</textarea>
+        <textarea id="soruMetniInput" placeholder="Soru metnini yazınız...">${s.soruMetni}</textarea>
         
         <label style="font-size:12px; color:#aaa;">Şıklar:</label>
         <div class="sik-grid">
-          <input type="text" id="secenekAInput" placeholder="A) Şıkkı" value="${s.secenekA}" required>
-          <input type="text" id="secenekBInput" placeholder="B) Şıkkı" value="${s.secenekB}" required>
-          <input type="text" id="secenekCInput" placeholder="C) Şıkkı" value="${s.secenekC}" required>
-          <input type="text" id="secenekDInput" placeholder="D) Şıkkı" value="${s.secenekD}" required>
+          <input type="text" id="secenekAInput" placeholder="A) Şıkkı" value="${s.secenekA}">
+          <input type="text" id="secenekBInput" placeholder="B) Şıkkı" value="${s.secenekB}">
+          <input type="text" id="secenekCInput" placeholder="C) Şıkkı" value="${s.secenekC}">
+          <input type="text" id="secenekDInput" placeholder="D) Şıkkı" value="${s.secenekD}">
         </div>
 
         <label style="font-size:12px; color:#aaa; margin-top:10px; display:block;">Cevap Anahtarı (Doğru Cevap):</label>
-        <select id="dogruCevapSelect" required>
+        <select id="dogruCevapSelect">
           <option value="A" ${s.dogruCevap === 'A' ? 'selected' : ''}>A Şıkkı</option>
           <option value="B" ${s.dogruCevap === 'B' ? 'selected' : ''}>B Şıkkı</option>
           <option value="C" ${s.dogruCevap === 'C' ? 'selected' : ''}>C Şıkkı</option>
@@ -673,19 +691,30 @@
     });
   }
 
+  // TESTİ YAYINLA
   document.getElementById("testOlusturForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     mevcutSoruyuKaydet();
 
-    const eksikSoru = testSorulariVeri.find(s => !s.soruMetni.trim() || !s.secenekA.trim() || !s.secenekB.trim() || !s.secenekC.trim() || !s.secenekD.trim());
-    
-    if (eksikSoru) {
-      showToast(`Lütfen Soru ${eksikSoru.soruNo}'in metnini ve tüm şıklarını doldurunuz!`, "#F44336");
-      suAnkiSoruIndex = eksikSoru.soruNo - 1;
-      soruNavGridOlustur();
-      soruFormuCiz(suAnkiSoruIndex);
+    // Sadece soru metni ve tüm şıkları tam olarak doldurulmuş soruları filtrele
+    const doldurulanSorular = testSorulariVeri.filter(s => 
+      s.soruMetni.trim() !== "" && 
+      s.secenekA.trim() !== "" && 
+      s.secenekB.trim() !== "" && 
+      s.secenekC.trim() !== "" && 
+      s.secenekD.trim() !== ""
+    );
+
+    if (doldurulanSorular.length === 0) {
+      showToast("Lütfen yayınlamak için en az 1 tane soruyu (metin ve tüm şıklarıyla) eksiksiz doldurunuz!", "#F44336");
       return;
     }
+
+    // Soruların soru numaralarını düzenle (1, 2, 3...)
+    const kaydedilecekSorular = doldurulanSorular.map((s, index) => ({
+      ...s,
+      soruNo: index + 1
+    }));
 
     const testBtn = document.getElementById("testKaydetBtn");
     testBtn.disabled = true;
@@ -695,7 +724,7 @@
       const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
       const testBaslik = document.getElementById("testBaslik").value.trim();
       const testHedefSinif = document.getElementById("testHedefSinif").value;
-      const testSuresi = parseInt(document.getElementById("testSuresi").value) || 40;
+      const testSuresi = parseInt(document.getElementById("testSuresi").value) || 30;
 
       await addDoc(collection(db, "testler"), {
         ogretmenId: ogretmenId,
@@ -705,10 +734,10 @@
         hedefSinif: testHedefSinif,
         sureDakika: testSuresi,
         tarih: new Date().toLocaleString('tr-TR'),
-        sorular: testSorulariVeri
+        sorular: kaydedilecekSorular
       });
 
-      showToast("25 Soruluk Test Başarıyla Oluşturuldu ve Yayınlandı!", "#4CAF50");
+      showToast(`Tebrikler! ${kaydedilecekSorular.length} Soruluk Test Başarıyla Yayınlandı.`, "#4CAF50");
       document.getElementById("testOlusturForm").reset();
       
       testSorulariVeri.forEach(s => {
@@ -727,24 +756,22 @@
       showToast("Test kaydedilirken hata oluştu: " + err.message, "#F44336");
     } finally {
       testBtn.disabled = false;
-      testBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> 25 Soruluk Testi Yayınla`;
+      testBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Testi Yayınla`;
     }
   });
 
   async function ogretmenTestleriniYukle() {
-    if(!aktifOgretmen) return;
+    if (!aktifOgretmen) return;
     const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
     const select = document.getElementById("testSecimDropdown");
-    select.innerHTML = "<option value=''>Test yükleniyor...</option>";
+    select.innerHTML = "<option value=''>Test Seçiniz...</option>";
 
     try {
       const q = query(collection(db, "testler"), where("ogretmenId", "==", ogretmenId));
       const snap = await getDocs(q);
 
-      select.innerHTML = "<option value=''>Lütfen bir test seçin</option>";
-
-      if(snap.empty) {
-        select.innerHTML = "<option value=''>Yayınlanmış testiniz bulunamadı</option>";
+      if (snap.empty) {
+        select.innerHTML = "<option value=''>Yayınlanmış test bulunamadı</option>";
         return;
       }
 
@@ -753,41 +780,41 @@
         select.innerHTML += `<option value="${docSnap.id}">${t.baslik} (${t.hedefSinif}) - ${t.tarih}</option>`;
       });
 
-      select.onchange = (e) => testRaporuGetir(e.target.value);
-    } catch(err) {
-      console.error("Testler yüklenemedi:", err);
-      select.innerHTML = "<option value=''>Testler yüklenirken hata oluştu</option>";
+      select.onchange = (e) => testRaporuYukle(e.target.value);
+    } catch (err) {
+      showToast("Testler yüklenirken hata oluştu: " + err.message, "#F44336");
     }
   }
 
-  async function testRaporuGetir(testId) {
+  async function testRaporuYukle(testId) {
     const alan = document.getElementById("testRaporDetayAlani");
-    if(!testId) {
+    if (!testId) {
       alan.innerHTML = "<p style='color:#aaa; font-size:13px;'>Lütfen detaylarını ve başarı durumunu görmek için yukarıdan bir test seçiniz.</p>";
       return;
     }
 
-    alan.innerHTML = "<p style='color:#aaa; font-size:13px;'><i class='fa-solid fa-spinner fa-spin'></i> Rapor ve sonuçlar yükleniyor...</p>";
+    alan.innerHTML = "<p style='color:#aaa; font-size:13px;'><i class='fa-solid fa-spinner fa-spin'></i> Raporlar yükleniyor...</p>";
 
     try {
       const q = query(collection(db, "testSonuclari"), where("testId", "==", testId));
       const snap = await getDocs(q);
 
-      if(snap.empty) {
-        alan.innerHTML = "<p style='color:#ffc107; font-size:13px;'>Bu testi henüz hiçbir öğrenci çözmedi.</p>";
+      if (snap.empty) {
+        alan.innerHTML = "<p style='color:#aaa; font-size:13px;'>Bu testi henüz çözen öğrenci bulunmuyor.</p>";
         return;
       }
 
-      let tabloHtml = `
+      let html = `
         <table class="sonuc-tablo">
           <thead>
             <tr>
               <th>Öğrenci Adı</th>
+              <th>Sınıfı</th>
               <th>Doğru</th>
               <th>Yanlış</th>
               <th>Boş</th>
               <th>Puan</th>
-              <th>Tamamlama Tarihi</th>
+              <th>Tarih</th>
             </tr>
           </thead>
           <tbody>
@@ -796,25 +823,27 @@
       snap.forEach(docSnap => {
         const r = docSnap.data();
         let puanSinif = "basari-orta";
-        if(r.puan >= 70) puanSinif = "basari-yuksek";
-        if(r.puan < 45) puanSinif = "basari-dusuk";
+        if (r.puan >= 80) puanSinif = "basari-yuksek";
+        else if (r.puan < 50) puanSinif = "basari-dusuk";
 
-        tabloHtml += `
+        html += `
           <tr>
-            <td>${r.ogrenciAd || 'Bilinmeyen Öğrenci'}</td>
+            <td>${r.ogrenciAd || 'Bilinmiyor'}</td>
+            <td>${r.sinif || '-'}</td>
             <td style="color:#4CAF50; font-weight:bold;">${r.dogruSayisi || 0}</td>
             <td style="color:#F44336; font-weight:bold;">${r.yanlisSayisi || 0}</td>
-            <td style="color:#aaa;">${r.bosSayisi || 0}</td>
+            <td style="color:#FFC107; font-weight:bold;">${r.bosSayisi || 0}</td>
             <td class="${puanSinif}">${r.puan || 0}</td>
-            <td style="font-size:11px; color:#aaa;">${r.tarih || '-'}</td>
+            <td>${r.tarih || '-'}</td>
           </tr>
         `;
       });
 
-      tabloHtml += "tbody></table>";
-      alan.innerHTML = tabloHtml;
-    } catch(err) {
-      alan.innerHTML = `<p style="color:#F44336; font-size:13px;">Rapor yüklenirken hata oluştu: ${err.message}</p>`;
+      html += "</tbody></table>";
+      alan.innerHTML = html;
+
+    } catch (err) {
+      alan.innerHTML = `<p style='color:#F44336; font-size:13px;'>Rapor yükleme hatası: ${err.message}</p>`;
     }
   }
 </script>
