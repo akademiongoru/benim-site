@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Öğretmen Paneli | Öngörü Akademi</title>
+  <title>Öngörü Akademi | Sınav ve Öğretmen Paneli</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <style>
@@ -15,11 +15,15 @@
     header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; gap:8px; }
 
     /* GİRİŞ EKRANI */
-    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
+    .giris-kutu { max-width:450px; margin:60px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
     .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
+    
+    .rol-secici { display: flex; gap: 10px; margin-bottom: 20px; }
+    .rol-btn { background: #252525; border: 1px solid #ff7a00; color: white; padding: 10px; border-radius: 8px; flex: 1; cursor: pointer; font-weight: bold; }
+    .rol-btn.aktif { background: #ff7a00; color: white; }
 
     input, select, textarea, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline: none; }
-    textarea { resize: vertical; min-height: 100px; }
+    textarea { resize: vertical; min-height: 80px; }
     button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
     button:hover { background:white; color:#ff7a00; }
 
@@ -36,7 +40,7 @@
     .dosya-alani input[type="file"] { display: none; }
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
-    /* PAYLAŞIM LİSTESİ STİLİ */
+    /* PAYLAŞIM LİSTESİ VE TABLOLAR */
     .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
     .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
     .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
@@ -50,12 +54,27 @@
     .sil-btn:hover { background: #cc0000; }
     
     .hedef-rozet { background: #444; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #ff7a00; font-weight: bold; }
+
+    /* SINAV VE TEST ALANI ÖZEL STİLLERİ */
+    .soru-olustur-kutusu { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #444; }
+    .siklar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+    .cevap-anahtari-secim { display: flex; align-items: center; gap: 10px; margin-top: 5px; background: #1f1f1f; padding: 8px; border-radius: 6px; }
+
+    .zamanlayici { background: #ff3333; color: white; font-weight: bold; padding: 8px 16px; border-radius: 20px; font-size: 16px; display: inline-flex; align-items: center; gap: 8px; }
+
+    .ogrenci-sik-label { display: flex; align-items: center; gap: 10px; background: #252525; padding: 10px; border-radius: 8px; border: 1px solid #444; cursor: pointer; margin-bottom: 6px; }
+    .ogrenci-sik-label:hover { border-color: #ff7a00; }
+    .ogrenci-sik-label input[type="radio"] { width: auto; margin: 0; }
+
+    .rapor-tablo { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+    .rapor-tablo th, .rapor-tablo td { border: 1px solid #444; padding: 10px; text-align: left; }
+    .rapor-tablo th { background: #1f1f1f; color: #ff7a00; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-chalkboard-user"></i> Öngörü Akademi - Öğretmen Paneli</h1>
+  <h1><i class="fa-solid fa-graduation-cap"></i> Öngörü Akademi</h1>
   <div>
     <a href="index.html"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
     <button class="cikis-btn" id="cikisBtn" style="display:none; margin-left:10px;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
@@ -64,32 +83,62 @@
 
 <!-- GİRİŞ EKRANI -->
 <div class="giris-kutu" id="girisAlani">
-  <h2>Öğretmen Girişi</h2>
-  <form id="ogretmenGirisForm">
-    <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" required autofocus>
+  <h2>Sisteme Giriş Yap</h2>
+  
+  <div class="rol-secici">
+    <button type="button" class="rol-btn aktif" id="btnRolOgretmen" onclick="rolDegistir('ogretmen')">Öğretmen Girişi</button>
+    <button type="button" class="rol-btn" id="btnRolOgrenci" onclick="rolDegistir('ogrenci')">Öğrenci Girişi</button>
+  </div>
+
+  <form id="girisForm">
+    <input type="text" id="kullaniciAdi" placeholder="Ders Adı / Öğretmen K.Adı veya Öğrenci Adı" required autofocus>
     <input type="password" id="sifre" placeholder="Şifreniz" required>
     <button type="submit" id="girisBtn">Giriş Yap</button>
   </form>
 </div>
 
-<!-- PANEL ALANI -->
-<div class="panel" id="panelAlani">
+<!-- ÖĞRETMEN PANEL ALANI -->
+<div class="panel" id="ogretmenPanelAlani">
   
-  <!-- SOL BÖLÜM: DERS NOTU / ÖDEV PAYLAŞ -->
+  <!-- SOL BÖLÜM: SINAV OLUŞTURMA ALANI (1-20 SORU ESNEK) -->
   <div class="kutu">
-    <h2><i class="fa-solid fa-upload"></i> Ders Notu / Ödev Paylaş</h2>
+    <h2><i class="fa-solid fa-file-pen"></i> Sınıf Düzeyi Test Hazırlama (Maks. 20 Soru)</h2>
+    <p style="font-size: 12px; color: #aaa; margin-bottom: 15px;">Doldurduğunuz kadar soru öğrencilere sınav olarak yansıyacaktır. Boş bıraktığınız sorular dahil edilmez.</p>
+    
+    <div id="soruBuilderAlani" class="liste"></div>
+
+    <button type="button" id="sinavKaydetBtn" style="margin-top:15px; background: #22c55e;"><i class="fa-solid fa-floppy-disk"></i> Sınavı Kaydet ve Yayınla</button>
+  </div>
+
+  <!-- SAĞ BÖLÜM: DERS NOTU PAYLAŞIMI VE ÖĞRENCİ BAŞARI TAKİBİ -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-chart-column"></i> Öğrenci Test Başarı Düzeyi</h2>
+    <div class="liste">
+      <table class="rapor-tablo">
+        <thead>
+          <tr>
+            <th>Öğrenci</th>
+            <th>Doğru</th>
+            <th>Yanlış</th>
+            <th>Boş</th>
+            <th>Başarı (%)</th>
+          </tr>
+        </thead>
+        <tbody id="ogrenciRaporBody">
+          <tr><td colspan="5" style="text-align: center; color: #aaa;">Henüz sonuç girilmedi.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 style="margin-top: 25px;"><i class="fa-solid fa-upload"></i> Ders Notu / Ödev Paylaş</h2>
     <form id="paylasimForm">
-      
-      <label style="font-size:12px; color:#aaa;">Hedef Seçimi:</label>
       <select id="hedefTuru" required>
         <option value="hepsi">Tüm Öğrenciler (Genel Duyuru)</option>
         <option value="sinif">Belirli Bir Sınıfa Gönder</option>
         <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
       </select>
 
-      <!-- SINIF SEÇİM KUTUSU -->
       <div id="sinifSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
         <select id="hedefSinif">
           <option value="">Sınıf Seçin</option>
           <option value="1. Sınıf">1. Sınıf</option>
@@ -103,9 +152,7 @@
         </select>
       </div>
 
-      <!-- ÖĞRENCİ SEÇİM KUTUSU -->
       <div id="ogrenciSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
         <select id="hedefOgrenci">
           <option value="">Öğrenci Yükleniyor...</option>
         </select>
@@ -114,31 +161,39 @@
       <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <!-- DOSYA YÜKLEME ALANI -->
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 800 KB - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
-          Dosya Seçmek İçin Tıklayın
+          Dosya Seçmek İçin Tıklayın (Maks 800 KB)
         </label>
         <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
       </div>
 
       <button type="submit" id="paylasBtn">Paylaş</button>
     </form>
-  </div>
 
-  <!-- SAĞ BÖLÜM: PAYLAŞILAN ÖDEVLER VE NOTLAR -->
-  <div class="kutu">
-    <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
-    <div class="liste" id="paylasimListesi">
-      <p style="color:#aaa; font-size:13px;">Yükleniyor...</p>
-    </div>
+    <h2 style="margin-top:20px;"><i class="fa-solid fa-clock-rotate-left"></i> Paylaşımlarınız</h2>
+    <div class="liste" id="paylasimListesi"></div>
   </div>
 
 </div>
 
-<!-- FIREBASE UYGULAMASI -->
+<!-- ÖĞRENCİ PANEL ALANI (TEST ÇÖZME ALANI) -->
+<div class="panel" id="ogrenciPanelAlani" style="grid-template-columns: 1fr;">
+  <div class="kutu">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2><i class="fa-solid fa-pen-to-square"></i> Çevrim İçi Sınav Alanı</h2>
+      <div class="zamanlayici" id="zamanlayiciKutusu"><i class="fa-solid fa-stopwatch"></i> Kalan Süre: <span id="kalanSureText">30:00</span></div>
+    </div>
+
+    <form id="ogrenciTestForm">
+      <div id="ogrenciSorularContainer"></div>
+      <button type="submit" id="testBitirBtn" style="background: #22c55e; margin-top: 20px; font-size: 16px;"><i class="fa-solid fa-paper-plane"></i> Testi Bitir ve Gönder</button>
+    </form>
+  </div>
+</div>
+
+<!-- FIREBASE VE SİSTEM YÖNETİMİ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -155,113 +210,270 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  let aktifOgretmen = null;
+  let seciliRol = "ogretmen";
+  let aktifKullanici = null;
+  let testTimer = null;
+  let kalanSaniye = 1800; // 30 Dakika
 
-  // DOSYA SEÇİM HAREKETİ
+  // ROL DEĞİŞTİRME FONKSİYONU
+  window.rolDegistir = function(rol) {
+    seciliRol = rol;
+    document.getElementById("btnRolOgretmen").classList.toggle("aktif", rol === 'ogretmen');
+    document.getElementById("btnRolOgrenci").classList.toggle("aktif", rol === 'ogrenci');
+  };
+
+  // 20 SORULUK ÖĞRETMEN INPUT ALANI OLUŞTURMA
+  function soruInputlariniOlustur() {
+    const container = document.getElementById("soruBuilderAlani");
+    container.innerHTML = "";
+    for (let i = 1; i <= 20; i++) {
+      container.innerHTML += `
+        <div class="soru-olustur-kutusu">
+          <strong style="color:#ff7a00;">Soru ${i}</strong>
+          <textarea id="q_text_${i}" placeholder="${i}. Soru metnini buraya yazınız (Boş bırakılırsa sınava dahil edilmez)..."></textarea>
+          <div class="siklar-grid">
+            <input type="text" id="q_optA_${i}" placeholder="A Şıkkı">
+            <input type="text" id="q_optB_${i}" placeholder="B Şıkkı">
+            <input type="text" id="q_optC_${i}" placeholder="C Şıkkı">
+            <input type="text" id="q_optD_${i}" placeholder="D Şıkkı">
+          </div>
+          <div class="cevap-anahtari-secim">
+            <label style="font-size:12px; color:#aaa;">Doğru Cevap Anahtarı:</label>
+            <select id="q_ans_${i}" style="width: auto; margin:0;">
+              <option value="">Seçiniz</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+            </select>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // SAYFA YÜKLENDİĞİNDE OTURUM DİNLEMESİ (REFRESH KORUMASI)
+  document.addEventListener("DOMContentLoaded", () => {
+    soruInputlariniOlustur();
+    const kayitliOturum = JSON.parse(localStorage.getItem("ongoru_aktif_oturum"));
+    if (kayitliOturum) {
+      aktifKullanici = kayitliOturum;
+      panelleriAc();
+    }
+  });
+
+  // GİRİŞ İŞLEMİ
+  document.getElementById("girisForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const kAdi = document.getElementById("kullaniciAdi").value.trim();
+    const sifre = document.getElementById("sifre").value.trim();
+
+    if (!kAdi || !sifre) return alert("Lütfen kullanıcı adı ve şifre giriniz.");
+
+    aktifKullanici = { kullaniciAdi: kAdi, rol: seciliRol };
+    localStorage.setItem("ongoru_aktif_oturum", JSON.stringify(aktifKullanici));
+    panelleriAc();
+  });
+
+  function panelleriAc() {
+    document.getElementById("girisAlani").style.display = "none";
+    document.getElementById("cikisBtn").style.display = "inline-flex";
+
+    if (aktifKullanici.rol === "ogretmen") {
+      document.getElementById("ogretmenPanelAlani").style.display = "grid";
+      document.getElementById("ogrenciPanelAlani").style.display = "none";
+      ogretmenSinavYukle();
+      raporlariYukle();
+      paylasimlariCanliIzle();
+      ogrencileriYukle();
+    } else {
+      document.getElementById("ogretmenPanelAlani").style.display = "none";
+      document.getElementById("ogrenciPanelAlani").style.display = "grid";
+      ogrenciTestiniYukle();
+      zamanlayiciBaslat();
+    }
+  }
+
+  // ÇIKIŞ YAP (SAYFA YENİLENİNCE ÇIKIŞ OLMAZ, SADECE BURADA OLUR)
+  document.getElementById("cikisBtn").addEventListener("click", () => {
+    clearInterval(testTimer);
+    localStorage.removeItem("ongoru_aktif_oturum");
+    location.reload();
+  });
+
+  // SINAV KAYDETME (ÖĞRETMEN)
+  document.getElementById("sinavKaydetBtn").addEventListener("click", () => {
+    const hazirSorular = [];
+    for (let i = 1; i <= 20; i++) {
+      const text = document.getElementById(`q_text_${i}`).value.trim();
+      const a = document.getElementById(`q_optA_${i}`).value.trim();
+      const b = document.getElementById(`q_optB_${i}`).value.trim();
+      const c = document.getElementById(`q_optC_${i}`).value.trim();
+      const d = document.getElementById(`q_optD_${i}`).value.trim();
+      const ans = document.getElementById(`q_ans_${i}`).value;
+
+      if (text !== "") {
+        if (!a || !b || !c || !d || !ans) {
+          alert(`Soru ${i} için şıkları ve doğru cevap anahtarını eksiksiz doldurmalısınız.`);
+          return;
+        }
+        hazirSorular.push({ id: i, text, options: { A: a, B: b, C: c, D: d }, answer: ans });
+      }
+    }
+
+    if (hazirSorular.length === 0) {
+      alert("Lütfen en az 1 tane soru doldurunuz.");
+      return;
+    }
+
+    localStorage.setItem(`sinav_${aktifKullanici.kullaniciAdi}`, JSON.stringify(hazirSorular));
+    alert(`${hazirSorular.length} soruluk test başarıyla kaydedildi ve yayınlandı!`);
+  });
+
+  function ogretmenSinavYukle() {
+    const sinav = JSON.parse(localStorage.getItem(`sinav_${aktifKullanici.kullaniciAdi}`));
+    if (!sinav) return;
+    sinav.forEach(q => {
+      if (document.getElementById(`q_text_${q.id}`)) {
+        document.getElementById(`q_text_${q.id}`).value = q.text;
+        document.getElementById(`q_optA_${q.id}`).value = q.options.A;
+        document.getElementById(`q_optB_${q.id}`).value = q.options.B;
+        document.getElementById(`q_optC_${q.id}`).value = q.options.C;
+        document.getElementById(`q_optD_${q.id}`).value = q.options.D;
+        document.getElementById(`q_ans_${q.id}`).value = q.answer;
+      }
+    });
+  }
+
+  // BAŞARI RAPORU YÜKLEME
+  function raporlariYukle() {
+    const raporlar = JSON.parse(localStorage.getItem(`raporlar_${aktifKullanici.kullaniciAdi}`)) || [];
+    const tbody = document.getElementById("ogrenciRaporBody");
+    if (raporlar.length === 0) return;
+
+    tbody.innerHTML = "";
+    raporlar.forEach(r => {
+      tbody.innerHTML += `
+        <tr>
+          <td><strong>${r.ogrenci}</strong></td>
+          <td style="color:#22c55e;">${r.dogru}</td>
+          <td style="color:#ff3333;">${r.yanlis}</td>
+          <td>${r.bos}</td>
+          <td style="color:#ff7a00; font-weight:bold;">%${r.basari.toFixed(1)}</td>
+        </tr>
+      `;
+    });
+  }
+
+  // ÖĞRENCİ SINAV ÇÖZME İŞLEMLERİ
+  function ogrenciTestiniYukle() {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith("sinav_"));
+    const container = document.getElementById("ogrenciSorularContainer");
+
+    if (keys.length === 0) {
+      container.innerHTML = "<p style='color:#aaa;'>Henüz öğretmeniniz tarafından aktifleştirilmiş bir test bulunmuyor.</p>";
+      document.getElementById("testBitirBtn").style.display = "none";
+      return;
+    }
+
+    const sinavKey = keys[0];
+    const ogretmenKAdi = sinavKey.replace("sinav_", "");
+    const sorular = JSON.parse(localStorage.getItem(sinavKey));
+
+    container.dataset.ogretmen = ogretmenKAdi;
+    container.innerHTML = "";
+
+    sorular.forEach((q, idx) => {
+      container.innerHTML += `
+        <div class="kart" style="border-left-color: #ff7a00;">
+          <h4>Soru ${idx + 1}: ${q.text}</h4>
+          <div style="margin-top:10px;">
+            ${['A','B','C','D'].map(key => `
+              <label class="ogrenci-sik-label">
+                <input type="radio" name="sq_${q.id}" value="${key}">
+                <span><strong>${key})</strong> ${q.options[key]}</span>
+              </label>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // 30 DAKİKALIK GERİ SAYIM
+  function zamanlayiciBaslat() {
+    testTimer = setInterval(() => {
+      kalanSaniye--;
+      let dak = Math.floor(kalanSaniye / 60);
+      let san = kalanSaniye % 60;
+
+      document.getElementById("kalanSureText").innerText = 
+        `${dak.toString().padStart(2, '0')}:${san.toString().padStart(2, '0')}`;
+
+      if (kalanSaniye <= 0) {
+        clearInterval(testTimer);
+        alert("30 dakikalık süreniz dolmuştur! Testiniz otomatik teslim ediliyor.");
+        document.getElementById("ogrenciTestForm").requestSubmit();
+      }
+    }, 1000);
+  }
+
+  // TESTİ BİTİR VE DEĞERLENDİR
+  document.getElementById("ogrenciTestForm").addEventListener("submit", (e) => {
+    e.preventDefault();
+    clearInterval(testTimer);
+
+    const container = document.getElementById("ogrenciSorularContainer");
+    const ogretmenKAdi = container.dataset.ogretmen;
+    const sorular = JSON.parse(localStorage.getItem(`sinav_${ogretmenKAdi}`)) || [];
+
+    let dogru = 0, yanlis = 0, bos = 0;
+
+    sorular.forEach(q => {
+      const secilen = document.querySelector(`input[name="sq_${q.id}"]:checked`);
+      if (!secilen) {
+        bos++;
+      } else if (secilen.value === q.answer) {
+        dogru++;
+      } else {
+        yanlis++;
+      }
+    });
+
+    const toplam = sorular.length;
+    const basari = toplam > 0 ? (dogru / toplam) * 100 : 0;
+
+    // Sonucu Öğretmen Paneli Raporuna Kaydet
+    const raporlar = JSON.parse(localStorage.getItem(`raporlar_${ogretmenKAdi}`)) || [];
+    raporlar.push({ ogrenci: aktifKullanici.kullaniciAdi, dogru, yanlis, bos, basari });
+    localStorage.setItem(`raporlar_${ogretmenKAdi}`, JSON.stringify(raporlar));
+
+    alert(`Testiniz Tamamlandı!\nDoğru: ${dogru}\nYanlış: ${yanlis}\nBoş: ${bos}\nBaşarı Oranınız: %${basari.toFixed(1)}`);
+    document.getElementById("cikisBtn").click();
+  });
+
+  // VERİTABANI DOSYA VE PAYLAŞIM İŞLEMLERİ (MEVCUT KODLARIN)
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
 
   dosyaInput.addEventListener("change", (e) => {
     if (e.target.files.length > 0) {
-      dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#2196F3;"></i><br>${e.target.files[0].name}`;
+      dosyaEtiket.innerHTML = `<i class="fa-solid fa-file-circle-check fa-2x" style="color:#ff7a00;"></i><br>${e.target.files[0].name}`;
     } else {
       dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
     }
   });
 
-  // HEDEF SEÇİM DİNLEMESİ
   const hedefTuru = document.getElementById("hedefTuru");
   const sinifKutu = document.getElementById("sinifSecimKutu");
   const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
 
   hedefTuru.addEventListener("change", () => {
     const tur = hedefTuru.value;
-    if (tur === "sinif") {
-      sinifKutu.style.display = "block";
-      ogrenciKutu.style.display = "none";
-    } else if (tur === "ogrenci") {
-      sinifKutu.style.display = "none";
-      ogrenciKutu.style.display = "block";
-    } else {
-      sinifKutu.style.display = "none";
-      ogrenciKutu.style.display = "none";
-    }
+    sinifKutu.style.display = tur === "sinif" ? "block" : "none";
+    ogrenciKutu.style.display = tur === "ogrenci" ? "block" : "none";
   });
 
-  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
-  document.addEventListener("DOMContentLoaded", () => {
-    const kayitli = localStorage.getItem("ongoru_ogretmen");
-    if (kayitli) {
-      try {
-        aktifOgretmen = JSON.parse(kayitli);
-        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) {
-          paneliAc();
-        } else {
-          cikisYap();
-        }
-      } catch(e) {
-        cikisYap();
-      }
-    } else {
-      cikisYap();
-    }
-  });
-
-  // GİRİŞ FORMU KONTROLÜ
-  document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const gBtn = document.getElementById("girisBtn");
-    gBtn.disabled = true;
-    gBtn.innerText = "Giriş Yapılıyor...";
-
-    const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
-    const sifre = document.getElementById("sifre").value.trim();
-
-    try {
-      const snap = await getDocs(collection(db, "kullanicilar"));
-      let eslesenUser = null;
-
-      snap.forEach(docSnap => {
-        const u = docSnap.data();
-        if ((u.kullaniciAdi && u.kullaniciAdi.toLowerCase() === kAdi) && u.sifre === sifre && u.rol === "ogretmen") {
-          eslesenUser = { id: docSnap.id, ...u };
-        }
-      });
-
-      if (eslesenUser) {
-        aktifOgretmen = eslesenUser;
-        localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
-        paneliAc();
-      } else {
-        alert("Kullanıcı adı veya şifre hatalı!");
-      }
-    } catch (err) {
-      alert("Giriş sırasında veritabanı hatası oluştu: " + err.message);
-    } finally {
-      gBtn.disabled = false;
-      gBtn.innerText = "Giriş Yap";
-    }
-  });
-
-  function paneliAc() {
-    document.getElementById("girisAlani").style.display = "none";
-    document.getElementById("panelAlani").style.display = "grid";
-    document.getElementById("cikisBtn").style.display = "inline-flex";
-
-    ogrencileriYukle();
-    paylasimlariCanliIzle();
-  }
-
-  function cikisYap() {
-    localStorage.removeItem("ongoru_ogretmen");
-    document.getElementById("girisAlani").style.display = "block";
-    document.getElementById("panelAlani").style.display = "none";
-    document.getElementById("cikisBtn").style.display = "none";
-  }
-
-  document.getElementById("cikisBtn").addEventListener("click", cikisYap);
-
-  // ÖĞRENCİLERİ LİSTELEME
   async function ogrencileriYukle() {
     const select = document.getElementById("hedefOgrenci");
     select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
@@ -270,15 +482,12 @@
       snap.forEach(docSnap => {
         const u = docSnap.data();
         if(u.rol === "ogrenci") {
-          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
+          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi}</option>`;
         }
       });
-    } catch (err) {
-      console.error("Öğrenciler alınamadı:", err);
-    }
+    } catch (err) {}
   }
 
-  // DOSYA METİN OKUYUCU (Base64)
   function dosyayiOku(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -288,135 +497,58 @@
     });
   }
 
-  // PAYLAŞIM GÖNDERME
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
     btn.disabled = true;
-    btn.innerText = "Paylaşılıyor...";
 
     try {
-      const tur = hedefTuru.value;
-      let hedefSinifVal = "";
-      let hedefOgrenciVal = "";
-
-      if (tur === "sinif") {
-        hedefSinifVal = document.getElementById("hedefSinif").value;
-        if (!hedefSinifVal) { 
-          alert("Lütfen bir sınıf seçin!"); 
-          btn.disabled = false; 
-          btn.innerText = "Paylaş"; 
-          return; 
-        }
-      } else if (tur === "ogrenci") {
-        hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
-        if (!hedefOgrenciVal) { 
-          alert("Lütfen bir öğrenci seçin!"); 
-          btn.disabled = false; 
-          btn.innerText = "Paylaş"; 
-          return; 
-        }
-      }
-
-      let dosyaUrl = "";
-      let dosyaAdi = "";
-
+      let dosyaUrl = "", dosyaAdi = "";
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-
-        // Firestore belge sınırı 1MB olduğu için Base64 yüklemesinde limit 800 KB yapılmalı
         if (file.size > 800 * 1024) {
-          alert("Direkt veritabanı yüklemesi için dosya boyutu 800 KB'dan küçük olmalıdır!");
+          alert("Dosya 800 KB'dan küçük olmalıdır!");
           btn.disabled = false;
-          btn.innerText = "Paylaş";
           return;
         }
-
         dosyaAdi = file.name;
         dosyaUrl = await dosyayiOku(file);
       }
 
       await addDoc(collection(db, "paylasimlar"), {
-        ogretmenId: aktifOgretmen.id || aktifOgretmen.kullaniciAdi,
-        ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
-        brans: aktifOgretmen.brans || "",
+        ogretmenId: aktifKullanici.kullaniciAdi,
         baslik: document.getElementById("baslik").value.trim(),
         aciklama: document.getElementById("aciklama").value.trim(),
-        hedefTuru: tur,
-        hedefSinif: hedefSinifVal,
-        hedefOgrenciId: hedefOgrenciVal,
-        dosyaUrl: dosyaUrl,
-        dosyaAdi: dosyaAdi,
+        hedefTuru: hedefTuru.value,
+        dosyaUrl, dosyaAdi,
         tarih: new Date().toLocaleString('tr-TR')
       });
 
-      alert("Paylaşım başarıyla gönderildi!");
+      alert("Paylaşım yapıldı!");
       document.getElementById("paylasimForm").reset();
-      dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
-      sinifKutu.style.display = "none";
-      ogrenciKutu.style.display = "none";
-
     } catch (err) {
-      alert("Gönderim Hatası: " + err.message);
+      alert("Hata: " + err.message);
     } finally {
       btn.disabled = false;
-      btn.innerText = "Paylaş";
     }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ
   function paylasimlariCanliIzle() {
-    if(!aktifOgretmen) return;
-    const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
-
     onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
       const liste = document.getElementById("paylasimListesi");
       liste.innerHTML = "";
-
-      let paylasimVarMi = false;
-
       snapshot.forEach((docSnap) => {
         const p = docSnap.data();
-        const id = docSnap.id;
-
-        if (p.ogretmenId === ogretmenId) {
-          paylasimVarMi = true;
-          let hedefMetin = "Tüm Okul";
-          if (p.hedefTuru === "sinif") hedefMetin = `Sınıf: ${p.hedefSinif}`;
-          if (p.hedefTuru === "ogrenci") hedefMetin = "Özel Öğrenci";
-
-          liste.innerHTML += `
-            <div class="kart">
-              <h4>${p.baslik} <span class="hedef-rozet">${hedefMetin}</span></h4>
-              <p>${p.aciklama}</p>
-              ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> ${p.dosyaAdi || 'Ekli Dosyayı İndir'}</a>` : ''}
-              <div class="kart-bilgi">
-                <span><i class="fa-regular fa-clock"></i> ${p.tarih}</span>
-                <button class="sil-btn" onclick="window.paylasimSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
-              </div>
-            </div>
-          `;
-        }
+        liste.innerHTML += `
+          <div class="kart">
+            <h4>${p.baslik}</h4>
+            <p>${p.aciklama}</p>
+            ${p.dosyaUrl ? `<a href="${p.dosyaUrl}" download="${p.dosyaAdi}" class="dosya-indir-btn"><i class="fa-solid fa-file-arrow-down"></i> İndir</a>` : ''}
+          </div>
+        `;
       });
-
-      if (!paylasimVarMi) {
-        liste.innerHTML = "<p style='color:#aaa; font-size:13px;'>Henüz bir ders notu veya ödev paylaşmadınız.</p>";
-      }
-    }, (err) => {
-      document.getElementById("paylasimListesi").innerHTML = `<p style="color:#ff4444; font-size:12px;">Liste Okuma Hatası: ${err.message}</p>`;
     });
   }
-
-  // SILME FONKSIYONUNU GLOBAL SCOPE'A BAGLAMA
-  window.paylasimSil = async function(id) {
-    if (confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) {
-      try {
-        await deleteDoc(doc(db, "paylasimlar", id));
-      } catch (err) {
-        alert("Silinirken hata oluştu: " + err.message);
-      }
-    }
-  };
 </script>
 
 </body>
