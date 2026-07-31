@@ -11,18 +11,18 @@
     body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; }
     header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
     header h1 { color:#ff7a00; font-size:24px; }
-    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; }
+    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; gap:8px; }
     
     .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
     .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
     
-    input, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:none; border-radius:8px; color:white; font-size:14px; outline:none; }
-    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; }
+    input, select, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline:none; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
     button:hover { background:white; color:#ff7a00; }
     
     .panel { display:none; max-width:900px; margin:0 auto; }
     .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; margin-bottom:20px; }
-    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; }
+    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
     
     .not-kart { background:#252525; padding:18px; border-radius:10px; margin-bottom:15px; border-left:4px solid #ff7a00; }
     .not-kart .ust-bilgi { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #3a3a3a; padding-bottom:8px; }
@@ -33,6 +33,19 @@
     
     .dosya-indir-btn { display: inline-flex; align-items: center; gap: 8px; background: #ff7a00; color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; margin-top: 5px; transition: .3s; }
     .dosya-indir-btn:hover { background: white; color: #ff7a00; }
+
+    /* SINAV VE SORU TASARIMLARI */
+    .test-secim-alani { margin-bottom: 20px; background: #252525; padding: 15px; border-radius: 10px; }
+    .soru-kart { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ff7a00; }
+    .soru-kart h4 { color: #ff7a00; font-size: 15px; margin-bottom: 10px; }
+    .secenekler { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .secenek-label { display: flex; align-items: center; gap: 10px; background: #1f1f1f; padding: 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px; }
+    .secenek-label:hover { background: #333; }
+    .secenek-label input[type="radio"] { width: auto; margin: 0; }
+
+    .sonuc-kutusu { background: #1f1f1f; border: 2px solid #ff7a00; padding: 20px; border-radius: 10px; text-align: center; margin-top: 15px; display: none; }
+    .sonuc-kutusu h3 { color: #ff7a00; margin-bottom: 10px; }
+    .sonuc-detay { display: flex; justify-content: space-around; margin-top: 15px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -59,6 +72,39 @@
 <!-- ÖĞRENCİ PANEL ALANI -->
 <div class="panel" id="panelAlani">
   
+  <!-- AKTİF TESTLER VE SINAV ALANI -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-file-pen"></i> Öğretmen Testleri & Online Sınav</h2>
+    <div class="test-secim-alani">
+      <label style="font-size:12px; color:#aaa;">Çözmek İstediğiniz Öğretmen Testini Seçiniz:</label>
+      <select id="ogretmenSecimi">
+        <option value="">Öğretmen / Ders Seçiniz...</option>
+      </select>
+      <button type="button" id="testiBaslatBtn" style="margin-top:5px;"><i class="fa-solid fa-play"></i> Testi Getir ve Başlat</button>
+    </div>
+
+    <!-- SINAV SORULARI ALANI -->
+    <div id="sinavEkrani" style="display:none;">
+      <form id="sinavFormu">
+        <div id="sorularContainer"></div>
+        <button type="submit" id="sinavBitirBtn" style="margin-top:15px; background:#22c55e;"><i class="fa-solid fa-check-double"></i> Testi Tamamla ve Gönder</button>
+      </form>
+
+      <!-- TEST SONUC EKRANI -->
+      <div id="sonucKutusu" class="sonuc-kutusu">
+        <h3><i class="fa-solid fa-trophy"></i> Test Sonucunuz</h3>
+        <p id="sonucMesaj"></p>
+        <div class="sonuc-detay">
+          <span style="color:#22c55e;">Doğru: <span id="resDogru">0</span></span>
+          <span style="color:#ff3333;">Yanlış: <span id="resYanlis">0</span></span>
+          <span style="color:#aaa;">Boş: <span id="resBos">0</span></span>
+          <span style="color:#ff7a00;">Başarı: %<span id="resBasari">0</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DERS NOTLARI VE ÖDEVLER -->
   <div class="kutu">
     <h2><i class="fa-solid fa-book-open"></i> Ders Notlarım ve Ödevlerim</h2>
     <div id="notlarListesi">Yükleniyor...</div>
@@ -85,6 +131,19 @@
   const db = getFirestore(app);
 
   let aktifOgrenci = null;
+  let mevcutMevcutSorular = [];
+  let seciliOgretmenKey = "";
+
+  // GÜVENLİK İÇİN METİN KAÇIŞ (ESCAPE) FONKSİYONU
+  function escapeHtml(text) {
+    if (!text) return "";
+    return String(text)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
 
   // OTURUM KONTROLÜ
   document.addEventListener("DOMContentLoaded", () => {
@@ -136,9 +195,10 @@
     document.getElementById("girisAlani").style.display = "none";
     document.getElementById("panelAlani").style.display = "block";
     document.getElementById("cikisBtn").style.display = "inline-block";
-    document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + (aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi) + (aktifOgrenci.sinif ? " (" + aktifOgrenci.sinif + ")" : "");
+    document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + escapeHtml(aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi) + (aktifOgrenci.sinif ? " (" + escapeHtml(aktifOgrenci.sinif) + ")" : "");
 
     notlariYukle();
+    ogretmenleriYukle();
   }
 
   // ÇIKIŞ BUTONU
@@ -147,7 +207,125 @@
     location.reload();
   });
 
-  // 2. ÖĞRENCİYE ÖZEL NOTLARI / ÖDEVLERİ CANLI ÇEK
+  // 2. ÖĞRETENLERİ SEÇİM KUTUSUNA DOLDURMA
+  async function ogretmenleriYukle() {
+    const select = document.getElementById("ogretmenSecimi");
+    select.innerHTML = "<option value=''>Öğretmen / Ders Seçiniz...</option>";
+
+    try {
+      const snap = await getDocs(collection(db, "kullanicilar"));
+      snap.forEach(docSnap => {
+        const u = docSnap.data();
+        if (u.rol === "ogretmen") {
+          const key = u.kullaniciAdi || docSnap.id;
+          select.innerHTML += `<option value="${key}">${escapeHtml(u.adSoyad || u.kullaniciAdi)} - ${escapeHtml(u.brans || 'Öğretmen')}</option>`;
+        }
+      });
+    } catch (err) {
+      console.error("Öğretmen listesi çekilemedi:", err);
+    }
+  }
+
+  // 3. TESTİ BAŞLATMA
+  document.getElementById("testiBaslatBtn").addEventListener("click", () => {
+    seciliOgretmenKey = document.getElementById("ogretmenSecimi").value;
+    if (!seciliOgretmenKey) {
+      alert("Lütfen önce bir öğretmen seçiniz!");
+      return;
+    }
+
+    const sinavData = localStorage.getItem(`sinav_${seciliOgretmenKey}`);
+    if (!sinavData) {
+      alert("Seçilen öğretmene ait yayınlanmış aktif bir test bulunamadı.");
+      document.getElementById("sinavEkrani").style.display = "none";
+      return;
+    }
+
+    mevcutMevcutSorular = JSON.parse(sinavData);
+    if (mevcutMevcutSorular.length === 0) {
+      alert("Bu testte henüz soru bulunmuyor.");
+      return;
+    }
+
+    // Soruları Ekrana Bas
+    const container = document.getElementById("sorularContainer");
+    container.innerHTML = "";
+    document.getElementById("sonucKutusu").style.display = "none";
+
+    mevcutMevcutSorular.forEach((q, index) => {
+      container.innerHTML += `
+        <div class="soru-kart">
+          <h4>Soru ${index + 1}: ${escapeHtml(q.text)}</h4>
+          <div class="secenekler">
+            <label class="secenek-label"><input type="radio" name="question_${q.id}" value="A"> A) ${escapeHtml(q.options.A)}</label>
+            <label class="secenek-label"><input type="radio" name="question_${q.id}" value="B"> B) ${escapeHtml(q.options.B)}</label>
+            <label class="secenek-label"><input type="radio" name="question_${q.id}" value="C"> C) ${escapeHtml(q.options.C)}</label>
+            <label class="secenek-label"><input type="radio" name="question_${q.id}" value="D"> D) ${escapeHtml(q.options.D)}</label>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById("sinavEkrani").style.display = "block";
+  });
+
+  // 4. SINAVI BİTİR VE SONUÇLARI ÖĞRETMENE GÖNDER
+  document.getElementById("sinavFormu").addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!confirm("Testi bitirip sonuçları göndermek istediğinize emin misiniz?")) return;
+
+    let dogru = 0;
+    let yanlis = 0;
+    let bos = 0;
+
+    mevcutMevcutSorular.forEach(q => {
+      const secim = document.querySelector(`input[name="question_${q.id}"]:checked`);
+      if (!secim) {
+        bos++;
+      } else if (secim.value === q.answer) {
+        dogru++;
+      } else {
+        yanlis++;
+      }
+    });
+
+    const toplamSoru = mevcutMevcutSorular.length;
+    const basariYuzdesi = ((dogru / toplamSoru) * 100) || 0;
+
+    // Ekrana Sonucu Bas
+    document.getElementById("resDogru").innerText = dogru;
+    document.getElementById("resYanlis").innerText = yanlis;
+    document.getElementById("resBos").innerText = bos;
+    document.getElementById("resBasari").innerText = basariYuzdesi.toFixed(1);
+    document.getElementById("sonucMesaj").innerText = `Test tamamlandı! Toplam ${toplamSoru} sorudan ${dogru} doğrunuz var.`;
+    document.getElementById("sonucKutusu").style.display = "block";
+
+    // Öğretmenin Göreceği Raporu Kaydet
+    const raporKey = `raporlar_${seciliOgretmenKey}`;
+    const mevcutRaporlar = JSON.parse(localStorage.getItem(raporKey)) || [];
+
+    const yeniRapor = {
+      ogrenci: aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi,
+      dogru: dogru,
+      yanlis: yanlis,
+      bos: bos,
+      basari: basariYuzdesi,
+      tarih: new Date().toLocaleString('tr-TR')
+    };
+
+    // Aynı öğrencinin önceki raporu varsa güncelle, yoksa ekle
+    const varolanIndex = mevcutRaporlar.findIndex(r => r.ogrenci === yeniRapor.ogrenci);
+    if (varolanIndex !== -1) {
+      mevcutRaporlar[varolanIndex] = yeniRapor;
+    } else {
+      mevcutRaporlar.push(yeniRapor);
+    }
+
+    localStorage.setItem(raporKey, JSON.stringify(mevcutRaporlar));
+    alert("Test sonuçlarınız başarıyla öğretmen panelinize iletildi!");
+  });
+
+  // 5. ÖĞRENCİYE ÖZEL NOTLARI / ÖDEVLERİ CANLI ÇEK
   function notlariYukle() {
     onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
       const listeDiv = document.getElementById("notlarListesi");
@@ -168,12 +346,12 @@
           listeDiv.innerHTML += `
             <div class="not-kart">
               <div class="ust-bilgi">
-                <span class="ogretmen-adi"><i class="fa-solid fa-chalkboard-user"></i> ${item.ogretmenAd || 'Öğretmen'} ${item.brans ? '(' + item.brans + ')' : ''}</span>
-                <span class="tarih"><i class="fa-regular fa-clock"></i> ${item.tarih}</span>
+                <span class="ogretmen-adi"><i class="fa-solid fa-chalkboard-user"></i> ${escapeHtml(item.ogretmenAd) || 'Öğretmen'} ${item.brans ? '(' + escapeHtml(item.brans) + ')' : ''}</span>
+                <span class="tarih"><i class="fa-regular fa-clock"></i> ${escapeHtml(item.tarih)}</span>
               </div>
-              <h3>${item.baslik}</h3>
-              <p>${item.aciklama}</p>
-              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" target="_blank" class="dosya-indir-btn"><i class="fa-solid fa-arrow-up-right-from-square"></i> ${item.dosyaAdi || 'Ekli Dosyayı Gör / İndir'}</a>` : ''}
+              <h3>${escapeHtml(item.baslik)}</h3>
+              <p>${escapeHtml(item.aciklama)}</p>
+              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" download="${escapeHtml(item.dosyaAdi)}" class="dosya-indir-btn"><i class="fa-solid fa-arrow-down-long"></i> ${escapeHtml(item.dosyaAdi) || 'Ekli Dosyayı İndir'}</a>` : ''}
             </div>
           `;
         }
