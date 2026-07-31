@@ -67,25 +67,35 @@
     .detay-satir span { color:#ff7a00; font-weight:600; }
     .detay-islem { margin-top:10px; text-align:right; display:flex; justify-content:flex-end; }
 
-    /* KÜÇÜK PROFİL FOTOĞRAFI ALANI */
+    /* PROFİL FOTOĞRAFI ALANLARI VE BÜYÜTME */
     .foto-yukleme-alani { display:flex; align-items:center; gap:15px; background:#252525; padding:10px; border-radius:8px; margin-bottom:12px; border:1px solid #444; }
-    .profil-foto-kucuk { width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #ff7a00; background:#1a1a1a; flex-shrink:0; }
+    .profil-foto-kucuk { width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid #ff7a00; background:#1a1a1a; flex-shrink:0; cursor:pointer; transition: transform 0.2s; }
+    .profil-foto-kucuk:hover { transform: scale(1.1); }
+    
+    .detay-foto-kutu { text-align: center; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333; }
+    .detay-foto-kutu img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #ff7a00; cursor: pointer; transition: transform 0.2s; }
+    .detay-foto-kutu img:hover { transform: scale(1.05); }
+
     .foto-input-wrapper { display:flex; flex-direction:column; font-size:12px; color:#aaa; width:100%; }
     .foto-input-wrapper input { padding:4px; margin-bottom:0; font-size:11px; background:transparent; border:none; }
 
     /* GALERİ YÖNETİMİ STİLLERİ */
     .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
     .galeri-kart { background: #252525; border-radius: 8px; border: 1px solid #444; overflow: hidden; position: relative; display: flex; flex-direction: column; }
-    .galeri-kart img { width: 100%; height: 100px; object-fit: cover; }
+    .galeri-kart img { width: 100%; height: 100px; object-fit: cover; cursor: pointer; }
     .galeri-kart .bilgi { padding: 8px; font-size: 11px; color: #ccc; text-align: center; }
     .galeri-kart .sil-btn { width: 100%; border-radius: 0; padding: 5px; font-size: 12px; }
 
     /* POPUP MODAL */
-    .modal-arka { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:1000; }
+    .modal-arka { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); justify-content:center; align-items:center; z-index:1000; }
     .modal-kutu { background:#383838; padding:25px; border-radius:12px; width:90%; max-width:480px; border:2px solid #ff7a00; position:relative; max-height:90vh; overflow-y:auto; }
     .modal-kutu h3 { color:#ff7a00; margin-bottom:15px; }
-    .modal-kapat { position:absolute; right:15px; top:15px; color:#aaa; font-size:20px; cursor:pointer; }
+    .modal-kapat { position:absolute; right:15px; top:15px; color:#aaa; font-size:24px; cursor:pointer; }
     .modal-kapat:hover { color:white; }
+
+    /* RESİM BÜYÜTME MODAL (LIGHTBOX) */
+    .resim-modal-kutu { background: #1c1c1c; padding: 15px; border-radius: 12px; border: 2px solid #ff7a00; max-width: 90vw; max-height: 90vh; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .resim-modal-kutu img { max-width: 100%; max-height: 75vh; border-radius: 8px; object-fit: contain; }
   </style>
 </head>
 <body>
@@ -113,7 +123,7 @@
 <!-- PANEL ALANI (GİRİŞ YAPILINCA AÇILIR) -->
 <div class="panel" id="panelAlani">
   
-  <!-- 0. BÖLÜM: GALERİ YÖNETİMİ (YENİ EKLENEN KISIM) -->
+  <!-- 0. BÖLÜM: GALERİ YÖNETİMİ -->
   <div class="kutu">
     <h2><i class="fa-solid fa-images"></i> Ana Sayfa Galeri Yönetimi</h2>
     <form id="galeriForm">
@@ -293,6 +303,15 @@
   </div>
 </div>
 
+<!-- RESİM BÜYÜTME MODAL PENCERESİ (LIGHTBOX) -->
+<div class="modal-arka" id="resimModal">
+  <div class="resim-modal-kutu">
+    <i class="fa-solid fa-xmark modal-kapat" onclick="resimModalKapat()"></i>
+    <h3 id="resimModalBaslik" style="color:#ff7a00; margin-bottom:10px; font-size:16px;">Profil Fotoğrafı</h3>
+    <img id="resimModalImg" src="" alt="Büyük Resim">
+  </div>
+</div>
+
 <script>
   function sifreGosterToggle() {
     const input = document.getElementById("adminSifre");
@@ -317,6 +336,18 @@
     document.getElementById("duzenleModal").style.display = "none";
   }
 
+  // RESİM BÜYÜTME FONKSİYONLARI
+  function resimBuyut(url, baslik = "Profil Fotoğrafı") {
+    if (!url || url.includes("via.placeholder")) return;
+    document.getElementById("resimModalImg").src = url;
+    document.getElementById("resimModalBaslik").innerText = baslik;
+    document.getElementById("resimModal").style.display = "flex";
+  }
+
+  function resimModalKapat() {
+    document.getElementById("resimModal").style.display = "none";
+  }
+
   function fotoOnizle(event, targetId) {
     const reader = new FileReader();
     reader.onload = function() {
@@ -331,7 +362,7 @@
 <!-- FIREBASE SİSTEMİ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -385,8 +416,6 @@
   });
 
   // --- GALERİ YÖNETİMİ ---
-
-  // 1. GALERİ FOTOĞRAF EKLEME
   document.getElementById("galeriForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("galeriBtn");
@@ -419,7 +448,6 @@
     }
   });
 
-  // 2. GALERİ FOTOĞRAFLARINI ÇEKME VE CANLI İZLEME
   function galeriGetir() {
     onSnapshot(collection(db, "galeri"), (snapshot) => {
       const galeriDiv = document.getElementById("galeriListesi");
@@ -436,7 +464,7 @@
 
         galeriDiv.innerHTML += `
           <div class="galeri-kart">
-            <img src="${item.url}" alt="${item.baslik}">
+            <img src="${item.url}" alt="${item.baslik}" onclick="resimBuyut('${item.url}', '${item.baslik || 'Galeri Fotoğrafı'}')">
             <div class="bilgi">${item.baslik || ''}</div>
             <button class="sil-btn" onclick="galeriFotoSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
           </div>
@@ -445,7 +473,6 @@
     });
   }
 
-  // 3. GALERİ FOTOĞRAF SİLME
   window.galeriFotoSil = async function(id) {
     if (confirm("Bu fotoğrafı galeriden silmek istediğinize emin misiniz?")) {
       try {
@@ -708,12 +735,16 @@
             <div class="liste-item">
               <div class="liste-baslik" onclick="detayAcKapasin(this)">
                 <strong>
-                  <img src="${profilResmi}" class="profil-foto-kucuk" style="width:30px; height:30px;">
+                  <img src="${profilResmi}" class="profil-foto-kucuk" onclick="event.stopPropagation(); resimBuyut('${profilResmi}', '${u.adSoyad || 'Öğrenci Profil Fotoğrafı'}')">
                   ${u.adSoyad || 'İsimsiz'}
                 </strong>
                 <i class="fa-solid fa-chevron-down ok-ikon"></i>
               </div>
               <div class="liste-detay">
+                ${u.foto ? `
+                <div class="detay-foto-kutu">
+                  <img src="${u.foto}" title="Büyütmek için tıklayın" onclick="resimBuyut('${u.foto}', '${u.adSoyad || 'Öğrenci Profil Fotoğrafı'}')">
+                </div>` : ''}
                 <div class="detay-satir"><span>Okul:</span> ${u.okul || '-'}</div>
                 <div class="detay-satir"><span>Sınıf:</span> ${u.sinif || '-'}</div>
                 <div class="detay-satir"><span>Başarı Düzeyi:</span> ${u.basari || '-'}</div>
