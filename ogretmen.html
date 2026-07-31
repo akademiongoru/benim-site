@@ -4,52 +4,96 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Öğretmen Paneli | Öngörü Akademi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
   <style>
     * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
-    body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; }
+    body { background:#2f2f2f; color:white; padding:20px; min-height:100vh; position: relative; }
     
-    header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
-    header h1 { color:#ff7a00; font-size:24px; }
-    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; gap:8px; }
+    header { background:#1f1f1f; padding:20px; border-bottom:3px solid #ff7a00; border-radius:10px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+    header h1 { color:#ff7a00; font-size:22px; display: flex; align-items: center; gap: 10px; }
+    header a, .cikis-btn { color:white; text-decoration:none; background:#ff7a00; padding:8px 15px; border-radius:8px; font-weight:bold; border:none; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; gap:8px; transition: 0.3s; }
+    header a:hover, .cikis-btn:hover { background: #e06c00; }
 
-    /* GİRİŞ EKRANI */
-    .giris-kutu { max-width:400px; margin:80px auto; background:#383838; padding:30px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; }
-    .giris-kutu h2 { color:#ff7a00; margin-bottom:20px; }
+    /* GİRİŞ EKRANI STİLLERİ */
+    .giris-kutu { max-width:420px; margin:60px auto; background:#383838; padding:35px; border-radius:15px; border-top:4px solid #ff7a00; text-align:center; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+    .giris-kutu h2 { color:#ff7a00; margin-bottom:10px; font-size: 24px; }
+    .giris-kutu p { color:#aaa; font-size: 13px; margin-bottom: 20px; }
 
-    input, select, textarea, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline: none; }
-    textarea { resize: vertical; min-height: 100px; }
-    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
-    button:hover { background:white; color:#ff7a00; }
+    input, select, textarea, button { width:100%; padding:12px 15px; margin-bottom:14px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline: none; transition: border-color 0.3s; }
+    input:focus, select:focus, textarea:focus { border-color: #ff7a00; }
+    textarea { resize: vertical; min-height: 90px; }
+    button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; color:white; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+    button:hover { background:#ffffff; color:#ff7a00; }
 
-    /* PANEL ALANI */
-    .panel { display:none; grid-template-columns: 1fr 1fr; gap:20px; }
-    @media(max-width:900px){ .panel { grid-template-columns: 1fr; } }
+    /* MENÜ SEKMELERİ */
+    .nav-sekmeler { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .sekme-btn { width: auto; background: #383838; color: white; border: 1px solid #444; padding: 12px 22px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .sekme-btn:hover { background: #454545; }
+    .sekme-btn.aktif { background: #ff7a00; border-color: #ff7a00; color: white; }
+
+    /* PANEL ALANLARI */
+    .panel-bolum { display: none; }
+    .panel-bolum.aktif { display: block; }
     
-    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; }
-    .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap:20px; }
+    @media(max-width:900px){ .grid-2 { grid-template-columns: 1fr; } }
+    
+    .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .kutu h2 { color:#ff7a00; margin-bottom:18px; font-size:20px; display:flex; align-items:center; gap:10px; }
 
-    /* DOSYA YÜKLEME ALANI */
-    .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 12px; cursor: pointer; transition: 0.3s; }
-    .dosya-alani:hover { background: #1f1f1f; }
+    /* DOSYA YÜKLEME VE KART STİLLERİ */
+    .dosya-alani { background: #252525; border: 2px dashed #ff7a00; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 14px; cursor: pointer; transition: 0.3s; }
+    .dosya-alani:hover { background: #1f1f1f; border-color: #fff; }
     .dosya-alani input[type="file"] { display: none; }
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
-    /* PAYLAŞIM LİSTESİ STİLİ */
-    .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
-    .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
-    .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
-    .kart p { font-size: 13px; color: #ddd; margin-bottom: 8px; white-space: pre-wrap; }
-    .kart-bilgi { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 8px; margin-top: 8px; }
+    .liste { max-height: 520px; overflow-y: auto; margin-top: 15px; padding-right: 5px; }
+    .liste::-webkit-scrollbar { width: 6px; }
+    .liste::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+    .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 16px; border-radius: 8px; margin-bottom: 12px; position: relative; }
+    .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .kart p { font-size: 13px; color: #ddd; margin-bottom: 10px; white-space: pre-wrap; line-height: 1.5; }
+    .kart-bilgi { font-size: 11px; color: #aaa; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #333; padding-top: 10px; margin-top: 8px; }
     
-    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #ff7a00; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-top: 5px; }
-    .dosya-indir-btn:hover { background: white; color: #ff7a00; }
+    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 6px; background: #2196F3; color: white; padding: 6px 12px; border-radius: 5px; text-decoration: none; font-size: 12px; font-weight: bold; margin-bottom: 8px; transition: 0.2s; }
+    .dosya-indir-btn:hover { background: #1976D2; }
 
-    .sil-btn { background: #ff3333; color: white; border: none; padding: 4px 8px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
+    .sil-btn { background: #ff3333; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; width: auto; margin:0; }
     .sil-btn:hover { background: #cc0000; }
     
-    .hedef-rozet { background: #444; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #ff7a00; font-weight: bold; }
+    .hedef-rozet { background: #444; padding: 3px 8px; border-radius: 4px; font-size: 11px; color: #ff7a00; font-weight: 600; }
+
+    /* TEST OLUŞTURMA NAVİGASYON STİLLERİ */
+    .soru-nav-container { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 15px; }
+    .soru-nav-btn { min-width: 38px; height: 38px; background: #2f2f2f; border: 1px solid #555; color: white; border-radius: 6px; cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-bottom: 0; }
+    .soru-nav-btn.dolu { border-color: #4CAF50; color: #4CAF50; }
+    .soru-nav-btn.aktif { background: #ff7a00; color: white; border-color: #ff7a00; }
+
+    .soru-kutu { background: #252525; padding: 18px; border-radius: 10px; border: 1px solid #444; margin-bottom: 15px; }
+    .sik-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+    @media(max-width:600px){ .sik-grid { grid-template-columns: 1fr; } }
+    
+    /* TEST RAPOR TABLOSU */
+    .sonuc-tablo { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .sonuc-tablo th, .sonuc-tablo td { padding: 12px; text-align: left; border-bottom: 1px solid #444; font-size: 13px; }
+    .sonuc-tablo th { color: #ff7a00; background: #252525; }
+    .basari-yuksek { color: #4CAF50; font-weight: bold; }
+    .basari-orta { color: #FFC107; font-weight: bold; }
+    .basari-dusuk { color: #F44336; font-weight: bold; }
+
+    /* BİLDİRİM VE ONAY MODALI */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal-kutu { background: #383838; padding: 25px; border-radius: 12px; border-top: 4px solid #ff7a00; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .modal-kutu h3 { color: #ff7a00; margin-bottom: 12px; font-size: 18px; }
+    .modal-kutu p { color: #ddd; font-size: 14px; margin-bottom: 20px; }
+    .modal-butonlar { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn { width: auto; padding: 8px 20px; margin-bottom: 0; font-size: 14px; }
+    .modal-btn-iptal { background: #555; }
+    .modal-btn-iptal:hover { background: #777; color: white; }
+
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #333; color: white; padding: 14px 24px; border-left: 5px solid #ff7a00; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.4); display: none; z-index: 1001; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -62,86 +106,168 @@
   </div>
 </header>
 
-<!-- GİRİŞ EKRANI -->
 <div class="giris-kutu" id="girisAlani">
   <h2>Öğretmen Girişi</h2>
+  <p>Devam etmek için öğretmen kullanıcı adınız ve şifreniz ile giriş yapın.</p>
   <form id="ogretmenGirisForm">
-    <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı" required autofocus>
+    <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı (Örn: ogretmen)" required autofocus>
     <input type="password" id="sifre" placeholder="Şifreniz" required>
-    <button type="submit" id="girisBtn">Giriş Yap</button>
+    <button type="submit" id="girisBtn"><i class="fa-solid fa-key"></i> Giriş Yap</button>
   </form>
 </div>
 
-<!-- PANEL ALANI -->
-<div class="panel" id="panelAlani">
-  
-  <!-- SOL BÖLÜM: DERS NOTU / ÖDEV PAYLAŞ -->
-  <div class="kutu">
-    <h2><i class="fa-solid fa-upload"></i> Ders Notu / Ödev Paylaş</h2>
-    <form id="paylasimForm">
-      
-      <label style="font-size:12px; color:#aaa;">Hedef Seçimi:</label>
-      <select id="hedefTuru" required>
-        <option value="hepsi">Tüm Öğrenciler (Genel Duyuru)</option>
-        <option value="sinif">Belirli Bir Sınıfa Gönder</option>
-        <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
-      </select>
+<div id="panelAlani" style="display: none;">
 
-      <!-- SINIF SEÇİM KUTUSU -->
-      <div id="sinifSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
-        <select id="hedefSinif">
-          <option value="">Sınıf Seçin</option>
-          <option value="1. Sınıf">1. Sınıf</option>
-          <option value="2. Sınıf">2. Sınıf</option>
-          <option value="3. Sınıf">3. Sınıf</option>
-          <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
-          <option value="5. Sınıf">5. Sınıf</option>
-          <option value="6. Sınıf">6. Sınıf</option>
-          <option value="7. Sınıf">7. Sınıf</option>
-          <option value="8. Sınıf LGS">8. Sınıf LGS</option>
-        </select>
-      </div>
-
-      <!-- ÖĞRENCİ SEÇİM KUTUSU -->
-      <div id="ogrenciSecimKutu" style="display:none;">
-        <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
-        <select id="hedefOgrenci">
-          <option value="">Öğrenci Yükleniyor...</option>
-        </select>
-      </div>
-
-      <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
-      <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
-
-      <!-- DOSYA YÜKLEME ALANI -->
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 5 MB - İsteğe Bağlı):</label>
-      <div class="dosya-alani">
-        <label for="dosyaInput" id="dosyaEtiket">
-          <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
-          Dosya Seçmek İçin Tıklayın
-        </label>
-        <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
-      </div>
-
-      <button type="submit" id="paylasBtn">Paylaş</button>
-    </form>
+  <!-- SEKMELER -->
+  <div class="nav-sekmeler">
+    <button class="sekme-btn aktif" id="sekmeBtnNot" onclick="sekmeDegistir('notPaylasim')"><i class="fa-solid fa-folder-open"></i> Ders Notu & Ödev Paylaş</button>
+    <button class="sekme-btn" id="sekmeBtnTest" onclick="sekmeDegistir('testOlustur')"><i class="fa-solid fa-file-pen"></i> 25 Soruluk Test Oluştur</button>
+    <button class="sekme-btn" id="sekmeBtnRapor" onclick="sekmeDegistir('testSonuclari')"><i class="fa-solid fa-chart-line"></i> Test Sonuçları & Raporlar</button>
   </div>
 
-  <!-- SAĞ BÖLÜM: PAYLAŞILAN ÖDEVLER VE NOTLAR -->
-  <div class="kutu">
-    <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
-    <div class="liste" id="paylasimListesi">
-      <p style="color:#aaa; font-size:13px;">Yükleniyor...</p>
+  <div class="panel-bolum aktif" id="sekme-notPaylasim">
+    <div class="grid-2">
+      <!-- SOL BÖLÜM: FORM -->
+      <div class="kutu">
+        <h2><i class="fa-solid fa-upload"></i> Ders Notu / Ödev Paylaş</h2>
+        <form id="paylasimForm">
+          
+          <label style="font-size:12px; color:#aaa;">Hedef Seçimi:</label>
+          <select id="hedefTuru" required>
+            <option value="hepsi">Tüm Öğrenciler (Genel Duyuru)</option>
+            <option value="sinif">Belirli Bir Sınıfa Gönder</option>
+            <option value="ogrenci">Tek Bir Öğrenciye Gönder</option>
+          </select>
+
+          <!-- SINIF SEÇİM KUTUSU -->
+          <div id="sinifSecimKutu" style="display:none;">
+            <label style="font-size:12px; color:#aaa;">Sınıf Seçiniz:</label>
+            <select id="hedefSinif">
+              <option value="">Sınıf Seçin</option>
+              <option value="1. Sınıf">1. Sınıf</option>
+              <option value="2. Sınıf">2. Sınıf</option>
+              <option value="3. Sınıf">3. Sınıf</option>
+              <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+              <option value="5. Sınıf">5. Sınıf</option>
+              <option value="6. Sınıf">6. Sınıf</option>
+              <option value="7. Sınıf">7. Sınıf</option>
+              <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+            </select>
+          </div>
+
+          <!-- ÖĞRENCİ SEÇİM KUTUSU -->
+          <div id="ogrenciSecimKutu" style="display:none;">
+            <label style="font-size:12px; color:#aaa;">Öğrenci Seçiniz:</label>
+            <select id="hedefOgrenci">
+              <option value="">Öğrenci Yükleniyor...</option>
+            </select>
+          </div>
+
+          <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
+          <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
+
+          <!-- DOSYA YÜKLEME ALANI -->
+          <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 5 MB - İsteğe Bağlı):</label>
+          <div class="dosya-alani" onclick="document.getElementById('dosyaInput').click()">
+            <label for="dosyaInput" id="dosyaEtiket">
+              <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
+              Dosya Seçmek İçin Tıklayın
+            </label>
+            <input type="file" id="dosyaInput" accept=".pdf, .doc, .docx, .jpg, .jpeg, .png">
+          </div>
+
+          <button type="submit" id="paylasBtn"><i class="fa-solid fa-paper-plane"></i> Paylaş</button>
+        </form>
+      </div>
+
+      <!-- SAĞ BÖLÜM: PAYLAŞILAN LİSTE -->
+      <div class="kutu">
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Paylaştığınız Notlar ve Ödevler</h2>
+        <div class="liste" id="paylasimListesi">
+          <p style="color:#aaa; font-size:13px;">Yükleniyor...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-bolum" id="sekme-testOlustur">
+    <div class="kutu">
+      <h2><i class="fa-solid fa-list-check"></i> 25 Soruluk Online Test Hazırlama</h2>
+      <form id="testOlusturForm">
+        
+        <div class="grid-2">
+          <div>
+            <label style="font-size:12px; color:#aaa;">Test Başlığı:</label>
+            <input type="text" id="testBaslik" placeholder="Örn: 7. Sınıf Matematik 1. Dönem Değerlendirme" required>
+          </div>
+          <div>
+            <label style="font-size:12px; color:#aaa;">Hedef Sınıf Düzeyi:</label>
+            <select id="testHedefSinif" required>
+              <option value="">Sınıf Seçiniz</option>
+              <option value="1. Sınıf">1. Sınıf</option>
+              <option value="2. Sınıf">2. Sınıf</option>
+              <option value="3. Sınıf">3. Sınıf</option>
+              <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+              <option value="5. Sınıf">5. Sınıf</option>
+              <option value="6. Sınıf">6. Sınıf</option>
+              <option value="7. Sınıf">7. Sınıf</option>
+              <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+          <label style="font-size:12px; color:#aaa;">Test Süresi (Dakika):</label>
+          <input type="number" id="testSuresi" value="40" min="5" max="180" required>
+        </div>
+
+        <h3 style="color:#ff7a00; font-size:16px; margin: 15px 0 10px 0;">Sorular ve Cevap Anahtarı (25 Soru)</h3>
+        
+        <!-- HIZLI SORU GEÇİŞ BUTONLARI -->
+        <div class="soru-nav-container" id="soruNavGrid"></div>
+
+        <!-- DİNAMİK SORU FORM ALANI -->
+        <div id="aktifSoruFormAlani"></div>
+
+        <button type="submit" id="testKaydetBtn" style="margin-top: 15px; font-size: 16px; padding: 15px;">
+          <i class="fa-solid fa-paper-plane"></i> 25 Soruluk Testi Yayınla
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel-bolum" id="sekme-testSonuclari">
+    <div class="kutu">
+      <h2><i class="fa-solid fa-square-poll-vertical"></i> Yayınladığınız Testler ve Başarı Durumu</h2>
+      <label style="font-size:12px; color:#aaa;">İncelemek İstediğiniz Testi Seçin:</label>
+      <select id="testSecimDropdown" style="margin-bottom: 20px;">
+        <option value="">Testler Yükleniyor...</option>
+      </select>
+
+      <div id="testRaporDetayAlani">
+        <p style="color:#aaa; font-size:13px;">Lütfen detaylarını ve başarı durumunu görmek için yukarıdan bir test seçiniz.</p>
+      </div>
     </div>
   </div>
 
 </div>
 
-<!-- FIREBASE UYGULAMASI -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-kutu">
+    <h3><i class="fa-solid fa-circle-question"></i> Onay Gerekli</h3>
+    <p id="confirmMesaj">Bu işlemi yapmak istediğinize emin misiniz?</p>
+    <div class="modal-butonlar">
+      <button class="modal-btn modal-btn-iptal" id="confirmIptalBtn">Vazgeç</button>
+      <button class="modal-btn" id="confirmEvetBtn">Evet, Onayla</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastBox"></div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -156,8 +282,71 @@
   const db = getFirestore(app);
 
   let aktifOgretmen = null;
+  let tumOgrencilerListesi = [];
 
-  // DOSYA SEÇİM HAREKETİ
+  // 25 SORULUK TEST VERİ YAPISI
+  const testSorulariVeri = Array.from({ length: 25 }, (_, index) => ({
+    soruNo: index + 1,
+    soruMetni: "",
+    secenekA: "",
+    secenekB: "",
+    secenekC: "",
+    secenekD: "",
+    dogruCevap: "A"
+  }));
+  let suAnkiSoruIndex = 0;
+
+  function showToast(mesaj, renk = '#ff7a00') {
+    const toast = document.getElementById("toastBox");
+    toast.innerText = mesaj;
+    toast.style.borderLeftColor = renk;
+    toast.style.display = "block";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 3500);
+  }
+
+  let confirmCallback = null;
+  function showConfirm(mesaj, onConfirm) {
+    document.getElementById("confirmMesaj").innerText = mesaj;
+    document.getElementById("confirmModal").style.display = "flex";
+    confirmCallback = onConfirm;
+  }
+
+  document.getElementById("confirmIptalBtn").onclick = () => {
+    document.getElementById("confirmModal").style.display = "none";
+    confirmCallback = null;
+  };
+  document.getElementById("confirmEvetBtn").onclick = () => {
+    document.getElementById("confirmModal").style.display = "none";
+    if (confirmCallback) confirmCallback();
+    confirmCallback = null;
+  };
+
+  window.sekmeDegistir = function(sekmeId) {
+    document.querySelectorAll(".panel-bolum").forEach(el => el.classList.remove("aktif"));
+    document.querySelectorAll(".sekme-btn").forEach(el => el.classList.remove("aktif"));
+
+    const hedefSekme = document.getElementById(`sekme-${sekmeId}`);
+    if (hedefSekme) hedefSekme.classList.add("aktif");
+
+    if (sekmeId === 'notPaylasim') document.getElementById("sekmeBtnNot").classList.add("aktif");
+    if (sekmeId === 'testOlustur') document.getElementById("sekmeBtnTest").classList.add("aktif");
+    if (sekmeId === 'testSonuclari') {
+      document.getElementById("sekmeBtnRapor").classList.add("aktif");
+      ogretmenTestleriniYukle();
+    }
+  };
+
+  function dosyayiOku(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   const dosyaInput = document.getElementById("dosyaInput");
   const dosyaEtiket = document.getElementById("dosyaEtiket");
 
@@ -169,131 +358,130 @@
     }
   });
 
-  // HEDEF SEÇİM DİNLEMESİ
+  document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const kAd = document.getElementById("kullaniciAdi").value.trim();
+    const sifre = document.getElementById("sifre").value.trim();
+
+    try {
+      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAd), where("sifre", "==", sifre));
+      const snap = await getDocs(q);
+
+      if (!snap.empty) {
+        let userDoc = snap.docs[0];
+        let data = userDoc.data();
+        if (data.rol === "ogretmen" || data.rol === "admin") {
+          aktifOgretmen = { id: userDoc.id, ...data };
+          panelAc();
+          return;
+        }
+      }
+
+      if ((kAd === "ogretmen" || kAd === "admin") && sifre === "123456") {
+        aktifOgretmen = {
+          id: "demo_ogretmen",
+          kullaniciAdi: kAd,
+          adSoyad: "Örnek Öğretmen",
+          brans: "Matematik",
+          rol: "ogretmen"
+        };
+        panelAc();
+      } else {
+        showToast("Hatalı kullanıcı adı veya şifre! (Varsayılan: ogretmen / 123456)", "#F44336");
+      }
+    } catch (err) {
+      showToast("Giriş yapılırken hata oluştu: " + err.message, "#F44336");
+    }
+  });
+
+  function panelAc() {
+    document.getElementById("girisAlani").style.display = "none";
+    document.getElementById("panelAlani").style.display = "block";
+    document.getElementById("cikisBtn").style.display = "inline-flex";
+    showToast(`Hoş geldiniz, ${aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi}!`, "#4CAF50");
+    
+    ogrencileriYukle();
+    paylasimlariCanliIzle();
+    soruNavGridOlustur();
+    soruFormuCiz(0);
+  }
+
+  document.getElementById("cikisBtn").addEventListener("click", () => {
+    aktifOgretmen = null;
+    document.getElementById("panelAlani").style.display = "none";
+    document.getElementById("girisAlani").style.display = "block";
+    document.getElementById("cikisBtn").style.display = "none";
+    document.getElementById("ogretmenGirisForm").reset();
+    showToast("Çıkış yapıldı.");
+  });
+
   const hedefTuru = document.getElementById("hedefTuru");
   const sinifKutu = document.getElementById("sinifSecimKutu");
   const ogrenciKutu = document.getElementById("ogrenciSecimKutu");
+  const hedefSinifSelect = document.getElementById("hedefSinif");
 
   hedefTuru.addEventListener("change", () => {
     const tur = hedefTuru.value;
     if (tur === "sinif") {
       sinifKutu.style.display = "block";
       ogrenciKutu.style.display = "none";
+      hedefSinifSelect.value = "";
     } else if (tur === "ogrenci") {
-      sinifKutu.style.display = "none";
+      sinifKutu.style.display = "block";
       ogrenciKutu.style.display = "block";
+      hedefSinifSelect.value = "";
+      ogrenciDropdownGuncelle("");
     } else {
       sinifKutu.style.display = "none";
       ogrenciKutu.style.display = "none";
     }
   });
 
-  // SAYFA YÜKLENDİĞİNDE OTURUM KONTROLÜ
-  document.addEventListener("DOMContentLoaded", () => {
-    const kayitli = localStorage.getItem("ongoru_ogretmen");
-    if (kayitli) {
-      try {
-        aktifOgretmen = JSON.parse(kayitli);
-        if(aktifOgretmen && (aktifOgretmen.id || aktifOgretmen.kullaniciAdi)) {
-          paneliAc();
-        } else {
-          cikisYap();
-        }
-      } catch(e) {
-        cikisYap();
-      }
-    } else {
-      cikisYap();
+  hedefSinifSelect.addEventListener("change", (e) => {
+    if (hedefTuru.value === "ogrenci") {
+      ogrenciDropdownGuncelle(e.target.value);
     }
   });
 
-  // GİRİŞ FORMU KONTROLÜ
-  document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const gBtn = document.getElementById("girisBtn");
-    gBtn.disabled = true;
-    gBtn.innerText = "Giriş Yapılıyor...";
-
-    const kAdi = document.getElementById("kullaniciAdi").value.toLowerCase().trim();
-    const sifre = document.getElementById("sifre").value.trim();
-
-    try {
-      const snap = await getDocs(collection(db, "kullanicilar"));
-      let eslesenUser = null;
-
-      snap.forEach(docSnap => {
-        const u = docSnap.data();
-        if ((u.kullaniciAdi && u.kullaniciAdi.toLowerCase() === kAdi) && u.sifre === sifre && u.rol === "ogretmen") {
-          eslesenUser = { id: docSnap.id, ...u };
-        }
-      });
-
-      if (eslesenUser) {
-        aktifOgretmen = eslesenUser;
-        localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
-        paneliAc();
-      } else {
-        alert("Kullanıcı adı veya şifre hatalı!");
-      }
-    } catch (err) {
-      alert("Giriş sırasında veritabanı hatası oluştu: " + err.message);
-    } finally {
-      gBtn.disabled = false;
-      gBtn.innerText = "Giriş Yap";
-    }
-  });
-
-  function paneliAc() {
-    document.getElementById("girisAlani").style.display = "none";
-    document.getElementById("panelAlani").style.display = "grid";
-    document.getElementById("cikisBtn").style.display = "inline-flex";
-
-    ogrencileriYukle();
-    paylasimlariCanliIzle();
-  }
-
-  function cikisYap() {
-    localStorage.removeItem("ongoru_ogretmen");
-    document.getElementById("girisAlani").style.display = "block";
-    document.getElementById("panelAlani").style.display = "none";
-    document.getElementById("cikisBtn").style.display = "none";
-  }
-
-  document.getElementById("cikisBtn").addEventListener("click", cikisYap);
-
-  // ÖĞRENCİLERİ LİSTELEME
   async function ogrencileriYukle() {
-    const select = document.getElementById("hedefOgrenci");
-    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
+    tumOgrencilerListesi = [];
     try {
       const snap = await getDocs(collection(db, "kullanicilar"));
       snap.forEach(docSnap => {
         const u = docSnap.data();
         if(u.rol === "ogrenci") {
-          select.innerHTML += `<option value="${docSnap.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
+          tumOgrencilerListesi.push({ id: docSnap.id, ...u });
         }
       });
+      ogrenciDropdownGuncelle("");
     } catch (err) {
       console.error("Öğrenciler alınamadı:", err);
     }
   }
 
-  // DOSYA METİN OKUYUCU (Base64)
-  function dosyayiOku(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-      reader.readAsDataURL(file);
+  function ogrenciDropdownGuncelle(secilenSinif) {
+    const select = document.getElementById("hedefOgrenci");
+    select.innerHTML = "<option value=''>Öğrenci Seçiniz</option>";
+    
+    const filtrelenmis = secilenSinif 
+      ? tumOgrencilerListesi.filter(o => o.sinif === secilenSinif)
+      : tumOgrencilerListesi;
+
+    if (filtrelenmis.length === 0) {
+      select.innerHTML = "<option value=''>Bu sınıfta kayıtlı öğrenci bulunamadı</option>";
+      return;
+    }
+
+    filtrelenmis.forEach(u => {
+      select.innerHTML += `<option value="${u.id}">${u.adSoyad || u.kullaniciAdi} (${u.sinif || 'Sınıfsız'})</option>`;
     });
   }
 
-  // PAYLAŞIM GÖNDERME
   document.getElementById("paylasimForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = document.getElementById("paylasBtn");
     btn.disabled = true;
-    btn.innerText = "Paylaşılıyor...";
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Paylaşılıyor...`;
 
     try {
       const tur = hedefTuru.value;
@@ -303,17 +491,17 @@
       if (tur === "sinif") {
         hedefSinifVal = document.getElementById("hedefSinif").value;
         if (!hedefSinifVal) { 
-          alert("Lütfen bir sınıf seçin!"); 
+          showToast("Lütfen bir sınıf seçin!", "#F44336"); 
           btn.disabled = false; 
-          btn.innerText = "Paylaş"; 
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Paylaş`; 
           return; 
         }
       } else if (tur === "ogrenci") {
         hedefOgrenciVal = document.getElementById("hedefOgrenci").value;
         if (!hedefOgrenciVal) { 
-          alert("Lütfen bir öğrenci seçin!"); 
+          showToast("Lütfen bir öğrenci seçin!", "#F44336"); 
           btn.disabled = false; 
-          btn.innerText = "Paylaş"; 
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Paylaş`; 
           return; 
         }
       }
@@ -325,9 +513,9 @@
         const file = dosyaInput.files[0];
 
         if (file.size > 5000 * 1024) {
-          alert("Lütfen 5 MB'dan küçük bir dosya veya görsel seçin!");
+          showToast("Lütfen 5 MB'dan küçük bir dosya veya görsel seçin!", "#F44336");
           btn.disabled = false;
-          btn.innerText = "Paylaş";
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Paylaş`;
           return;
         }
 
@@ -349,21 +537,20 @@
         tarih: new Date().toLocaleString('tr-TR')
       });
 
-      alert("Paylaşım başarıyla gönderildi!");
+      showToast("Paylaşım başarıyla yapıldı!", "#4CAF50");
       document.getElementById("paylasimForm").reset();
       dosyaEtiket.innerHTML = `<i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>Dosya Seçmek İçin Tıklayın`;
       sinifKutu.style.display = "none";
       ogrenciKutu.style.display = "none";
 
     } catch (err) {
-      alert("Gönderim Hatası: " + err.message);
+      showToast("Gönderim Hatası: " + err.message, "#F44336");
     } finally {
       btn.disabled = false;
-      btn.innerText = "Paylaş";
+      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Paylaş`;
     }
   });
 
-  // CANLI PAYLAŞIM LİSTESİ
   function paylasimlariCanliIzle() {
     if(!aktifOgretmen) return;
     const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
@@ -406,15 +593,241 @@
     });
   }
 
-  window.paylasimSil = async function(id) {
-    if (confirm("Bu paylaşımı silmek istediğinize emin misiniz?")) {
+  window.paylasimSil = function(id) {
+    showConfirm("Bu paylaşımı silmek istediğinize emin misiniz?", async () => {
       try {
         await deleteDoc(doc(db, "paylasimlar", id));
+        showToast("Paylaşım silindi.");
       } catch (err) {
-        alert("Silinirken hata oluştu: " + err.message);
+        showToast("Silinirken hata oluştu: " + err.message, "#F44336");
       }
-    }
+    });
   };
+
+  function soruNavGridOlustur() {
+    const grid = document.getElementById("soruNavGrid");
+    grid.innerHTML = "";
+    testSorulariVeri.forEach((s, idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `soru-nav-btn ${idx === suAnkiSoruIndex ? 'aktif' : ''} ${s.soruMetni.trim() !== '' ? 'dolu' : ''}`;
+      btn.innerText = idx + 1;
+      btn.onclick = () => {
+        mevcutSoruyuKaydet();
+        suAnkiSoruIndex = idx;
+        soruNavGridOlustur();
+        soruFormuCiz(idx);
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function mevcutSoruyuKaydet() {
+    const s = testSorulariVeri[suAnkiSoruIndex];
+    const metin = document.getElementById("soruMetniInput");
+    const a = document.getElementById("secenekAInput");
+    const b = document.getElementById("secenekBInput");
+    const c = document.getElementById("secenekCInput");
+    const d = document.getElementById("secenekDInput");
+    const cevap = document.getElementById("dogruCevapSelect");
+
+    if (metin) s.soruMetni = metin.value;
+    if (a) s.secenekA = a.value;
+    if (b) s.secenekB = b.value;
+    if (c) s.secenekC = c.value;
+    if (d) s.secenekD = d.value;
+    if (cevap) s.dogruCevap = cevap.value;
+  }
+
+  function soruFormuCiz(idx) {
+    const s = testSorulariVeri[idx];
+    const container = document.getElementById("aktifSoruFormAlani");
+
+    container.innerHTML = `
+      <div class="soru-kutu">
+        <h4 style="color:#ff7a00; margin-bottom:12px;">Soru ${s.soruNo} / 25</h4>
+        <label style="font-size:12px; color:#aaa;">Soru Metni:</label>
+        <textarea id="soruMetniInput" placeholder="Soru metnini yazınız..." required>${s.soruMetni}</textarea>
+        
+        <label style="font-size:12px; color:#aaa;">Şıklar:</label>
+        <div class="sik-grid">
+          <input type="text" id="secenekAInput" placeholder="A) Şıkkı" value="${s.secenekA}" required>
+          <input type="text" id="secenekBInput" placeholder="B) Şıkkı" value="${s.secenekB}" required>
+          <input type="text" id="secenekCInput" placeholder="C) Şıkkı" value="${s.secenekC}" required>
+          <input type="text" id="secenekDInput" placeholder="D) Şıkkı" value="${s.secenekD}" required>
+        </div>
+
+        <label style="font-size:12px; color:#aaa; margin-top:10px; display:block;">Cevap Anahtarı (Doğru Cevap):</label>
+        <select id="dogruCevapSelect" required>
+          <option value="A" ${s.dogruCevap === 'A' ? 'selected' : ''}>A Şıkkı</option>
+          <option value="B" ${s.dogruCevap === 'B' ? 'selected' : ''}>B Şıkkı</option>
+          <option value="C" ${s.dogruCevap === 'C' ? 'selected' : ''}>C Şıkkı</option>
+          <option value="D" ${s.dogruCevap === 'D' ? 'selected' : ''}>D Şıkkı</option>
+        </select>
+      </div>
+    `;
+
+    document.getElementById("soruMetniInput").addEventListener("input", () => {
+      s.soruMetni = document.getElementById("soruMetniInput").value;
+      soruNavGridOlustur();
+    });
+  }
+
+  document.getElementById("testOlusturForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    mevcutSoruyuKaydet();
+
+    const eksikSoru = testSorulariVeri.find(s => !s.soruMetni.trim() || !s.secenekA.trim() || !s.secenekB.trim() || !s.secenekC.trim() || !s.secenekD.trim());
+    
+    if (eksikSoru) {
+      showToast(`Lütfen Soru ${eksikSoru.soruNo}'in metnini ve tüm şıklarını doldurunuz!`, "#F44336");
+      suAnkiSoruIndex = eksikSoru.soruNo - 1;
+      soruNavGridOlustur();
+      soruFormuCiz(suAnkiSoruIndex);
+      return;
+    }
+
+    const testBtn = document.getElementById("testKaydetBtn");
+    testBtn.disabled = true;
+    testBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Test Yayınlanıyor...`;
+
+    try {
+      const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
+      const testBaslik = document.getElementById("testBaslik").value.trim();
+      const testHedefSinif = document.getElementById("testHedefSinif").value;
+      const testSuresi = parseInt(document.getElementById("testSuresi").value) || 40;
+
+      await addDoc(collection(db, "testler"), {
+        ogretmenId: ogretmenId,
+        ogretmenAd: aktifOgretmen.adSoyad || aktifOgretmen.kullaniciAdi,
+        brans: aktifOgretmen.brans || "",
+        baslik: testBaslik,
+        hedefSinif: testHedefSinif,
+        sureDakika: testSuresi,
+        tarih: new Date().toLocaleString('tr-TR'),
+        sorular: testSorulariVeri
+      });
+
+      showToast("25 Soruluk Test Başarıyla Oluşturuldu ve Yayınlandı!", "#4CAF50");
+      document.getElementById("testOlusturForm").reset();
+      
+      testSorulariVeri.forEach(s => {
+        s.soruMetni = "";
+        s.secenekA = "";
+        s.secenekB = "";
+        s.secenekC = "";
+        s.secenekD = "";
+        s.dogruCevap = "A";
+      });
+      suAnkiSoruIndex = 0;
+      soruNavGridOlustur();
+      soruFormuCiz(0);
+
+    } catch (err) {
+      showToast("Test kaydedilirken hata oluştu: " + err.message, "#F44336");
+    } finally {
+      testBtn.disabled = false;
+      testBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> 25 Soruluk Testi Yayınla`;
+    }
+  });
+
+  async function ogretmenTestleriniYukle() {
+    const select = document.getElementById("testSecimDropdown");
+    select.innerHTML = "<option value=''>Test Seçiniz</option>";
+    
+    if(!aktifOgretmen) return;
+    const ogretmenId = aktifOgretmen.id || aktifOgretmen.kullaniciAdi;
+
+    try {
+      const q = query(collection(db, "testler"), where("ogretmenId", "==", ogretmenId));
+      const snap = await getDocs(q);
+      
+      snap.forEach(docSnap => {
+        const t = docSnap.data();
+        select.innerHTML += `<option value="${docSnap.id}">${t.baslik} (${t.hedefSinif}) - ${t.tarih}</option>`;
+      });
+    } catch(err) {
+      console.error("Testler getirilemedi:", err);
+    }
+  }
+
+  document.getElementById("testSecimDropdown").addEventListener("change", async (e) => {
+    const testId = e.target.value;
+    const detayAlani = document.getElementById("testRaporDetayAlani");
+
+    if(!testId) {
+      detayAlani.innerHTML = `<p style="color:#aaa; font-size:13px;">Lütfen detaylarını ve başarı durumunu görmek için yukarıdan bir test seçiniz.</p>`;
+      return;
+    }
+
+    detayAlani.innerHTML = "<p style='color:#aaa;'><i class='fa-solid fa-spinner fa-spin'></i> Sonuçlar yükleniyor...</p>";
+
+    try {
+      const q = query(collection(db, "test_sonuclari"), where("testId", "==", testId));
+      const snap = await getDocs(q);
+
+      if(snap.empty) {
+        detayAlani.innerHTML = `<p style="color:#ff7a00; font-size:14px;"><i class="fa-solid fa-info-circle"></i> Bu testi henüz hiçbir öğrenci tamamlamadı.</p>`;
+        return;
+      }
+
+      let toplamPuan = 0;
+      let ogrenciSayisi = 0;
+      let tabloHtml = `
+        <table class="sonuc-tablo">
+          <thead>
+            <tr>
+              <th>Öğrenci Adı</th>
+              <th>Sınıfı</th>
+              <th>Doğru</th>
+              <th>Yanlış</th>
+              <th>Boş</th>
+              <th>Puan</th>
+              <th>Başarı Düzeyi</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      snap.forEach(docSnap => {
+        const s = docSnap.data();
+        ogrenciSayisi++;
+        toplamPuan += (s.puan || 0);
+
+        let basariSinif = "basari-dusuk";
+        if(s.puan >= 70) basariSinif = "basari-yuksek";
+        else if(s.puan >= 50) basariSinif = "basari-orta";
+
+        tabloHtml += `
+          <tr>
+            <td>${s.ogrenciAd || 'Bilinmiyor'}</td>
+            <td>${s.sinif || '-'}</td>
+            <td style="color:#4CAF50; font-weight:bold;">${s.dogruSayisi || 0}</td>
+            <td style="color:#F44336; font-weight:bold;">${s.yanlisSayisi || 0}</td>
+            <td style="color:#aaa;">${s.bosSayisi || 0}</td>
+            <td style="font-weight:bold;">${s.puan || 0} / 100</td>
+            <td class="${basariSinif}">%${s.puan || 0}</td>
+          </tr>
+        `;
+      });
+
+      const sinifOrtalamasi = Math.round(toplamPuan / ogrenciSayisi);
+
+      tabloHtml += `
+          </tbody>
+        </table>
+        <div style="margin-top:15px; padding:15px; background:#252525; border-radius:8px; display:flex; justify-content:space-between; align-items:center;">
+          <span>Sınava Giren Öğrenci Sayısı: <strong>${ogrenciSayisi}</strong></span>
+          <span>Sınıf Başarı Ortalaması: <strong style="color:#ff7a00; font-size:18px;">%${sinifOrtalamasi}</strong></span>
+        </div>
+      `;
+
+      detayAlani.innerHTML = tabloHtml;
+
+    } catch(err) {
+      detayAlani.innerHTML = `<p style="color:#ff3333;">Sonuçlar alınırken hata oluştu: ${err.message}</p>`;
+    }
+  });
 </script>
 
 </body>
