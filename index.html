@@ -304,6 +304,84 @@
       line-height: 1.8;
     }
 
+    /* DERS PROGRAMLARI VE DUYURULAR BÖLÜMÜ */
+    .programlar-duyurular-section {
+      padding: 50px 8%;
+      background: #1f1f1f;
+    }
+
+    .sinif-butonlari {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 35px;
+    }
+
+    .sinif-btn {
+      background: #383838;
+      color: white;
+      border: 2px solid #ff7a00;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .sinif-btn:hover,
+    .sinif-btn.active {
+      background: #ff7a00;
+      color: white;
+    }
+
+    .program-icerik-alani {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+
+    .program-kutu {
+      background: #383838;
+      padding: 25px;
+      border-radius: 20px;
+      text-align: center;
+      border-top: 4px solid #ff7a00;
+    }
+
+    .program-kutu h3 {
+      color: #ff7a00;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .program-gorsel-wrapper {
+      width: 100%;
+      min-height: 300px;
+      background: #2f2f2f;
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .program-gorsel-wrapper img {
+      width: 100%;
+      height: auto;
+      max-height: 500px;
+      object-fit: contain;
+      border-radius: 15px;
+      cursor: pointer;
+    }
+
+    .program-gorsel-wrapper p {
+      color: #aaa;
+      font-size: 15px;
+      padding: 20px;
+    }
+
     .galeri {
       padding: 50px 8%;
     }
@@ -445,7 +523,8 @@
       }
 
       .galeri-grid,
-      .kayit-alan {
+      .kayit-alan,
+      .program-icerik-alani {
         grid-template-columns: 1fr;
       }
     }
@@ -473,6 +552,7 @@
     <a href="#">Ana Sayfa</a>
     <a href="#hakkimizda">Hakkımızda</a>
     <a href="#dersler">Dersler</a>
+    <a href="#programlar-duyurular">Ders Programları ve Duyurular</a>
     <a href="#iletisim">İletişim</a>
   </nav>
 
@@ -639,6 +719,38 @@
     </div>
   </section>
 
+  <!-- DERS PROGRAMLARI VE DUYURULAR BÖLÜMÜ -->
+  <section class="programlar-duyurular-section" id="programlar-duyurular">
+    <h2 class="baslik">Ders Programları ve Duyurular</h2>
+
+    <div class="sinif-butonlari">
+      <button class="sinif-btn active" data-sinif="1">1. Sınıf</button>
+      <button class="sinif-btn" data-sinif="2">2. Sınıf</button>
+      <button class="sinif-btn" data-sinif="3">3. Sınıf</button>
+      <button class="sinif-btn" data-sinif="4">4. Sınıf</button>
+      <button class="sinif-btn" data-sinif="5">5. Sınıf</button>
+      <button class="sinif-btn" data-sinif="6">6. Sınıf</button>
+      <button class="sinif-btn" data-sinif="7">7. Sınıf</button>
+      <button class="sinif-btn" data-sinif="8">8. Sınıf</button>
+    </div>
+
+    <div class="program-icerik-alani">
+      <div class="program-kutu">
+        <h3><i class="fa-solid fa-calendar-days"></i> Ders Programı</h3>
+        <div class="program-gorsel-wrapper" id="dersProgramiWrapper">
+          <p>Henüz ders programı görseli yüklenmemiş.</p>
+        </div>
+      </div>
+
+      <div class="program-kutu">
+        <h3><i class="fa-solid fa-bullhorn"></i> Sınıf Duyurusu</h3>
+        <div class="program-gorsel-wrapper" id="sinifDuyurusuWrapper">
+          <p>Henüz duyuru görseli yüklenmemiş.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="galeri">
     <h2 class="baslik">Öngörü Akademi'den Kareler</h2>
     <div class="galeri-grid" id="anaGaleriGrid">
@@ -733,6 +845,18 @@
       }
     });
 
+    // PROGRAM VE DUYURU GÖRSELLERİNE TIKLAYINCA BÜYÜTME
+    document.getElementById("dersProgramiWrapper").addEventListener("click", function(e) {
+      if (e.target && e.target.tagName === "IMG") {
+        window.open(e.target.src, "_blank");
+      }
+    });
+    document.getElementById("sinifDuyurusuWrapper").addEventListener("click", function(e) {
+      if (e.target && e.target.tagName === "IMG") {
+        window.open(e.target.src, "_blank");
+      }
+    });
+
     // HIZLI GİRİŞ KUTUSUNDAKİ "BİLGİ AL" FORMUNU AÇMA/KAPATMA
     const bilgiToggleBtn = document.getElementById("bilgiToggleBtn");
     const hizliFormAlani = document.getElementById("hizliFormAlani");
@@ -746,10 +870,10 @@
     });
   </script>
 
-  <!-- FIREBASE BAĞLANTISI VE DİNAMİK GALERİ ÇEKME KODU -->
+  <!-- FIREBASE BAĞLANTISI VE DİNAMİK GALERİ & DERS PROGRAMLARI ÇEKME KODU -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -763,6 +887,47 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // --- DERS PROGRAMLARI VE DUYURULAR SIFIN SEÇİMİ VE CANLI VERİ ÇEKME ---
+    let seciliSinif = "1";
+    let programlarVerisi = {};
+
+    function sinifIcerikGuncelle(sinifNo) {
+      const progWrapper = document.getElementById("dersProgramiWrapper");
+      const duyuruWrapper = document.getElementById("sinifDuyurusuWrapper");
+
+      const sinifData = programlarVerisi[sinifNo] || {};
+
+      if (sinifData.programUrl) {
+        progWrapper.innerHTML = `<img src="${sinifData.programUrl}" alt="${sinifNo}. Sınıf Ders Programı">`;
+      } else {
+        progWrapper.innerHTML = `<p>${sinifNo}. Sınıf için henüz ders programı görseli yüklenmemiş.</p>`;
+      }
+
+      if (sinifData.duyuruUrl) {
+        duyuruWrapper.innerHTML = `<img src="${sinifData.duyuruUrl}" alt="${sinifNo}. Sınıf Duyurusu">`;
+      } else {
+        duyuruWrapper.innerHTML = `<p>${sinifNo}. Sınıf için henüz duyuru görseli yüklenmemiş.</p>`;
+      }
+    }
+
+    const sinifButonlari = document.querySelectorAll(".sinif-btn");
+    sinifButonlari.forEach(btn => {
+      btn.addEventListener("click", function() {
+        sinifButonlari.forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        seciliSinif = this.getAttribute("data-sinif");
+        sinifIcerikGuncelle(seciliSinif);
+      });
+    });
+
+    onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
+      programlarVerisi = {};
+      snapshot.forEach(docSnap => {
+        programlarVerisi[docSnap.id] = docSnap.data();
+      });
+      sinifIcerikGuncelle(seciliSinif);
+    });
 
     // --- 1. FIREBASE GALERİ CANLI VERİ ÇEKME ---
     onSnapshot(collection(db, "galeri"), (snapshot) => {
