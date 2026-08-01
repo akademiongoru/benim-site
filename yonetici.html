@@ -36,6 +36,11 @@ header {
   color: #ff7a00;
   font-size: 24px;
 }
+.header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 .back-btn {
   background: #ff7a00;
   color: white;
@@ -43,6 +48,16 @@ header {
   border-radius: 8px;
   text-decoration: none;
   font-weight: bold;
+}
+.cikis-btn {
+  background: #e74c3c;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  display: none;
 }
 
 /* GİRİŞ ALANI */
@@ -63,6 +78,7 @@ header {
   border: none;
   border-radius: 8px;
   color: white;
+  font-size: 16px;
 }
 .login-container button {
   width: 100%;
@@ -73,6 +89,7 @@ header {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+  font-size: 16px;
 }
 
 /* PANEL İÇERİK */
@@ -154,14 +171,17 @@ header {
   <div class="logo">
     <h1><i class="fa-solid fa-user-tie"></i> Öngörü Akademi Yönetim Paneli</h1>
   </div>
-  <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> Ana Sayfaya Dön</a>
+  <div class="header-actions">
+    <button id="cikisYapBtn" class="cikis-btn"><i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap</button>
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+  </div>
 </header>
 
 <!-- GİRİŞ FORMU -->
 <div class="login-container" id="loginBox">
   <h2 style="color:#ff7a00; margin-bottom:15px;">Yönetici Girişi</h2>
-  <input type="password" id="adminPassword" placeholder="Yönetici Şifreniz">
-  <button id="loginBtn">Giriş Yap</button>
+  <input type="password" id="adminPassword" placeholder="Yönetici Şifreniz (Varsayılan: 12345)">
+  <button id="loginBtn" type="button">Giriş Yap</button>
 </div>
 
 <!-- YÖNETİM PANELİ -->
@@ -234,18 +254,57 @@ header {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // ŞİFRE KONTROLÜ
+  const DOGRU_SIFRE = "12345"; // Buradan şifrenizi belirleyebilirsiniz
+
+  const loginBox = document.getElementById("loginBox");
+  const panelBox = document.getElementById("panelBox");
+  const cikisYapBtn = document.getElementById("cikisYapBtn");
   const loginBtn = document.getElementById("loginBtn");
-  loginBtn.addEventListener("click", () => {
-    const pwd = document.getElementById("adminPassword").value;
-    if(pwd === "12345") { // Şifrenizi buradan değiştirebilirsiniz
-      document.getElementById("loginBox").style.display = "none";
-      document.getElementById("panelBox").style.display = "block";
+  const adminPasswordInput = document.getElementById("adminPassword");
+
+  // OTURUM KONTROLÜ (Sayfa yenilenince oturumun kapanmaması için)
+  function oturumKontrol() {
+    if (sessionStorage.getItem("adminGirisYapildi") === "true") {
+      loginBox.style.display = "none";
+      panelBox.style.display = "block";
+      cikisYapBtn.style.display = "inline-block";
       verileriYukle();
     } else {
-      alert("Hatalı Şifre!");
+      loginBox.style.display = "block";
+      panelBox.style.display = "none";
+      cikisYapBtn.style.display = "none";
+    }
+  }
+
+  // GİRİŞ YAPMA İŞLEMİ
+  function girisYap() {
+    const girilenSifre = adminPasswordInput.value.trim();
+    if (girilenSifre === DOGRU_SIFRE) {
+      sessionStorage.setItem("adminGirisYapildi", "true");
+      oturumKontrol();
+      adminPasswordInput.value = "";
+    } else {
+      alert("Hatalı Şifre! Lütfen tekrar deneyin.");
+    }
+  }
+
+  loginBtn.addEventListener("click", girisYap);
+
+  // ENTER TUŞU İLE GİRİŞ DESTEĞİ
+  adminPasswordInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      girisYap();
     }
   });
+
+  // ÇIKIŞ YAPMA İŞLEMİ
+  cikisYapBtn.addEventListener("click", () => {
+    sessionStorage.removeItem("adminGirisYapildi");
+    oturumKontrol();
+  });
+
+  // Sayfa açılır açılmaz oturumu kontrol et
+  oturumKontrol();
 
   function verileriYukle() {
     // 1. DERS PROGRAMLARINI CANLI DİNLE & LİSTELE
@@ -335,7 +394,7 @@ header {
     }
   });
 
-  // SİLME İŞLEMLERİ (KÜRESEL FONKSİYONLAR)
+  // SİLME İŞLEMLERİ
   document.progSil = async (id) => {
     if(confirm("Bu ders programını silmek istediğinize emin misiniz?")) {
       await deleteDoc(doc(db, "dersProgramlari", id));
