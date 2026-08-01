@@ -79,7 +79,7 @@
     .foto-input-wrapper { display:flex; flex-direction:column; font-size:12px; color:#aaa; width:100%; }
     .foto-input-wrapper input { padding:4px; margin-bottom:0; font-size:11px; background:transparent; border:none; }
 
-    /* GALERİ YÖNETİMİ STİLLERİ */
+    /* GALERİ VE PROGRAM YÖNETİMİ STİLLERİ */
     .galeri-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
     .galeri-kart { background: #252525; border-radius: 8px; border: 1px solid #444; overflow: hidden; position: relative; display: flex; flex-direction: column; }
     .galeri-kart img { width: 100%; height: 100px; object-fit: cover; cursor: pointer; }
@@ -123,6 +123,49 @@
 <!-- PANEL ALANI (GİRİŞ YAPILINCA AÇILIR) -->
 <div class="panel" id="panelAlani">
   
+  <!-- DERS PROGRAMLARI VE DUYURULAR YÖNETİMİ -->
+  <div class="kutu">
+    <h2><i class="fa-solid fa-calendar-days"></i> Ders Programları ve Duyuru Yönetimi</h2>
+    <form id="programForm">
+      <div class="foto-yukleme-alani">
+        <img id="programFotoOnizleme" src="https://via.placeholder.com/100?text=Önizleme" style="width:70px; height:50px; border-radius:6px; object-fit:cover;" alt="Önizleme">
+        <div class="foto-input-wrapper">
+          <label for="programFoto">Görsel / Resim Seç (Ders Programı veya Duyuru)</label>
+          <input type="file" id="programFoto" accept="image/*" required onchange="fotoOnizle(event, 'programFotoOnizleme')">
+        </div>
+      </div>
+      
+      <div class="grid-2" style="gap:10px; margin-bottom:0;">
+        <select id="programSinif" required>
+          <option value="">Sınıf Seçiniz</option>
+          <option value="1. Sınıf">1. Sınıf</option>
+          <option value="2. Sınıf">2. Sınıf</option>
+          <option value="3. Sınıf">3. Sınıf</option>
+          <option value="4. Sınıf">4. Sınıf</option>
+          <option value="5. Sınıf">5. Sınıf</option>
+          <option value="6. Sınıf">6. Sınıf</option>
+          <option value="7. Sınıf">7. Sınıf</option>
+          <option value="8. Sınıf">8. Sınıf</option>
+        </select>
+
+        <select id="programTur" required>
+          <option value="program">Ders Programı</option>
+          <option value="duyuru">Duyuru</option>
+        </select>
+      </div>
+
+      <input type="text" id="programBaslik" placeholder="Başlık (Örn: Haftalık Ders Programı)" required>
+      <input type="text" id="programAciklama" placeholder="Açıklama / Detay (Opsiyonel)">
+
+      <button type="submit" id="programBtn"><i class="fa-solid fa-plus"></i> Program / Duyuru Ekle</button>
+    </form>
+
+    <h3 style="margin-top:20px; color:#ff7a00;"><i class="fa-solid fa-list-check"></i> Eklenen Ders Programları & Duyurular</h3>
+    <div class="galeri-grid" id="programListesi">
+      <small style="color:#aaa;">Programlar yükleniyor...</small>
+    </div>
+  </div>
+
   <!-- 0. BÖLÜM: GALERİ YÖNETİMİ -->
   <div class="kutu">
     <h2><i class="fa-solid fa-images"></i> Ana Sayfa Galeri Yönetimi</h2>
@@ -391,6 +434,7 @@
     document.getElementById("panelAlani").style.display = "flex";
     document.getElementById("cikisBtn").style.display = "inline-block";
     
+    programlariGetir();
     galeriGetir();
     basvurulariGetir();
     canliKullanicilariGetir();
@@ -414,6 +458,84 @@
     localStorage.removeItem("adminGirisYapildi");
     location.reload();
   });
+
+  // --- DERS PROGRAMLARI VE DUYURULAR YÖNETİMİ ---
+  document.getElementById("programForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById("programBtn");
+    const fotoSrc = document.getElementById("programFotoOnizleme").src;
+    const sinif = document.getElementById("programSinif").value;
+    const tur = document.getElementById("programTur").value;
+    const baslik = document.getElementById("programBaslik").value.trim();
+    const aciklama = document.getElementById("programAciklama").value.trim();
+
+    if (fotoSrc.includes("via.placeholder")) {
+      alert("Lütfen geçerli bir görsel seçin.");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Eklendi...";
+
+    try {
+      await addDoc(collection(db, "programlar_duyurular"), {
+        url: fotoSrc,
+        sinif: sinif,
+        tur: tur,
+        baslik: baslik,
+        aciklama: aciklama,
+        tarih: new Date().toISOString()
+      });
+
+      alert("Ders Programı/Duyuru başarıyla eklendi!");
+      document.getElementById("programForm").reset();
+      document.getElementById("programFotoOnizleme").src = "https://via.placeholder.com/100?text=Önizleme";
+    } catch (err) {
+      alert("Ekleme hatası: " + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-plus"></i> Program / Duyuru Ekle`;
+    }
+  });
+
+  function programlariGetir() {
+    onSnapshot(collection(db, "programlar_duyurular"), (snapshot) => {
+      const div = document.getElementById("programListesi");
+      div.innerHTML = "";
+
+      if (snapshot.empty) {
+        div.innerHTML = "<small style='color:#aaa;'>Henüz ders programı veya duyuru eklenmedi.</small>";
+        return;
+      }
+
+      snapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        const id = docSnap.id;
+
+        div.innerHTML += `
+          <div class="galeri-kart">
+            <img src="${item.url}" alt="${item.baslik}" onclick="resimBuyut('${item.url}', '${item.baslik}')">
+            <div class="bilgi">
+              <strong>${item.sinif}</strong><br>
+              ${item.baslik} (${item.tur})
+            </div>
+            <button class="sil-btn" onclick="programSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+          </div>
+        `;
+      });
+    });
+  }
+
+  window.programSil = async function(id) {
+    if (confirm("Bu ders programını/duyuruyu silmek istediğinize emin misiniz?")) {
+      try {
+        await deleteDoc(doc(db, "programlar_duyurular", id));
+        alert("Başarıyla silindi.");
+      } catch (error) {
+        alert("Silinirken hata oluştu: " + error.message);
+      }
+    }
+  };
 
   // --- GALERİ YÖNETİMİ ---
   document.getElementById("galeriForm").addEventListener("submit", async (e) => {
