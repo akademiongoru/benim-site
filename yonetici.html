@@ -700,6 +700,12 @@
       ogretmenDiv.innerHTML = ""; 
       ogrenciDiv.innerHTML = "";
 
+      if (snapshot.empty) {
+        ogretmenDiv.innerHTML = "<small style='color:#aaa;'>Kayıtlı öğretmen bulunamadı.</small>";
+        ogrenciDiv.innerHTML = "<small style='color:#aaa;'>Kayıtlı öğrenci bulunamadı.</small>";
+        return;
+      }
+
       let ogretmenSayisi = 0;
       let ogrenciSayisi = 0;
 
@@ -749,7 +755,7 @@
                 <div class="detay-satir"><span>Sınıf:</span> ${u.sinif || '-'}</div>
                 <div class="detay-satir"><span>Başarı Düzeyi:</span> ${u.basari || '-'}</div>
                 <div class="detay-satir"><span>Anne Adı:</span> ${u.anneAdSoyad || '-'}</div>
-                <div class="detay-satir"><span>Cep Tel:</span> ${u.cepTel || '-'}</div>
+                <div class="detay-satir"><span>Cep Tel:</span> <a href="tel:${u.cepTel || ''}" style="color:#ff7a00; text-decoration:none;">${u.cepTel || '-'}</a></div>
                 <div class="detay-satir"><span>Kullanıcı Adı:</span> ${u.kullaniciAdi || '-'}</div>
                 <div class="detay-satir"><span>Şifre:</span> ${u.sifre || '-'}</div>
                 <div class="detay-satir"><span>Kayıt Tarihi:</span> ${u.kayitTarihi || '-'}</div>
