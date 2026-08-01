@@ -4,8 +4,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Öngörü Akademi | Yönetici ve Öğrenci Paneli</title>
-<meta name="description" content="Öngörü Akademi resmi web sitesi. Öğrenci ve öğretmen kayıt paneli.">
+<title>Öngörü Akademi | Resmi Web Sitesi</title>
+<meta name="description" content="Öngörü Akademi resmi web sitesi. Öğrenci, öğretmen ve yönetim paneli.">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -307,6 +307,67 @@ margin-bottom:15px;
 line-height:1.8;
 }
 
+/* DERS PROGRAMLARI BÖLÜMÜ */
+.ders-programlari-section {
+padding:50px 8%;
+background:#1f1f1f;
+}
+
+.sinif-butonlari {
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:wrap;
+margin-bottom:30px;
+}
+
+.sinif-btn {
+background:#383838;
+color:white;
+border:2px solid #ff7a00;
+padding:12px 22px;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+transition:.3s;
+font-size:16px;
+}
+
+.sinif-btn:hover, .sinif-btn.active {
+background:#ff7a00;
+color:white;
+}
+
+.program-resim-alani {
+display:grid;
+grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+gap:25px;
+justify-items:center;
+}
+
+.program-resim-alani img {
+width:100%;
+max-width:500px;
+border-radius:15px;
+border:2px solid #ff7a00;
+box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+cursor:pointer;
+transition:.3s;
+}
+
+.program-resim-alani img:hover {
+transform:scale(1.03);
+}
+
+.program-bos-mesaj {
+text-align:center;
+color:#bbb;
+font-size:18px;
+width:100%;
+grid-column: 1 / -1;
+padding: 20px;
+}
+
 .galeri{
 padding:50px 8%;
 }
@@ -489,6 +550,10 @@ Hakkımızda
 Dersler
 </a>
 
+<a href="#ders-programlari">
+Ders Programları
+</a>
+
 <a href="#iletisim">
 İletişim
 </a>
@@ -609,7 +674,6 @@ Merkez Mahallesi Cihaner Sokak No 7/5A Öngörü Akademi Kurs Merkezi Arnavutkö
 <a href="https://www.instagram.com/ongoruakademi/" target="_blank" style="color: white; text-decoration: none;">
 <i class="fa-brands fa-instagram"></i>
 @arnavutkoyongoruakademi
-
 </a>
 </p>
 
@@ -617,7 +681,27 @@ Merkez Mahallesi Cihaner Sokak No 7/5A Öngörü Akademi Kurs Merkezi Arnavutkö
 
 </section>
 
-<!-- YUKARI TAŞINAN ÖN KAYIT FORMU BÖLÜMÜ -->
+<!-- DERS PROGRAMLARI BÖLÜMÜ -->
+<section class="ders-programlari-section" id="ders-programlari">
+  <h2 class="baslik"><i class="fa-solid fa-calendar-days"></i> Ders Programları</h2>
+  
+  <div class="sinif-butonlari">
+    <button class="sinif-btn active" data-sinif="1. Sınıf">1. Sınıf</button>
+    <button class="sinif-btn" data-sinif="2. Sınıf">2. Sınıf</button>
+    <button class="sinif-btn" data-sinif="3. Sınıf">3. Sınıf</button>
+    <button class="sinif-btn" data-sinif="4. Sınıf">4. Sınıf</button>
+    <button class="sinif-btn" data-sinif="5. Sınıf">5. Sınıf</button>
+    <button class="sinif-btn" data-sinif="6. Sınıf">6. Sınıf</button>
+    <button class="sinif-btn" data-sinif="7. Sınıf">7. Sınıf</button>
+    <button class="sinif-btn" data-sinif="8. Sınıf">8. Sınıf</button>
+  </div>
+
+  <div class="program-resim-alani" id="programResimAlani">
+    <p class="program-bos-mesaj">Yükleniyor...</p>
+  </div>
+</section>
+
+<!-- ÖN KAYIT FORMU BÖLÜMÜ -->
 <section class="kayit">
 
 <h2 class="baslik">
@@ -829,7 +913,7 @@ Tüm Hakları Saklıdır.
 <i class="fa-brands fa-whatsapp"></i>
 </a>
 
-<!-- SLIDER VE ETKİLEŞİM DİNAMİK SCRIPT KODU -->
+<!-- SLIDER VE ETKİLEŞİM SCRIPT KODU -->
 <script>
 let sliderlar = document.querySelectorAll(".slide");
 let index = 0;
@@ -879,14 +963,21 @@ document.querySelector(".sol").onclick = function(){
 
 sliderBaslat();
 
-// GALERİDEKİ RESİMLERE TIKLAYINCA BÜYÜTME İŞLEVİ (DELEGATE SİSTEMİ)
+// GALERİ BÜYÜTME İŞLEVİ
 document.getElementById("anaGaleriGrid").addEventListener("click", function(e) {
   if (e.target && e.target.tagName === "IMG") {
     window.open(e.target.src, "_blank");
   }
 });
 
-// HIZLI GİRİŞ KUTUSUNDAKİ "BİLGİ AL" FORMUNU AÇMA/KAPATMA
+// DERS PROGRAMI RESMİ BÜYÜTME
+document.getElementById("programResimAlani").addEventListener("click", function(e) {
+  if (e.target && e.target.tagName === "IMG") {
+    window.open(e.target.src, "_blank");
+  }
+});
+
+// HIZLI FORM AÇ/KAPAT
 const bilgiToggleBtn = document.getElementById("bilgiToggleBtn");
 const hizliFormAlani = document.getElementById("hizliFormAlani");
 
@@ -899,10 +990,10 @@ bilgiToggleBtn.addEventListener("click", function() {
 });
 </script>
 
-<!-- FIREBASE BAĞLANTISI VE DİNAMİK GALERİ ÇEKME KODU -->
+<!-- FIREBASE BAĞLANTISI VE DİNAMİK VERİ ÇEKME -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -917,7 +1008,50 @@ bilgiToggleBtn.addEventListener("click", function() {
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // --- 1. FIREBASE GALERİ CANLI VERİ ÇEKME (DOM İLE GÜVENLİ OLUŞTURMA) ---
+  // --- 1. FIREBASE DERS PROGRAMI ÇEKME ---
+  let aktifSinif = "1. Sınıf";
+  let tumProgramlar = [];
+
+  const resimAlani = document.getElementById("programResimAlani");
+
+  function programlariFiltreleVeGoster() {
+    resimAlani.innerHTML = "";
+    const secilenler = tumProgramlar.filter(p => p.sinif === aktifSinif);
+
+    if (secilenler.length === 0) {
+      resimAlani.innerHTML = `<p class="program-bos-mesaj">${aktifSinif} için henüz yüklenmiş bir ders programı bulunmamaktadır.</p>`;
+      return;
+    }
+
+    secilenler.forEach(item => {
+      const img = document.createElement("img");
+      img.src = item.url;
+      img.alt = `${item.sinif} Ders Programı`;
+      resimAlani.appendChild(img);
+    });
+  }
+
+  // Firestore Dinleyici
+  onSnapshot(collection(db, "dersProgramlari"), (snapshot) => {
+    tumProgramlar = [];
+    snapshot.forEach(docSnap => {
+      tumProgramlar.push({ id: docSnap.id, ...docSnap.data() });
+    });
+    programlariFiltreleVeGoster();
+  });
+
+  // Sınıf Butonları Tıklama Olayları
+  const sinifBtnleri = document.querySelectorAll(".sinif-btn");
+  sinifBtnleri.forEach(btn => {
+    btn.addEventListener("click", function() {
+      sinifBtnleri.forEach(b => b.classList.remove("active"));
+      this.classList.add("active");
+      aktifSinif = this.getAttribute("data-sinif");
+      programlariFiltreleVeGoster();
+    });
+  });
+
+  // --- 2. FIREBASE GALERİ CANLI VERİ ÇEKME ---
   onSnapshot(collection(db, "galeri"), (snapshot) => {
     const galeriGrid = document.getElementById("anaGaleriGrid");
     const sliderContainer = document.getElementById("mainSlider");
@@ -934,13 +1068,11 @@ bilgiToggleBtn.addEventListener("click", function() {
       snapshot.forEach((docSnap) => {
         const item = docSnap.data();
 
-        // Galeriye Güvenli Ekleme
         const img = document.createElement("img");
         img.src = item.url;
         img.alt = item.baslik || "Öngörü Akademi Fotoğrafı";
         galeriGrid.appendChild(img);
 
-        // Slider'a Güvenli Ekleme (XSS Önleme)
         const slideDiv = document.createElement("div");
         slideDiv.className = ilkEl ? "slide active" : "slide";
         
@@ -958,7 +1090,7 @@ bilgiToggleBtn.addEventListener("click", function() {
     }
   });
 
-  // --- 2. ANA SAYFADAKİ BÜYÜK ÖN KAYIT FORMU ---
+  // --- 3. ANA SAYFADAKİ ÖN KAYIT FORMU ---
   const form = document.getElementById("contactForm");
   if (form) {
     form.addEventListener("submit", async function(e) {
@@ -995,7 +1127,7 @@ bilgiToggleBtn.addEventListener("click", function() {
     });
   }
 
-  // --- 3. HIZLI GİRİŞ KUTUSUNDAKİ AÇILAN BİLGİ FORMU ---
+  // --- 4. HIZLI GİRİŞ FORMU ---
   const hizliForm = document.getElementById("hizliContactForm");
   if (hizliForm) {
     hizliForm.addEventListener("submit", async function(e) {
