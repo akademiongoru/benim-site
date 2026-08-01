@@ -1,755 +1,526 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Öngörü Akademi | Yönetici ve Öğrenci Paneli</title>
-  <meta name="description" content="Öngörü Akademi resmi web sitesi. Öğrenci ve öğretmen kayıt paneli.">
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>Öngörü Akademi | Geleceğe Güvenle</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+    html { scroll-behavior: smooth; }
+    body { background:#1e1e1e; color:white; overflow-x:hidden; }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background: #2f2f2f;
-      color: white;
-    }
-
+    /* HEADER */
     header {
-      background: #1f1f1f;
-      padding: 20px 8%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 3px solid #ff7a00;
+      background:rgba(20,20,20,0.95);
+      position:fixed;
+      width:100%;
+      top:0;
+      z-index:1000;
+      padding:15px 8%;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      box-shadow:0 5px 20px rgba(0,0,0,0.5);
+      backdrop-filter: blur(5px);
     }
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    .logo-container { display: flex; align-items: center; gap: 12px; }
+    .logo-img { height: 50px; width: auto; object-fit: contain; }
+    .logo-text { font-size:24px; font-weight:700; color:#ff7a00; }
 
-    .logo img {
-      width: 80px;
-      height: 80px;
-      background: white;
-      padding: 8px;
-      border-radius: 50%;
-    }
-
-    .logo h1 {
-      color: #ff7a00;
-      font-size: 28px;
-    }
-
-    .logo p {
-      color: #ddd;
-      font-size: 14px;
-    }
-
-    .meb img {
-      width: 80px;
-    }
-
-    nav {
-      background: #151515;
-      padding: 15px 8%;
-      display: flex;
-      justify-content: center;
-      gap: 35px;
-      flex-wrap: wrap;
-    }
-
+    nav { display:flex; gap:20px; align-items:center; }
     nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      transition: .3s;
+      color:white;
+      text-decoration:none;
+      font-weight:500;
+      transition:.3s;
+      font-size: 15px;
     }
+    nav a:hover { color:#ff7a00; }
 
-    nav a:hover {
-      color: #ff7a00;
-    }
-
-    /* ANA BANNER */
-    .banner {
-      margin: 40px 8%;
-      padding: 50px;
-      background: linear-gradient(135deg, #1f1f1f, #3c3c3c);
-      border-radius: 25px;
+    .nav-btn {
+      background:#ff7a00;
+      padding:8px 18px;
+      border-radius:20px;
+      color:white !important;
+      font-weight:600;
+      transition:.3s;
       border: 2px solid #ff7a00;
     }
+    .nav-btn:hover { background:transparent; color:#ff7a00 !important; }
 
-    .banner h2 {
-      font-size: 45px;
-      color: #ff7a00;
+    .menu-btn { display:none; font-size:24px; cursor:pointer; color:#ff7a00; }
+
+    /* HERO SLIDER */
+    .hero {
+      position:relative;
+      height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      overflow:hidden;
+    }
+    
+    .slide {
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      transition:opacity 1s ease-in-out;
+    }
+    .slide.active { opacity:1; }
+
+    .hero-overlay {
+      position:absolute;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.65);
     }
 
-    .banner span {
-      color: white;
+    .hero-content {
+      position:relative;
+      z-index:2;
+      max-width:800px;
+      padding:20px;
+    }
+    .hero-content h1 { font-size:48px; margin-bottom:15px; color:#ff7a00; }
+    .hero-content p { font-size:18px; margin-bottom:25px; color:#ddd; }
+
+    .btn {
+      background:#ff7a00;
+      color:white;
+      padding:12px 30px;
+      text-decoration:none;
+      border-radius:25px;
+      font-weight:600;
+      display:inline-block;
+      transition:.3s;
+      border:none;
+      cursor:pointer;
+    }
+    .btn:hover { background:#e06c00; transform:translateY(-3px); }
+
+    /* GENEL BÖLÜMLER */
+    section { padding:80px 8%; scroll-margin-top: 70px; }
+    .baslik { text-align:center; margin-bottom:50px; }
+    .baslik h2 { font-size:32px; color:#ff7a00; position:relative; display:inline-block; }
+    .baslik h2::after {
+      content:'';
+      width:50%;
+      height:3px;
+      background:#ff7a00;
+      position:absolute;
+      bottom:-10px;
+      left:25%;
     }
 
-    .banner p {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #ddd;
-      line-height: 1.8;
-    }
+    /* HAKKIMIZDA */
+    .hakkimizda-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; }
+    .hakkimizda-metin p { margin-bottom:15px; line-height:1.7; color:#ccc; }
 
-    .butons {
-      margin-top: 30px;
+    /* DERSLER */
+    .ders-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:25px; }
+    .ders-kart {
+      background:#2a2a2a;
+      padding:30px;
+      border-radius:15px;
+      text-align:center;
+      transition:.3s;
+      border-bottom:4px solid #ff7a00;
+    }
+    .ders-kart:hover { transform:translateY(-10px); background:#333; }
+    .ders-kart i { font-size:40px; color:#ff7a00; margin-bottom:15px; }
+    .ders-kart h3 { margin-bottom:10px; }
+
+    /* DERS PROGRAMLARI VE DUYURULAR BÖLÜMÜ */
+    .program-section { background:#252525; }
+    .sinif-sekmeleri {
       display: flex;
-      gap: 20px;
+      justify-content: center;
       flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 30px;
     }
-
-    .butons a {
-      background: #ff7a00;
-      padding: 15px 25px;
-      border-radius: 12px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .butons a:hover {
-      background: white;
-      color: #ff7a00;
-    }
-
-    /* HIZLI GİRİŞ + SLIDER */
-    .ana-alan {
-      padding: 40px 8%;
-      display: grid;
-      grid-template-columns: 220px 1fr 220px;
-      gap: 25px;
-    }
-
-    .kutu {
-      background: #383838;
-      padding: 25px;
-      border-radius: 20px;
-    }
-
-    .kutu h3 {
-      color: #ff7a00;
-      margin-bottom: 20px;
-      font-size: 22px;
-    }
-
-    .giris a,
-    .giris .bilgi-btn {
-      display: block;
-      width: 100%;
-      background: #ff7a00;
-      color: white;
-      text-decoration: none;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      border: none;
+    .sinif-btn {
+      background: #333;
+      color: #fff;
+      border: 2px solid #ff7a00;
+      padding: 10px 20px;
+      border-radius: 25px;
       cursor: pointer;
-      font-size: 16px;
-      transition: .3s;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
-
-    .giris a:hover,
-    .giris .bilgi-btn:hover {
-      background: white;
-      color: #ff7a00;
+    .sinif-btn:hover, .sinif-btn.aktif {
+      background: #ff7a00;
+      color: #fff;
     }
-
-    /* HIZLI GİRİŞ ALTINDAKİ AÇILIR FORM */
-    .hizli-form-alani {
-      display: none;
-      background: #2f2f2f;
-      padding: 15px;
+    .program-icerik-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .program-kart {
+      background: #1e1e1e;
       border-radius: 12px;
-      border: 1px solid #ff7a00;
-      margin-top: 10px;
+      border: 1px solid #444;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
     }
-
-    .hizli-form-alani input,
-    .hizli-form-alani select,
-    .hizli-form-alani textarea {
+    .program-kart:hover { transform: translateY(-5px); }
+    .program-kart img {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      background: #383838;
-      border: none;
-      border-radius: 8px;
-      color: white;
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+      border-bottom: 2px solid #ff7a00;
+    }
+    .program-kart .detay {
+      padding: 15px;
+    }
+    .program-kart .detay h4 {
+      color: #ff7a00;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    .program-kart .detay p {
+      color: #aaa;
       font-size: 13px;
     }
-
-    .hizli-form-alani textarea {
-      height: 60px;
-      resize: none;
+    .program-kart .detay span {
+      display: inline-block;
+      margin-top: 8px;
+      background: #333;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      color: #ff7a00;
     }
 
-    .hizli-form-alani button {
-      width: 100%;
-      padding: 10px;
-      background: #ff7a00;
-      color: white;
-      border: none;
+    /* FOTO GALERİ (DİNAMİK) */
+    .galeri-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:20px; }
+    .galeri-item {
+      position:relative;
+      border-radius:10px;
+      overflow:hidden;
+      height:200px;
+      cursor:pointer;
+      border: 2px solid #333;
+    }
+    .galeri-item img { width:100%; height:100%; object-fit:cover; transition:.5s; }
+    .galeri-item:hover img { transform:scale(1.1); }
+    .galeri-overlay {
+      position:absolute;
+      bottom:0; left:0; width:100%;
+      background:linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding:10px;
+      text-align:center;
+      color:white;
+      font-size:14px;
+    }
+
+    /* İLETİŞİM / BİLGİ FORMU */
+    .iletisim-grid { display:grid; grid-template-columns:1fr 1fr; gap:40px; }
+    .form-kutu { background:#2a2a2a; padding:30px; border-radius:15px; }
+    .form-kutu input, .form-kutu select, .form-kutu textarea {
+      width:100%;
+      padding:12px;
+      margin-bottom:15px;
+      background:#1e1e1e;
+      border:1px solid #444;
+      color:white;
+      border-radius:8px;
+      outline:none;
+    }
+    .form-kutu input:focus, .form-kutu select:focus, .form-kutu textarea:focus { border-color:#ff7a00; }
+    
+    .harita iframe { width:100%; height:100%; min-height:300px; border-radius:15px; border:0; }
+
+    /* FOOTER */
+    footer { background:#111; padding:30px 8%; text-align:center; color:#888; border-top:1px solid #222; }
+
+    /* MODAL (GİRİŞLER VE LIGHTBOX) */
+    .modal {
+      display:none;
+      position:fixed;
+      top:0; left:0; width:100%; height:100%;
+      background:rgba(0,0,0,0.85);
+      z-index:2000;
+      justify-content:center;
+      align-items:center;
+    }
+    .modal-kutu {
+      background:#2a2a2a;
+      padding:30px;
+      border-radius:15px;
+      width:90%;
+      max-width:400px;
+      position:relative;
+      border:2px solid #ff7a00;
+    }
+    .modal-kapat { position:absolute; top:15px; right:15px; cursor:pointer; color:#aaa; font-size:20px; }
+    
+    /* RESİM LIGHTBOX MODAL */
+    .resim-modal-kutu {
+      background: #1c1c1c;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #ff7a00;
+      max-width: 90vw;
+      max-height: 90vh;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .resim-modal-kutu img {
+      max-width: 100%;
+      max-height: 75vh;
       border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: .3s;
+      object-fit: contain;
     }
 
-    .hizli-form-alani button:hover {
-      background: white;
-      color: #ff7a00;
-    }
-
-    /* SLIDER */
-    .slider {
-      height: 420px;
-      position: relative;
-      overflow: hidden;
-      border-radius: 20px;
-    }
-
-    .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      transition: .8s;
-    }
-
-    .slide.active {
-      opacity: 1;
-    }
-
-    .slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .ok {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0, 0, 0, .6);
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 25px;
-      z-index: 5;
-    }
-
-    .sol {
-      left: 15px;
-    }
-
-    .sag {
-      right: 15px;
-    }
-
-    .iletisim p {
-      margin-bottom: 15px;
-      line-height: 1.6;
-    }
-
-    .iletisim i {
-      color: #ff7a00;
-      margin-right: 10px;
-    }
-
-    /* KARTLAR */
-    .kartlar {
-      padding: 40px 8%;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-    }
-
-    .kart {
-      background: #383838;
-      padding: 30px;
-      border-radius: 20px;
-      border-top: 4px solid #ff7a00;
-    }
-
-    .kart h2 {
-      color: #ff7a00;
-      margin-bottom: 15px;
-    }
-
-    .kart p,
-    .kart li {
-      line-height: 1.8;
-    }
-
-    .galeri {
-      padding: 50px 8%;
-    }
-
-    .baslik {
-      text-align: center;
-      color: #ff7a00;
-      font-size: 35px;
-      margin-bottom: 35px;
-    }
-
-    .galeri-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 25px;
-    }
-
-    .galeri-grid img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: .4s;
-    }
-
-    .galeri-grid img:hover {
-      transform: scale(1.05);
-    }
-
-    .kayit {
-      padding: 50px 8%;
-      background: #1f1f1f;
-    }
-
-    .kayit-alan {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-    }
-
-    .form-kutu {
-      background: #383838;
-      padding: 30px;
-      border-radius: 20px;
-    }
-
-    .form-kutu h2 {
-      color: #ff7a00;
-      margin-bottom: 25px;
-    }
-
-    .form-kutu input,
-    .form-kutu textarea,
-    .form-kutu select {
-      width: 100%;
-      padding: 15px;
-      margin-bottom: 15px;
-      background: #2f2f2f;
-      border: none;
-      border-radius: 10px;
-      color: white;
-    }
-
-    .form-kutu textarea {
-      height: 120px;
-      resize: none;
-    }
-
-    .form-kutu button {
-      width: 100%;
-      padding: 15px;
-      background: #ff7a00;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .form-kutu button:hover {
-      background: white;
-      color: #ff7a00;
-    }
-
-    .harita {
-      background: #383838;
-      padding: 30px;
-      border-radius: 20px;
-    }
-
-    .harita iframe {
-      width: 100%;
-      height: 350px;
-      border: 0;
-      border-radius: 15px;
-    }
-
-    footer {
-      background: #151515;
-      padding: 40px 20px;
-      text-align: center;
-      border-top: 3px solid #ff7a00;
-      line-height: 2;
-    }
-
-    footer h2 {
-      color: #ff7a00;
-    }
-
-    .whatsapp {
-      position: fixed;
-      right: 25px;
-      bottom: 25px;
-      width: 60px;
-      height: 60px;
-      background: #25D366;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 35px;
-      color: white;
-      text-decoration: none;
-      z-index: 999;
-    }
-
-    @media(max-width:1000px) {
-      .ana-alan {
-        grid-template-columns: 1fr;
-      }
-
-      .slider {
-        height: 300px;
-      }
-
-      .kartlar {
-        grid-template-columns: 1fr;
-      }
-
-      .galeri-grid,
-      .kayit-alan {
-        grid-template-columns: 1fr;
-      }
+    /* MOBİL UYUMLULUK */
+    @media(max-width:768px){
+      nav { display:none; position:absolute; top:100%; left:0; width:100%; background:#141414; flex-direction:column; padding:20px; }
+      nav.active { display:flex; }
+      .menu-btn { display:block; }
+      .hakkimizda-grid, .iletisim-grid { grid-template-columns:1fr; }
+      .hero-content h1 { font-size:32px; }
     }
   </style>
-
 </head>
-
 <body>
 
+  <!-- HEADER -->
   <header>
-    <div class="logo">
-      <img src="images/logo.png" alt="Logo">
-      <div>
-        <h1>Öngörü Akademi</h1>
-        <p>Arnavutköy Eğitim Merkezi</p>
-      </div>
+    <div class="logo-container">
+      <img src="https://via.placeholder.com/150x50?text=Öngörü+Akademi" alt="Öngörü Akademi Logo" class="logo-img">
+      <div class="logo-text">ÖNGÖRÜ AKADEMİ</div>
     </div>
+    
+    <div class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></div>
 
-    <div class="meb">
-      <img src="images/meb.png" alt="MEB Logo">
-    </div>
+    <nav id="nav-menu">
+      <a href="#anasayfa">Ana Sayfa</a>
+      <a href="#hakkimizda">Hakkımızda</a>
+      <a href="#dersler">Dersler</a>
+      <a href="#programlar-duyurular"><i class="fa-solid fa-calendar-days" style="color:#ff7a00;"></i> Ders Programları ve Duyurular</a>
+      <a href="#galeri">Galeri</a>
+      <a href="#iletisim">İletişim</a>
+      <a href="#" class="nav-btn" onclick="modalAc('ogrenciModal')"><i class="fa-solid fa-user-graduate"></i> Öğrenci Girişi</a>
+      <a href="#" class="nav-btn" style="background:#333; border-color:#555;" onclick="modalAc('ogretmenModal')"><i class="fa-solid fa-chalkboard-user"></i> Öğretmen Girişi</a>
+    </nav>
   </header>
 
-  <nav>
-    <a href="#">Ana Sayfa</a>
-    <a href="#hakkimizda">Hakkımızda</a>
-    <a href="#dersler">Dersler</a>
-    <a href="#iletisim">İletişim</a>
-  </nav>
-
-  <section class="ana-alan">
-    <div class="kutu giris">
-      <h3>
-        <i class="fa-solid fa-right-to-bracket"></i> Hızlı Giriş
-      </h3>
-
-      <a href="ogrenci.html">
-        <i class="fa-solid fa-user-graduate"></i> Öğrenci
-      </a>
-
-      <a href="ogretmen.html">
-        <i class="fa-solid fa-chalkboard-user"></i> Öğretmen
-      </a>
-
-      <a href="yonetici.html">
-        <i class="fa-solid fa-user-tie"></i> Yönetici
-      </a>
-
-      <button type="button" class="bilgi-btn" id="bilgiToggleBtn">
-        <i class="fa-solid fa-circle-info"></i> Bilgi Al
-      </button>
-
-      <!-- BUTONA TIKLAYINCA BURADA AÇILACAK FORM -->
-      <div class="hizli-form-alani" id="hizliFormAlani">
-        <form id="hizliContactForm">
-          <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" minlength="3" required>
-          <input type="tel" id="hOgrenciTel" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
-          <select id="hOgrenciSinif" required>
-            <option value="">Sınıf Seçiniz</option>
-            <option value="1. Sınıf">1. Sınıf</option>
-            <option value="2. Sınıf">2. Sınıf</option>
-            <option value="3. Sınıf">3. Sınıf</option>
-            <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
-            <option value="5. Sınıf">5. Sınıf</option>
-            <option value="6. Sınıf">6. Sınıf</option>
-            <option value="7. Sınıf">7. Sınıf</option>
-            <option value="8. Sınıf LGS">8. Sınıf LGS</option>
-          </select>
-          <textarea id="hOgrenciMesaj" placeholder="Mesajınız"></textarea>
-          <button type="submit" id="hGonderBtn">Gönder</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="slider" id="mainSlider">
-      <div class="slide active">
-        <img src="images/kurs1.jpg" alt="Kurs Görseli 1">
-      </div>
-      <div class="slide">
-        <img src="images/kurs2.jpg" alt="Kurs Görseli 2">
-      </div>
-      <div class="slide">
-        <img src="images/kurs3.jpg" alt="Kurs Görseli 3">
-      </div>
-      <div class="slide">
-        <img src="images/kurs4.jpg" alt="Kurs Görseli 4">
-      </div>
-      <div class="slide">
-        <img src="images/kurs5.jpg" alt="Kurs Görseli 5">
-      </div>
-      <div class="slide">
-        <img src="images/kurs6.jpg" alt="Kurs Görseli 6">
-      </div>
-
-      <div class="ok sol">
-        <i class="fa-solid fa-chevron-left"></i>
-      </div>
-      <div class="ok sag">
-        <i class="fa-solid fa-chevron-right"></i>
-      </div>
-    </div>
-
-    <div class="kutu iletisim" id="iletisim">
-      <h3>
-        <i class="fa-solid fa-address-book"></i> İletişim
-      </h3>
-
-      <p>
-        <i class="fa-solid fa-phone"></i> 0530 660 94 80
-      </p>
-
-      <p>
-        <i class="fa-solid fa-phone"></i> 0212 801 80 80
-      </p>
-
-      <p>
-        <i class="fa-solid fa-location-dot"></i> Merkez Mahallesi Cihaner Sokak No 7/5A Öngörü Akademi Kurs Merkezi Arnavutköy / İstanbul
-      </p>
-
-      <p>
-        <a href="https://www.instagram.com/ongoruakademi/" target="_blank" style="color: white; text-decoration: none;">
-          <i class="fa-brands fa-instagram"></i> @arnavutkoyongoruakademi
-        </a>
-      </p>
+  <!-- HERO SLIDER -->
+  <section class="hero" id="anasayfa">
+    <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1350&q=80');"></div>
+    <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1350&q=80');"></div>
+    
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Geleceğe Güvenle Öngörü ile Hazırlanın</h1>
+      <p>Uzman kadromuz ve modern eğitim yaklaşımlarımızla öğrencilerimizi başarıya taşıyoruz.</p>
+      <a href="#iletisim" class="btn">Bilgi Alın</a>
     </div>
   </section>
 
-  <!-- YUKARI TAŞINAN ÖN KAYIT FORMU BÖLÜMÜ -->
-  <section class="kayit">
-    <h2 class="baslik">Ön Kayıt Formu</h2>
+  <!-- HAKKIMIZDA -->
+  <section id="hakkimizda">
+    <div class="baslik">
+      <h2>Hakkımızda</h2>
+    </div>
+    <div class="hakkimizda-grid">
+      <div class="hakkimizda-metin">
+        <p>Öngörü Akademi, eğitimde yenilikçi ve birebir takip sistemini benimseyerek her öğrencinin potansiyelini en üst seviyeye çıkarmayı hedefler.</p>
+        <p>LGS, YKS ve okul takviye derslerimizde alanında uzman öğretmen kadromuz ile disiplinli ve kaliteli bir eğitim sunmaktayız.</p>
+      </div>
+      <div>
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" style="width:100%; border-radius:15px;" alt="Hakkımızda">
+      </div>
+    </div>
+  </section>
 
-    <div class="kayit-alan">
+  <!-- DERSLER -->
+  <section id="dersler" style="background:#252525;">
+    <div class="baslik">
+      <h2>Derslerimiz</h2>
+    </div>
+    <div class="ders-grid">
+      <div class="ders-kart">
+        <i class="fa-solid fa-calculator"></i>
+        <h3>Matematik</h3>
+        <p>Temel kavramlardan yeni nesil sorulara tam hakimiyet.</p>
+      </div>
+      <div class="ders-kart">
+        <i class="fa-solid fa-flask"></i>
+        <h3>Fen Bilimleri</h3>
+        <p>Deneyler ve mantık yürütme odaklı konu anlatımları.</p>
+      </div>
+      <div class="ders-kart">
+        <i class="fa-solid fa-book-open"></i>
+        <h3>Türkçe / Edebiyat</h3>
+        <p>Paragraf teknikleri, dil bilgisi ve okuma anlama gelişimi.</p>
+      </div>
+      <div class="ders-kart">
+        <i class="fa-solid fa-globe"></i>
+        <h3>Sosyal / Tarih</h3>
+        <p>Analitik düşünme ve ezbersiz tarih anlayışı.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DERS PROGRAMLARI VE DUYURULAR BÖLÜMÜ -->
+  <section id="programlar-duyurular" class="program-section">
+    <div class="baslik">
+      <h2>Ders Programları ve Duyurular</h2>
+    </div>
+
+    <!-- Sınıf Butonları (1 - 8. Sınıflar) -->
+    <div class="sinif-sekmeleri">
+      <button class="sinif-btn aktif" onclick="sinifFiltrele('1. Sınıf', this)">1. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('2. Sınıf', this)">2. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('3. Sınıf', this)">3. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('4. Sınıf', this)">4. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('5. Sınıf', this)">5. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('6. Sınıf', this)">6. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('7. Sınıf', this)">7. Sınıf</button>
+      <button class="sinif-btn" onclick="sinifFiltrele('8. Sınıf', this)">8. Sınıf</button>
+    </div>
+
+    <!-- Dinamik İçerik Listesi -->
+    <div class="program-icerik-grid" id="programIcerikAlani">
+      <small style="color:#aaa; text-align:center; grid-column: 1/-1;">Yükleniyor...</small>
+    </div>
+  </section>
+
+  <!-- FOTO GALERİ -->
+  <section id="galeri">
+    <div class="baslik">
+      <h2>Galeri</h2>
+    </div>
+    <div class="galeri-grid" id="anasayfaGaleri">
+      <small style="color:#aaa; text-align:center; grid-column:1/-1;">Galeri fotoğrafları yükleniyor...</small>
+    </div>
+  </section>
+
+  <!-- İLETİŞİM / BİLGİ FORMU -->
+  <section id="iletisim" style="background:#252525;">
+    <div class="baslik">
+      <h2>Bilgi Alın & İletişim</h2>
+    </div>
+    <div class="iletisim-grid">
       <div class="form-kutu">
-        <h2><i class="fa-solid fa-pen"></i> Bilgi Al</h2>
-
-        <form id="contactForm">
-          <input type="text" id="ogrenciAd" name="Ogrenci_Ad_Soyad" placeholder="Öğrenci Ad Soyad" minlength="3" required>
-          <input type="tel" id="ogrenciTel" name="Telefon" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
-
-          <select id="ogrenciSinif" name="Sinif" required>
+        <h3 style="margin-bottom:15px; color:#ff7a00;">Bilgi İstek Formu</h3>
+        <form id="bilgiFormu">
+          <input type="text" id="formAd" placeholder="Öğrenci Adı Soyadı" required>
+          <input type="tel" id="formTel" placeholder="Telefon Numaranız" required>
+          <select id="formSinif" required>
             <option value="">Sınıf Seçiniz</option>
             <option value="1. Sınıf">1. Sınıf</option>
             <option value="2. Sınıf">2. Sınıf</option>
             <option value="3. Sınıf">3. Sınıf</option>
-            <option value="4. Sınıf Proje OKULLARI">4. Sınıf Proje OKULLARI</option>
+            <option value="4. Sınıf">4. Sınıf</option>
             <option value="5. Sınıf">5. Sınıf</option>
             <option value="6. Sınıf">6. Sınıf</option>
             <option value="7. Sınıf">7. Sınıf</option>
-            <option value="8. Sınıf LGS">8. Sınıf LGS</option>
+            <option value="8. Sınıf">8. Sınıf (LGS)</option>
+            <option value="Lise / YKS">Lise / YKS</option>
           </select>
-
-          <textarea id="ogrenciMesaj" name="Mesaj" placeholder="Mesajınız"></textarea>
-
-          <button type="submit" id="gonderBtn">Başvuru Gönder</button>
+          <textarea id="formMesaj" rows="4" placeholder="Notunuz / Mesajınız"></textarea>
+          <button type="submit" class="btn" style="width:100%;">Gönder</button>
         </form>
       </div>
 
       <div class="harita">
-        <h2 style="color:#ff7a00;margin-bottom:20px;">
-          <i class="fa-solid fa-location-dot"></i> Konum
-        </h2>
-        <iframe src="https://maps.google.com/maps?q=Arnavutkoy%20Istanbul&t=&z=13&ie=UTF8&iwloc=&output=embed"></iframe>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d192633.39868725832!2d28.8473727!3d41.0082376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14caa7040068086b%3A0xe1cc7a3712613143!2zxLBzdGFuYnVs!5e0!3m2!1str!2str!4v1625000000000!5m2!1str!2str" allowfullscreen="" loading="lazy"></iframe>
       </div>
     </div>
   </section>
 
-  <section class="kartlar" id="hakkimizda">
-    <div class="kart">
-      <h2>Misyonumuz</h2>
-      <p>Öğrencilerimizin akademik gelişimini destekleyerek, onları geleceğe hazırlayan kaliteli ve güvenilir eğitim sunmak.</p>
-    </div>
-
-    <div class="kart">
-      <h2>Vizyonumuz</h2>
-      <p>Modern eğitim anlayışıyla başarılı, özgüvenli ve hedef sahibi öğrenciler yetiştirmek.</p>
-    </div>
-
-    <div class="kart" id="dersler">
-      <h2>Derslerimiz</h2>
-      <ul>
-        <li>Matematik</li>
-        <li>Türkçe</li>
-        <li>Fen Bilimleri</li>
-        <li>İngilizce</li>
-        <li>Sosyal Bilgiler</li>
-        <li>OKUMA ANLAMA VE YAZMA</li>
-        <li>Temel Becerileri Geliştirme ve Sosyal Gelişim</li>
-        <li>LGS Hazırlık</li>
-        <li>Proje Okulları Hazırlık</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="galeri">
-    <h2 class="baslik">Öngörü Akademi'den Kareler</h2>
-    <div class="galeri-grid" id="anaGaleriGrid">
-      <img src="images/kurs1.jpg" alt="Galeri 1">
-      <img src="images/kurs2.jpg" alt="Galeri 2">
-      <img src="images/kurs3.jpg" alt="Galeri 3">
-      <img src="images/kurs4.jpg" alt="Galeri 4">
-      <img src="images/kurs5.jpg" alt="Galeri 5">
-      <img src="images/kurs6.jpg" alt="Galeri 6">
-      <img src="images/kurs7.jpg" alt="Galeri 7">
-      <img src="images/kurs8.jpg" alt="Galeri 8">
-      <img src="images/kurs9.jpg" alt="Galeri 9">
-      <img src="images/kurs10.jpg" alt="Galeri 10">
-      <img src="images/kurs11.jpg" alt="Galeri 11">
-      <img src="images/kurs12.jpg" alt="Galeri 12">
-    </div>
-  </section>
-
+  <!-- FOOTER -->
   <footer>
-    <h2>ÖNGÖRÜ AKADEMİ</h2>
-    <p>Geleceği Öngör, Bilginle Yön Ver.</p>
-    <p>📍 Merkez Mahallesi Cihaner Sokak No:7/5A<br>Arnavutköy / İstanbul</p>
-    <p>☎ 0212 801 80 80<br>📱 0530 660 94 80</p>
-    <p>
-      <a href="https://www.instagram.com/ongoruakademi/" target="_blank" style="color: white; text-decoration: none;">
-        <i class="fa-brands fa-instagram"></i> @arnavutkoyongoruakademi
-      </a>
-    </p>
-    <p>© 2026 Öngörü Akademi<br>Tüm Hakları Saklıdır.</p>
+    <p>&copy; 2026 Öngörü Akademi - Tüm Hakları Saklıdır.</p>
   </footer>
 
-  <a href="https://wa.me/905306609480" class="whatsapp" target="_blank" rel="noopener noreferrer">
-    <i class="fa-brands fa-whatsapp"></i>
-  </a>
+  <!-- ÖĞRENCİ GİRİŞ MODAL -->
+  <div class="modal" id="ogrenciModal">
+    <div class="modal-kutu">
+      <i class="fa-solid fa-xmark modal-kapat" onclick="modalKapat('ogrenciModal')"></i>
+      <h3 style="color:#ff7a00; margin-bottom:15px; text-align:center;">Öğrenci Girişi</h3>
+      <form id="ogrenciGirisForm">
+        <input type="text" id="ogrenciKullanici" placeholder="T.C. Veya Kullanıcı Adı" required style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e1e; border:1px solid #444; color:white; border-radius:5px;">
+        <input type="password" id="ogrenciSifre" placeholder="Şifre" required style="width:100%; padding:10px; margin-bottom:15px; background:#1e1e1e; border:1px solid #444; color:white; border-radius:5px;">
+        <button type="submit" class="btn" style="width:100%;">Giriş Yap</button>
+      </form>
+    </div>
+  </div>
 
-  <!-- SLIDER VE ETKİLEŞİM DİNAMİK SCRIPT KODU -->
+  <!-- ÖĞRETMEN GİRİŞ MODAL -->
+  <div class="modal" id="ogretmenModal">
+    <div class="modal-kutu">
+      <i class="fa-solid fa-xmark modal-kapat" onclick="modalKapat('ogretmenModal')"></i>
+      <h3 style="color:#ff7a00; margin-bottom:15px; text-align:center;">Öğretmen Girişi</h3>
+      <form id="ogretmenGirisForm">
+        <input type="text" id="ogretmenKullanici" placeholder="Kullanıcı Adı" required style="width:100%; padding:10px; margin-bottom:10px; background:#1e1e1e; border:1px solid #444; color:white; border-radius:5px;">
+        <input type="password" id="ogretmenSifre" placeholder="Şifre" required style="width:100%; padding:10px; margin-bottom:15px; background:#1e1e1e; border:1px solid #444; color:white; border-radius:5px;">
+        <button type="submit" class="btn" style="width:100%;">Giriş Yap</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- RESİM BÜYÜTME MODAL (LIGHTBOX) -->
+  <div class="modal" id="resimModal">
+    <div class="resim-modal-kutu">
+      <i class="fa-solid fa-xmark modal-kapat" onclick="modalKapat('resimModal')"></i>
+      <h3 id="resimModalBaslik" style="color:#ff7a00; margin-bottom:10px; font-size:16px;">Görsel Detayı</h3>
+      <img id="resimModalImg" src="" alt="Büyük Görsel">
+    </div>
+  </div>
+
   <script>
-    let sliderlar = document.querySelectorAll(".slide");
-    let index = 0;
-    let sliderInterval = null;
-
-    function sliderGoster(no) {
-      sliderlar = document.querySelectorAll(".slide");
-      if (sliderlar.length === 0) return;
-      sliderlar.forEach(function(slide) {
-        slide.classList.remove("active");
-      });
-      if (sliderlar[no]) {
-        sliderlar[no].classList.add("active");
-      }
+    function toggleMenu() {
+      document.getElementById('nav-menu').classList.toggle('active');
+    }
+    function modalAc(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    function modalKapat(id) {
+      document.getElementById(id).style.display = 'none';
     }
 
-    function sliderBaslat() {
-      if (sliderInterval) clearInterval(sliderInterval);
-      sliderInterval = setInterval(function() {
-        sliderlar = document.querySelectorAll(".slide");
-        if (sliderlar.length === 0) return;
-        index++;
-        if (index >= sliderlar.length) {
-          index = 0;
-        }
-        sliderGoster(index);
-      }, 4000);
+    // Hero Slider Mantığı
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    setInterval(() => {
+      slides[currentSlide].classList.remove('active');
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add('active');
+    }, 4000);
+
+    // Resim Büyütme Fonksiyonu
+    function resimBuyut(url, baslik = "Görsel") {
+      if(!url) return;
+      document.getElementById("resimModalImg").src = url;
+      document.getElementById("resimModalBaslik").innerText = baslik;
+      modalAc("resimModal");
     }
-
-    document.querySelector(".sag").onclick = function() {
-      sliderlar = document.querySelectorAll(".slide");
-      index++;
-      if (index >= sliderlar.length) {
-        index = 0;
-      }
-      sliderGoster(index);
-      sliderBaslat();
-    };
-
-    document.querySelector(".sol").onclick = function() {
-      sliderlar = document.querySelectorAll(".slide");
-      index--;
-      if (index < 0) {
-        index = sliderlar.length - 1;
-      }
-      sliderGoster(index);
-      sliderBaslat();
-    };
-
-    sliderBaslat();
-
-    // GALERİDEKİ RESİMLERE TIKLAYINCA BÜYÜTME İŞLEVİ
-    document.getElementById("anaGaleriGrid").addEventListener("click", function(e) {
-      if (e.target && e.target.tagName === "IMG") {
-        window.open(e.target.src, "_blank");
-      }
-    });
-
-    // HIZLI GİRİŞ KUTUSUNDAKİ "BİLGİ AL" FORMUNU AÇMA/KAPATMA
-    const bilgiToggleBtn = document.getElementById("bilgiToggleBtn");
-    const hizliFormAlani = document.getElementById("hizliFormAlani");
-
-    bilgiToggleBtn.addEventListener("click", function() {
-      if (hizliFormAlani.style.display === "block") {
-        hizliFormAlani.style.display = "none";
-      } else {
-        hizliFormAlani.style.display = "block";
-      }
-    });
   </script>
 
-  <!-- FIREBASE BAĞLANTISI VE DİNAMİK GALERİ ÇEKME KODU -->
+  <!-- FIREBASE ENTEGRASYONU -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -764,129 +535,128 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- 1. FIREBASE GALERİ CANLI VERİ ÇEKME ---
-    onSnapshot(collection(db, "galeri"), (snapshot) => {
-      const galeriGrid = document.getElementById("anaGaleriGrid");
-      const sliderContainer = document.getElementById("mainSlider");
+    let tumProgramlar = [];
+    let seciliSinif = "1. Sınıf";
 
-      if (!snapshot.empty) {
-        galeriGrid.innerHTML = "";
+    // 1. Bilgi Formu Gönderimi
+    document.getElementById("bilgiFormu").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const ad = document.getElementById("formAd").value;
+      const tel = document.getElementById("formTel").value;
+      const sinif = document.getElementById("formSinif").value;
+      const mesaj = document.getElementById("formMesaj").value;
 
-        const solOk = sliderContainer.querySelector(".ok.sol");
-        const mevcutSlidelar = sliderContainer.querySelectorAll(".slide");
-        mevcutSlidelar.forEach(s => s.remove());
-
-        let ilkEl = true;
-
-        snapshot.forEach((docSnap) => {
-          const item = docSnap.data();
-
-          // Galeriye Ekleme
-          const img = document.createElement("img");
-          img.src = item.url;
-          img.alt = item.baslik || "Öngörü Akademi Fotoğrafı";
-          galeriGrid.appendChild(img);
-
-          // Slider'a Ekleme
-          const slideDiv = document.createElement("div");
-          slideDiv.className = ilkEl ? "slide active" : "slide";
-
-          const slideImg = document.createElement("img");
-          slideImg.src = item.url;
-          slideImg.alt = item.baslik || "Slider Fotoğrafı";
-
-          slideDiv.appendChild(slideImg);
-          sliderContainer.insertBefore(slideDiv, solOk);
-
-          ilkEl = false;
+      try {
+        await addDoc(collection(db, "basvurular"), {
+          ad: ad,
+          tel: tel,
+          sinif: sinif,
+          mesaj: mesaj,
+          tarih: new Date().toLocaleDateString('tr-TR')
         });
-
-        if (window.sliderBaslat) window.sliderBaslat();
+        alert("Başvurunuz başarıyla alındı. En kısa sürede sizinle iletişime geçeceğiz.");
+        document.getElementById("bilgiFormu").reset();
+      } catch (error) {
+        alert("Bir hata oluştu: " + error.message);
       }
     });
 
-    // --- 2. ANA SAYFADAKİ BÜYÜK ÖN KAYIT FORMU ---
-    const form = document.getElementById("contactForm");
-    if (form) {
-      form.addEventListener("submit", async function(e) {
-        e.preventDefault();
+    // 2. Canlı Galeri Yükleme
+    onSnapshot(collection(db, "galeri"), (snapshot) => {
+      const galeriDiv = document.getElementById("anasayfaGaleri");
+      galeriDiv.innerHTML = "";
 
-        const btn = document.getElementById("gonderBtn");
-        btn.innerText = "Gönderiliyor...";
-        btn.disabled = true;
+      if (snapshot.empty) {
+        galeriDiv.innerHTML = "<small style='color:#aaa; text-align:center; grid-column:1/-1;'>Henüz galeride fotoğraf yok.</small>";
+        return;
+      }
 
-        const ad = document.getElementById("ogrenciAd").value;
-        const tel = document.getElementById("ogrenciTel").value;
-        const sinif = document.getElementById("ogrenciSinif").value;
-        const mesaj = document.getElementById("ogrenciMesaj").value;
+      snapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        galeriDiv.innerHTML += `
+          <div class="galeri-item" onclick="resimBuyut('${item.url}', '${item.baslik || 'Galeri Fotoğrafı'}')">
+            <img src="${item.url}" alt="${item.baslik}">
+            <div class="galeri-overlay">${item.baslik || ''}</div>
+          </div>
+        `;
+      });
+    });
 
-        const bugun = new Date();
-        const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+    // 3. Ders Programları & Duyurular Çekme ve Filtreleme
+    onSnapshot(collection(db, "programlar_duyurular"), (snapshot) => {
+      tumProgramlar = [];
+      snapshot.forEach((docSnap) => {
+        tumProgramlar.push({ id: docSnap.id, ...docSnap.data() });
+      });
+      programlariEkranaBas(seciliSinif);
+    });
 
-        try {
-          await addDoc(collection(db, "basvurular"), {
-            ad: ad,
-            tel: tel,
-            sinif: sinif,
-            mesaj: mesaj,
-            tarih: tarihStr
-          });
-          alert("Başvurunuz başarıyla gönderildi!");
-          form.reset();
-        } catch (error) {
-          alert("Başvuru gönderilirken hata oluştu: " + error.message);
-        } finally {
-          btn.innerText = "Başvuru Gönder";
-          btn.disabled = false;
-        }
+    window.sinifFiltrele = function(sinifAdi, btnElement) {
+      seciliSinif = sinifAdi;
+      document.querySelectorAll(".sinif-btn").forEach(b => b.classList.remove("aktif"));
+      if(btnElement) btnElement.classList.add("aktif");
+      programlariEkranaBas(sinifAdi);
+    };
+
+    function programlariEkranaBas(sinifAdi) {
+      const alan = document.getElementById("programIcerikAlani");
+      alan.innerHTML = "";
+
+      const filtrelenmis = tumProgramlar.filter(p => p.sinif.toLowerCase().includes(sinifAdi.toLowerCase().split('.')[0]));
+
+      if (filtrelenmis.length === 0) {
+        alan.innerHTML = `<small style='color:#aaa; text-align:center; grid-column:1/-1; padding:20px;'>${sinifAdi} seviyesi için henüz yayınlanmış ders programı veya duyuru bulunmuyor.</small>`;
+        return;
+      }
+
+      filtrelenmis.forEach(item => {
+        alan.innerHTML += `
+          <div class="program-kart">
+            <img src="${item.url}" alt="${item.baslik}" onclick="resimBuyut('${item.url}', '${item.baslik}')">
+            <div class="detay">
+              <h4>${item.baslik}</h4>
+              <p>${item.aciklama || ''}</p>
+              <span><i class="fa-solid fa-tag"></i> ${item.tur === 'program' ? 'Ders Programı' : 'Duyuru'}</span>
+            </div>
+          </div>
+        `;
       });
     }
 
-    // --- 3. HIZLI GİRİŞ KUTUSUNDAKİ AÇILAN BİLGİ FORMU ---
-    const hizliForm = document.getElementById("hizliContactForm");
-    if (hizliForm) {
-      hizliForm.addEventListener("submit", async function(e) {
-        e.preventDefault();
+    // 4. Öğrenci Giriş Kontrolü
+    document.getElementById("ogrenciGirisForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const kAdi = document.getElementById("ogrenciKullanici").value.toLowerCase().trim();
+      const sifre = document.getElementById("ogrenciSifre").value.trim();
 
-        const btn = document.getElementById("hGonderBtn");
-        btn.innerText = "Gönderiliyor...";
-        btn.disabled = true;
+      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogrenci"));
+      const snapshot = await getDocs(q);
 
-        const ad = document.getElementById("hOgrenciAd").value;
-        const tel = document.getElementById("hOgrenciTel").value;
-        const sinif = document.getElementById("hOgrenciSinif").value;
-        const mesaj = document.getElementById("hOgrenciMesaj").value;
+      if(!snapshot.empty) {
+        alert("Giriş başarılı! Yönlendiriliyorsunuz...");
+        modalKapat("ogrenciModal");
+      } else {
+        alert("Kullanıcı adı veya şifre hatalı!");
+      }
+    });
 
-        const bugun = new Date();
-        const tarihStr = bugun.toLocaleDateString('tr-TR') + " " + bugun.toLocaleTimeString('tr-TR', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+    // 5. Öğretmen Giriş Kontrolü
+    document.getElementById("ogretmenGirisForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const kAdi = document.getElementById("ogretmenKullanici").value.toLowerCase().trim();
+      const sifre = document.getElementById("ogretmenSifre").value.trim();
 
-        try {
-          await addDoc(collection(db, "basvurular"), {
-            ad: ad,
-            tel: tel,
-            sinif: sinif,
-            mesaj: mesaj,
-            tarih: tarihStr
-          });
-          alert("Başvurunuz başarıyla gönderildi!");
-          hizliForm.reset();
-          document.getElementById("hizliFormAlani").style.display = "none";
-        } catch (error) {
-          alert("Başvuru gönderilirken hata oluştu: " + error.message);
-        } finally {
-          btn.innerText = "Gönder";
-          btn.disabled = false;
-        }
-      });
-    }
+      const q = query(collection(db, "kullanicilar"), where("kullaniciAdi", "==", kAdi), where("sifre", "==", sifre), where("rol", "==", "ogretmen"));
+      const snapshot = await getDocs(q);
+
+      if(!snapshot.empty) {
+        alert("Giriş başarılı! Yönlendiriliyorsunuz...");
+        modalKapat("ogretmenModal");
+      } else {
+        alert("Kullanıcı adı veya şifre hatalı!");
+      }
+    });
   </script>
 
 </body>
-
 </html>
