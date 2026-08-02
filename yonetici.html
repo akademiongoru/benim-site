@@ -181,13 +181,6 @@
     }
 
     /* FORM & INPUT UYARLAMALARI */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
     .two-col-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -246,7 +239,62 @@
       color: #ccc;
     }
 
-    /* GALERİ & KART ELEMANLARI */
+    /* KULLANICI DETAYLI LİSTE KARTLARI */
+    .user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .user-card {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      justify-content: space-between;
+    }
+
+    .user-card-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-card img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid var(--orange);
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .user-details strong {
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .user-details span {
+      color: #aaa;
+      font-size: 12px;
+    }
+
+    .user-details .badge {
+      color: var(--orange);
+      font-weight: 500;
+    }
+
+    /* GALERİ ELEMANLARI */
     .galeri-grid {
       display: flex;
       gap: 15px;
@@ -391,7 +439,7 @@
       <!-- İKİLİ FORM ALANI (ÖĞRETMEN & ÖĞRENCİ KAYDI) -->
       <div class="two-col-grid">
         
-        <!-- ÖĞRETMEN KAYDI -->
+        <!-- ÖĞRETMEN KAYDI VE DETAYLI LİSTESİ -->
         <div class="admin-card">
           <h2><i class="fa-solid fa-chalkboard-user"></i> Yeni Öğretmen Kaydı</h2>
           <form id="ogretmenForm" onsubmit="kullaniciKaydet(event, 'ogretmen')">
@@ -417,11 +465,11 @@
             <button type="submit" class="btn-orange">Öğretmen Kaydet</button>
           </form>
 
-          <h3 style="margin-top:20px; font-size:15px; color:var(--orange);">Kayıtlı Öğretmenler</h3>
-          <div id="ogretmenListesi" style="margin-top:10px;" class="galeri-grid"></div>
+          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğretmenler</h3>
+          <div id="ogretmenListesi" class="user-list"></div>
         </div>
 
-        <!-- ÖĞRENCİ KAYDI -->
+        <!-- ÖĞRENCİ KAYDI VE DETAYLI LİSTESİ -->
         <div class="admin-card">
           <h2><i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı</h2>
           <form id="ogrenciForm" onsubmit="kullaniciKaydet(event, 'ogrenci')">
@@ -447,14 +495,14 @@
               <input type="text" id="ogrenciTel" placeholder="Veli / Cep Tel">
             </div>
             <div class="form-group" style="margin-bottom: 15px;">
-              <label>Öğrenci Fotoğrafı Seç (Küçük Profil):</label>
+              <label>Öğrenci Fotoğrafı Seç:</label>
               <input type="file" id="ogrenciFoto" accept="image/*">
             </div>
             <button type="submit" class="btn-orange">Öğrenci Kaydet</button>
           </form>
 
-          <h3 style="margin-top:20px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
-          <div id="ogrenciListesi" style="margin-top:10px;" class="galeri-grid"></div>
+          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
+          <div id="ogrenciListesi" class="user-list"></div>
         </div>
 
       </div>
@@ -470,14 +518,14 @@
     </div>
   </div>
 
-  <!-- FIREBASE VE SCRIPT (SENİN PROJE BİLGİLERİNLE GÜNCELLENDİ) -->
+  <!-- FIREBASE VE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Kendi Firebase Bilgilerin Entegre Edildi
+    // Firebase Konfigürasyonun
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNzIWtGNhUPSvdtCRvbymwFoBqQtqZk",
       authDomain: "weffg5-b84a8.firebaseapp.com",
@@ -678,28 +726,55 @@
         });
       });
 
-      // Kullanıcılar (Öğretmen / Öğrenci)
+      // Kullanıcılar (Öğretmen / Öğrenci DETAYLI LİSTESİ)
       onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
         const ogretmenDiv = document.getElementById('ogretmenListesi');
         const ogrenciDiv = document.getElementById('ogrenciListesi');
         ogretmenDiv.innerHTML = "";
         ogrenciDiv.innerHTML = "";
 
+        if (snapshot.empty) {
+          ogretmenDiv.innerHTML = "<small style='color:#888;'>Kayıtlı öğretmen bulunamadı.</small>";
+          ogrenciDiv.innerHTML = "<small style='color:#888;'>Kayıtlı öğrenci bulunamadı.</small>";
+          return;
+        }
+
         snapshot.forEach((docSnap) => {
           const id = docSnap.id;
           const u = docSnap.data();
-
-          const cardHtml = `
-            <div class="galeri-item" style="width:110px;">
-              <img src="${u.foto || 'https://via.placeholder.com/100'}" onclick="resimBuyut('${u.foto}', '${u.adSoyad}')">
-              <div style="font-size:11px; padding:3px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${u.adSoyad}</div>
-              <button onclick="kullaniciSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
-            </div>`;
+          const fotoUrl = u.foto || 'https://via.placeholder.com/100?text=Profil';
 
           if (u.rol === 'ogretmen') {
-            ogretmenDiv.innerHTML += cardHtml;
+            ogretmenDiv.innerHTML += `
+              <div class="user-card">
+                <div class="user-card-info">
+                  <img src="${fotoUrl}" onclick="resimBuyut('${fotoUrl}', '${u.adSoyad}')" title="Büyütmek için tıkla">
+                  <div class="user-details">
+                    <strong>${u.adSoyad || '-'} <span class="badge">(${u.brans || 'Branş Yok'})</span></strong>
+                    <span><i class="fa-solid fa-user"></i> K.Adı: ${u.kullaniciAdi || '-'} | <i class="fa-solid fa-key"></i> Şifre: ${u.sifre || '-'}</span>
+                    <span><i class="fa-solid fa-phone"></i> Tel: ${u.cepTel || '-'}</span>
+                  </div>
+                </div>
+                <button class="btn-danger" style="padding:6px 12px; border:none; border-radius:6px; cursor:pointer;" onclick="kullaniciSil('${id}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>`;
           } else if (u.rol === 'ogrenci') {
-            ogrenciDiv.innerHTML += cardHtml;
+            ogrenciDiv.innerHTML += `
+              <div class="user-card">
+                <div class="user-card-info">
+                  <img src="${fotoUrl}" onclick="resimBuyut('${fotoUrl}', '${u.adSoyad}')" title="Büyütmek için tıkla">
+                  <div class="user-details">
+                    <strong>${u.adSoyad || '-'} <span class="badge">(${u.sinif || 'Sınıf Yok'})</span></strong>
+                    <span><i class="fa-solid fa-user"></i> K.Adı: ${u.kullaniciAdi || '-'} | <i class="fa-solid fa-key"></i> Şifre: ${u.sifre || '-'}</span>
+                    <span><i class="fa-solid fa-school"></i> Okul: ${u.okul || '-'} | <i class="fa-solid fa-person-breastfeeding"></i> Anne: ${u.anneAdSoyad || '-'}</span>
+                    <span><i class="fa-solid fa-phone"></i> Veli Tel: ${u.cepTel || '-'}</span>
+                  </div>
+                </div>
+                <button class="btn-danger" style="padding:6px 12px; border:none; border-radius:6px; cursor:pointer;" onclick="kullaniciSil('${id}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>`;
           }
         });
       });
