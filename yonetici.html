@@ -36,7 +36,6 @@
       min-height: 100vh;
     }
 
-    /* GİRİŞ EKRANI */
     .login-wrapper {
       display: flex;
       justify-content: center;
@@ -110,7 +109,6 @@
       background: var(--orange-hover);
     }
 
-    /* HEADER & NAVBAR */
     #panelContainer {
       display: none;
     }
@@ -157,7 +155,6 @@
       background: var(--danger);
     }
 
-    /* PANEL DÜZENİ */
     .admin-container {
       max-width: 1300px;
       margin: 30px auto;
@@ -181,7 +178,6 @@
       gap: 10px;
     }
 
-    /* FORM & INPUT UYARLAMALARI */
     .two-col-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -217,7 +213,6 @@
       border-color: var(--orange);
     }
 
-    /* TABLO STİLİ */
     .custom-table {
       width: 100%;
       border-collapse: collapse;
@@ -240,7 +235,6 @@
       color: #ccc;
     }
 
-    /* TIKLANABİLİR ACCORDION KULLANICI LİSTESİ */
     .user-accordion-list {
       display: flex;
       flex-direction: column;
@@ -336,7 +330,6 @@
       gap: 5px;
     }
 
-    /* GALERİ ELEMANLARI */
     .galeri-grid {
       display: flex;
       gap: 15px;
@@ -370,7 +363,6 @@
       font-weight: 600;
     }
 
-    /* MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -399,7 +391,6 @@
   <!-- PANEL EKRANI -->
   <div id="panelContainer">
     
-    <!-- ÜST BAR -->
     <div class="header-bar">
       <div class="header-title">
         <i class="fa-solid fa-chevron-right"></i> Öngörü Akademi - Yönetici Paneli
@@ -443,9 +434,7 @@
         </div>
 
         <h3 style="font-size: 15px; margin-bottom: 10px; color: var(--orange);">Kayıtlı Ders Programları</h3>
-        <div id="dersProgramlariListesi" class="galeri-grid">
-          <!-- Firebase Dinamik Veri -->
-        </div>
+        <div id="dersProgramlariListesi" class="galeri-grid"></div>
       </div>
 
       <!-- GALERİ YÖNETİMİ -->
@@ -472,16 +461,14 @@
               <th>İşlem</th>
             </tr>
           </thead>
-          <tbody id="basvuruContainer">
-            <!-- Firebase Dinamik Veri -->
-          </tbody>
+          <tbody id="basvuruContainer"></tbody>
         </table>
       </div>
 
-      <!-- İKİLİ FORM ALANI (ÖĞRETMEN & ÖĞRENCİ KAYDI) -->
+      <!-- İKİLİ FORM ALANI -->
       <div class="two-col-grid">
         
-        <!-- ÖĞRETMEN KAYDI VE TIKLANABİLİR LİSTESİ -->
+        <!-- ÖĞRETMEN KAYDI -->
         <div class="admin-card">
           <h2 id="ogretmenFormTitle"><i class="fa-solid fa-chalkboard-user"></i> Yeni Öğretmen Kaydı</h2>
           <form id="ogretmenForm" onsubmit="kullaniciKaydet(event, 'ogretmen')">
@@ -513,7 +500,7 @@
           <div id="ogretmenListesi" class="user-accordion-list"></div>
         </div>
 
-        <!-- ÖĞRENCİ KAYDI VE TIKLANABİLİR LİSTESİ -->
+        <!-- ÖĞRENCİ KAYDI -->
         <div class="admin-card">
           <h2 id="ogrenciFormTitle"><i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı</h2>
           <form id="ogrenciForm" onsubmit="kullaniciKaydet(event, 'ogrenci')">
@@ -556,7 +543,7 @@
     </div>
   </div>
 
-  <!-- BÜYÜK RESİM MODAL -->
+  <!-- MODAL -->
   <div id="imageModal" class="modal" onclick="this.style.display='none'">
     <div style="text-align:center;">
       <img id="modalImg" src="" style="max-width:90vw; max-height:85vh; object-fit:contain; border-radius:8px;">
@@ -564,14 +551,12 @@
     </div>
   </div>
 
-  <!-- FIREBASE VE SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
       getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Firebase Konfigürasyonun
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNzIWtGNhUPSvdtCRvbymwFoBqQtqZk",
       authDomain: "weffg5-b84a8.firebaseapp.com",
@@ -595,10 +580,8 @@
     window.onSnapshot = onSnapshot;
 
     let kullaniciVerileri = {};
-
     const YONETICI_SIFRESI = "Ongoru34+";
 
-    // Şifre Göster / Gizle
     document.getElementById('sifreToggle').addEventListener('click', function() {
       const input = document.getElementById('sifreInput');
       if (input.type === 'password') {
@@ -610,18 +593,12 @@
       }
     });
 
-    // Enter Tuşu ile Giriş Kontrolü
     window.enterKontrol = function(event) {
-      if (event.key === "Enter") {
-        girisKontrol();
-      }
+      if (event.key === "Enter") girisKontrol();
     };
 
-    // Oturum Kontrolü
     window.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('adminOturum') === 'acik') {
-        paneliAc();
-      }
+      if (localStorage.getItem('adminOturum') === 'acik') paneliAc();
     });
 
     window.girisKontrol = function() {
@@ -646,7 +623,6 @@
       canliDinleyiciler();
     }
 
-    // Modal Görsel Büyütme
     window.resimBuyut = function(src, title, e) {
       if(e) e.stopPropagation();
       document.getElementById('modalImg').src = src;
@@ -654,7 +630,7 @@
       document.getElementById('imageModal').style.display = 'flex';
     };
 
-    // Görsel Sıkıştırma (Base64)
+    // GÖRSEL SIKIŞTIRICI (Firebase limitini aşmaması için 800px & 0.65 kaliteye çekildi)
     function gorselBoyutlandir(file, maxWidth, maxHeight, callback) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -682,12 +658,11 @@
           canvas.height = height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0, width, height);
-          callback(canvas.toDataURL('image/jpeg', 0.85));
+          callback(canvas.toDataURL('image/jpeg', 0.65));
         };
       };
     }
 
-    // Accordion Aç/Kapat
     window.toggleAccordion = function(id) {
       const el = document.getElementById('acc-body-' + id);
       const icon = document.getElementById('acc-icon-' + id);
@@ -700,7 +675,6 @@
       }
     };
 
-    // DERS PROGRAMI YÜKLE
     window.dersProgramiYukle = async function() {
       const sinif = document.getElementById('dpSinifSecimi').value;
       const input = document.getElementById('dpGorselInput');
@@ -710,17 +684,18 @@
         return;
       }
 
-      gorselBoyutlandir(input.files[0], 1200, 1200, async function(base64Gorsel) {
+      gorselBoyutlandir(input.files[0], 800, 800, async function(base64Gorsel) {
         try {
           await addDoc(collection(db, "ders_programlari"), {
             sinif: sinif,
             gorsel: base64Gorsel,
             eklemeTarihi: new Date().toLocaleString('tr-TR')
           });
-          alert(`${sinif} ders programı eklendi!`);
+          alert(`${sinif} ders programı başarıyla yüklendi!`);
           input.value = "";
         } catch (e) {
           console.error("Yükleme hatası:", e);
+          alert("Görsel boyutu yüksek geldi, yüklenemedi.");
         }
       });
     };
@@ -729,9 +704,7 @@
       if(confirm("Ders programı silinsin mi?")) await deleteDoc(doc(db, "ders_programlari", id));
     };
 
-    // CANLI VERİ HAREKETLERİ
     function canliDinleyiciler() {
-      // Ders Programı
       onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
         const div = document.getElementById('dersProgramlariListesi');
         div.innerHTML = "";
@@ -751,7 +724,6 @@
         });
       });
 
-      // Galeri
       onSnapshot(collection(db, "galeri"), (snapshot) => {
         const div = document.getElementById('galeriContainer');
         div.innerHTML = "";
@@ -766,7 +738,6 @@
         });
       });
 
-      // Başvurular
       onSnapshot(collection(db, "basvurular"), (snapshot) => {
         const tbody = document.getElementById('basvuruContainer');
         tbody.innerHTML = "";
@@ -789,7 +760,6 @@
         });
       });
 
-      // Kullanıcılar (Öğretmen / Öğrenci Açılır Kart Yapısı)
       onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
         const ogretmenDiv = document.getElementById('ogretmenListesi');
         const ogrenciDiv = document.getElementById('ogrenciListesi');
@@ -866,7 +836,6 @@
       });
     }
 
-    // DÜZENLEME FORMA VERİ AKTARMA
     window.kullaniciDuzenle = function(id) {
       const u = kullaniciVerileri[id];
       if (!u) return;
@@ -916,11 +885,10 @@
       }
     };
 
-    // DİĞER İŞLEMLER
     window.galeriEkle = function() {
       const file = document.getElementById('galeriInput').files[0];
       if(!file) return alert("Dosya seçiniz.");
-      gorselBoyutlandir(file, 1200, 1200, async function(base64) {
+      gorselBoyutlandir(file, 800, 800, async function(base64) {
         await addDoc(collection(db, "galeri"), { url: base64 });
       });
     };
@@ -964,11 +932,9 @@
 
       const kaydetVeyaGuncelle = async (data) => {
         if (editId) {
-          // Güncelleme Modu
           await updateDoc(doc(db, "kullanicilar", editId), data);
           alert("Bilgiler güncellendi!");
         } else {
-          // Yeni Kayıt Modu
           data.kayitTarihi = new Date().toLocaleDateString('tr-TR');
           await addDoc(collection(db, "kullanicilar"), data);
           alert("Kayıt eklendi!");
@@ -977,13 +943,13 @@
       };
 
       if (fileInput.files && fileInput.files[0]) {
-        gorselBoyutlandir(fileInput.files[0], 600, 600, async function(base64) {
+        gorselBoyutlandir(fileInput.files[0], 500, 500, async function(base64) {
           veriler.foto = base64;
           await kaydetVeyaGuncelle(veriler);
         });
       } else {
         if (editId && kullaniciVerileri[editId] && kullaniciVerileri[editId].foto) {
-          veriler.foto = kullaniciVerileri[editId].foto; // Eski fotoğrafı koru
+          veriler.foto = kullaniciVerileri[editId].foto;
         }
         await kaydetVeyaGuncelle(veriler);
       }
