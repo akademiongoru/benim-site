@@ -21,8 +21,8 @@
       --primary-glow: rgba(255, 107, 0, 0.35);
       --primary-light: rgba(255, 107, 0, 0.12);
       
-      --bg-dark: #090a0f;         /* Derin Modern Koyu Zemin */
-      --bg-card: rgba(18, 20, 29, 0.75); /* Cam Efektli Kart Zemin */
+      --bg-dark: #090a0f;         
+      --bg-card: rgba(18, 20, 29, 0.75); 
       --bg-card-hover: rgba(28, 31, 45, 0.85);
       
       --border-color: rgba(255, 255, 255, 0.08);
@@ -58,7 +58,7 @@
       background-attachment: fixed;
     }
 
-    /* GLASSMORPHISM HEADER */
+    /* HEADER */
     header {
       background: rgba(9, 10, 15, 0.85);
       backdrop-filter: blur(20px);
@@ -120,7 +120,7 @@
       transform: scale(1.05);
     }
 
-    /* MODERN NAVIGATION BAR */
+    /* NAVIGATION BAR */
     nav {
       background: rgba(14, 16, 23, 0.9);
       backdrop-filter: blur(12px);
@@ -152,7 +152,7 @@
       transform: translateY(-1px);
     }
 
-    /* DROPDOWN DÜZELTİLDİ */
+    /* DROPDOWN MENU */
     .dropdown {
       position: relative;
       display: inline-block;
@@ -194,7 +194,6 @@
       transform: translateX(5px);
     }
 
-    /* Hover sırasında kopma yaşanmaması için */
     .dropdown:hover .dropdown-content {
       display: block;
       animation: fadeIn 0.25s ease forwards;
@@ -302,7 +301,7 @@
       font-size: 16px;
     }
 
-    /* GİRİŞ BUTONLARI & MODERN HIZLI GİRİŞ */
+    /* GİRİŞ BUTONLARI */
     .giris a,
     .giris .bilgi-btn {
       display: flex;
@@ -355,22 +354,37 @@
 
     .hizli-form-alani input,
     .hizli-form-alani select,
-    .hizli-form-alani textarea {
+    .hizli-form-alani textarea,
+    .form-kutu input,
+    .form-kutu select,
+    .form-kutu textarea {
       width: 100%;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      background: rgba(255, 255, 255, 0.05);
+      padding: 14px;
+      margin-bottom: 14px;
+      background: #12141d !important;
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
-      color: white;
-      font-size: 13px;
+      color: #ffffff !important;
+      font-size: 14px;
       outline: none;
       transition: 0.3s;
+      appearance: auto;
+    }
+
+    /* CRITICAL FIX: SELECT & OPTION STYLES FOR ALL BROWSERS */
+    select option {
+      background-color: #12141d !important;
+      color: #ffffff !important;
+      padding: 12px;
+      font-size: 14px;
     }
 
     .hizli-form-alani input:focus,
     .hizli-form-alani select:focus,
-    .hizli-form-alani textarea:focus {
+    .hizli-form-alani textarea:focus,
+    .form-kutu input:focus,
+    .form-kutu select:focus,
+    .form-kutu textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 10px var(--primary-glow);
     }
@@ -380,23 +394,28 @@
       resize: none;
     }
 
-    .hizli-form-alani button {
+    .hizli-form-alani button,
+    .form-kutu button {
       width: 100%;
-      padding: 13px;
+      padding: 15px;
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
       color: white;
       border: none;
       border-radius: var(--radius-sm);
       font-weight: 700;
+      font-size: 15px;
       cursor: pointer;
       transition: .3s;
+      box-shadow: 0 8px 20px var(--primary-glow);
     }
 
-    .hizli-form-alani button:hover {
-      box-shadow: 0 6px 20px var(--primary-glow);
+    .hizli-form-alani button:hover,
+    .form-kutu button:hover {
+      box-shadow: 0 12px 28px var(--primary-glow);
+      transform: translateY(-2px);
     }
 
-    /* BÜYÜTÜLMÜŞ & MODERN ÇERÇEVELİ KORUMALI SLIDER */
+    /* SLIDER */
     .slider-frame-wrapper {
       position: relative;
       border-radius: var(--radius-lg);
@@ -493,7 +512,7 @@
       text-align: center;
     }
 
-    /* KARTLAR SECTION */
+    /* KARTLAR */
     .kartlar {
       padding: 40px 6%;
       display: grid;
@@ -609,7 +628,7 @@
       box-shadow: 0 15px 30px var(--primary-glow);
     }
 
-    /* FORM VE HARİTA SECTION */
+    /* FORM VE HARİTA */
     .kayit {
       padding: 70px 6%;
       background: rgba(10, 11, 16, 0.8);
@@ -644,51 +663,9 @@
       color: var(--primary);
     }
 
-    .form-kutu input,
-    .form-kutu textarea,
-    .form-kutu select {
-      width: 100%;
-      padding: 16px;
-      margin-bottom: 18px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-sm);
-      color: white;
-      outline: none;
-      font-size: 14px;
-      transition: all 0.3s;
-    }
-
-    .form-kutu input:focus,
-    .form-kutu textarea:focus,
-    .form-kutu select:focus {
-      border-color: var(--primary);
-      background: rgba(255, 255, 255, 0.06);
-      box-shadow: 0 0 15px var(--primary-glow);
-    }
-
     .form-kutu textarea {
       height: 120px;
       resize: none;
-    }
-
-    .form-kutu button {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-weight: 700;
-      font-size: 15px;
-      cursor: pointer;
-      transition: all .3s ease;
-      box-shadow: 0 8px 20px var(--primary-glow);
-    }
-
-    .form-kutu button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px var(--primary-glow);
     }
 
     .harita {
@@ -751,7 +728,7 @@
       transform: scale(1.1) rotate(5deg);
     }
 
-    /* RESPONSIVE DESIGN */
+    /* RESPONSIVE */
     @media(max-width:1150px) {
       .ana-alan {
         grid-template-columns: 1fr;
@@ -790,7 +767,6 @@
     <a href="#hakkimizda"><i class="fa-solid fa-circle-info"></i> Hakkımızda</a>
     <a href="#dersler"><i class="fa-solid fa-book-open"></i> Dersler</a>
     
-    <!-- YENİLENMİŞ VE GÜVENLİ DERS PROGRAMI MENÜSÜ -->
     <div class="dropdown">
       <a href="javascript:void(0)" class="dropdown-btn">
         <i class="fa-solid fa-calendar-days"></i> Ders Programları <i class="fa-solid fa-chevron-down" style="font-size: 11px; margin-left: 2px;"></i>
@@ -810,7 +786,7 @@
     <a href="#iletisim"><i class="fa-solid fa-envelope"></i> İletişim</a>
   </nav>
 
-  <!-- DERS PROGRAMI GÖSTERİM POPUP (MODAL) -->
+  <!-- DERS PROGRAMI POPUP -->
   <div id="programModal" class="program-modal">
     <div class="program-modal-content">
       <span class="program-modal-close" onclick="dersProgramiKapat()">&times;</span>
@@ -841,13 +817,14 @@
         <i class="fa-solid fa-circle-info"></i> Hızlı Bilgi Al
       </button>
 
-      <!-- BUTONA TIKLAYINCA BURADA AÇILACAK FORM -->
+      <!-- HIZLI FORM (EKSİKSİZ SINIF LİSTESİ DÜZELTİLDİ) -->
       <div class="hizli-form-alani" id="hizliFormAlani">
         <form id="hizliContactForm">
           <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" minlength="3" required>
           <input type="tel" id="hOgrenciTel" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
+          
           <select id="hOgrenciSinif" required>
-            <option value="">Sınıf Seçiniz</option>
+            <option value="" disabled selected>Sınıf Seçiniz</option>
             <option value="1. Sınıf">1. Sınıf</option>
             <option value="2. Sınıf">2. Sınıf</option>
             <option value="3. Sınıf">3. Sınıf</option>
@@ -857,13 +834,14 @@
             <option value="7. Sınıf">7. Sınıf</option>
             <option value="8. Sınıf LGS">8. Sınıf LGS</option>
           </select>
+
           <textarea id="hOgrenciMesaj" placeholder="Mesajınız"></textarea>
           <button type="submit" id="hGonderBtn">Gönder</button>
         </form>
       </div>
     </div>
 
-    <!-- MODERN FRAME İÇİNDE BÜYÜTÜLMÜŞ SLIDER -->
+    <!-- SLIDER -->
     <div class="slider-frame-wrapper">
       <div class="slider" id="mainSlider">
         <div class="slide active">
@@ -938,7 +916,7 @@
         <li>Fen Bilimleri</li>
         <li>İngilizce</li>
         <li>Sosyal Bilgiler</li>
-        <li>Okuma Anlama ve Yazma</li>
+        <li>Okuma Yazma ve Anlama </li>
         <li>Temel Becerileri Geliştirme</li>
         <li>LGS Hazırlık</li>
         <li>Proje Okulları Hazırlık</li>
@@ -946,7 +924,7 @@
     </div>
   </section>
 
-  <!-- ÖN KAYIT FORMU -->
+  <!-- ÖN KAYIT FORMU (EKSİKSİZ SINIF LİSTESİ DÜZELTİLDİ) -->
   <section class="kayit">
     <div class="kayit-alan">
       <div class="form-kutu">
@@ -957,7 +935,7 @@
           <input type="tel" id="ogrenciTel" name="Telefon" placeholder="Telefon Numarası" pattern="[0-9\s\-\+]{10,15}" required>
 
           <select id="ogrenciSinif" name="Sinif" required>
-            <option value="">Sınıf Seçiniz</option>
+            <option value="" disabled selected>Sınıf Seçiniz</option>
             <option value="1. Sınıf">1. Sınıf</option>
             <option value="2. Sınıf">2. Sınıf</option>
             <option value="3. Sınıf">3. Sınıf</option>
@@ -1013,7 +991,7 @@
     <i class="fa-brands fa-whatsapp"></i>
   </a>
 
-  <!-- SCRIPT BÖLÜMÜ -->
+  <!-- SCRIPT -->
   <script>
     let sliderlar = document.querySelectorAll(".slide");
     let index = 0;
