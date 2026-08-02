@@ -886,6 +886,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
       authDomain: "weffg5-b84a8.firebaseapp.com",
+      databaseURL: "https://weffg5-b84a8-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "weffg5-b84a8",
       storageBucket: "weffg5-b84a8.firebasestorage.app",
       messagingSenderId: "979023738185",
@@ -896,7 +897,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // DERS PROGRAMLARINI SORGULAMA VE GÖSTERME
+    // DERS PROGRAMLARINI SORGULAMA VE GÖSTERME (Hem 'gorsel' hem 'url' alanlarını destekler)
     window.dersProgramiGoster = function(sinifAdi) {
       const modal = document.getElementById("programModal");
       const modalBaslik = document.getElementById("modalBaslik");
@@ -915,10 +916,13 @@
         } else {
           snapshot.forEach((docSnap) => {
             const data = docSnap.data();
-            const img = document.createElement("img");
-            img.src = data.url;
-            img.alt = sinifAdi + " Ders Programı";
-            modalResimler.appendChild(img);
+            const resimSrc = data.gorsel || data.url; // gorsel veya url alanını kontrol eder
+            if (resimSrc) {
+              const img = document.createElement("img");
+              img.src = resimSrc;
+              img.alt = sinifAdi + " Ders Programı";
+              modalResimler.appendChild(img);
+            }
           });
         }
       }, (error) => {
@@ -945,7 +949,7 @@
 
           // Galeriye Ekleme
           const img = document.createElement("img");
-          img.src = item.url;
+          img.src = item.url || item.gorsel;
           img.alt = item.baslik || "Öngörü Akademi Fotoğrafı";
           galeriGrid.appendChild(img);
 
@@ -954,7 +958,7 @@
           slideDiv.className = ilkEl ? "slide active" : "slide";
 
           const slideImg = document.createElement("img");
-          slideImg.src = item.url;
+          slideImg.src = item.url || item.gorsel;
           slideImg.alt = item.baslik || "Slider Fotoğrafı";
 
           slideDiv.appendChild(slideImg);
