@@ -129,7 +129,8 @@
       justify-content: center;
       gap: 15px;
       border-bottom: 1px solid var(--border-color);
-      flex-wrap: wrap;
+      position: relative;
+      z-index: 999;
     }
 
     nav a {
@@ -151,52 +152,56 @@
       transform: translateY(-1px);
     }
 
-    /* DROPDOWN */
+    /* DROPDOWN DÜZELTİLDİ */
     .dropdown {
       position: relative;
       display: inline-block;
     }
 
+    .dropdown-btn {
+      cursor: pointer;
+    }
+
     .dropdown-content {
       display: none;
       position: absolute;
-      background: rgba(18, 20, 29, 0.95);
+      background: rgba(18, 20, 29, 0.98);
       backdrop-filter: blur(20px);
-      min-width: 200px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-      z-index: 1000;
+      min-width: 220px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+      z-index: 9999;
       border-radius: var(--radius-md);
       top: 100%;
       left: 0;
-      border: 1px solid var(--border-color);
+      border: 1px solid var(--border-orange);
       overflow: hidden;
-      margin-top: 10px;
-      padding: 6px;
+      padding: 8px;
     }
 
     .dropdown-content a {
-      color: var(--text-main);
-      padding: 10px 16px;
+      color: var(--text-main) !important;
+      padding: 12px 16px;
       display: block;
-      transition: 0.2s ease;
+      transition: all 0.2s ease;
       font-size: 14px;
       border-radius: var(--radius-sm);
-      border-bottom: none;
+      width: 100%;
     }
 
     .dropdown-content a:hover {
-      background-color: var(--primary);
-      color: white;
-      transform: translateX(4px);
+      background-color: var(--primary) !important;
+      color: #ffffff !important;
+      transform: translateX(5px);
     }
 
+    /* Hover sırasında kopma yaşanmaması için */
     .dropdown:hover .dropdown-content {
       display: block;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.25s ease forwards;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -204,12 +209,12 @@
     .program-modal {
       display: none;
       position: fixed;
-      z-index: 2000;
+      z-index: 20000;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
+      background-color: rgba(0, 0, 0, 0.88);
       backdrop-filter: blur(12px);
     }
 
@@ -398,11 +403,12 @@
       padding: 8px;
       background: linear-gradient(135deg, rgba(255, 107, 0, 0.4) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 107, 0, 0.2) 100%);
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px var(--primary-glow);
+      z-index: 1;
     }
 
     .slider {
       height: 100%;
-      min-height: 580px; /* Slider yüksekliği büyütüldü */
+      min-height: 580px;
       position: relative;
       overflow: hidden;
       border-radius: calc(var(--radius-lg) - 6px);
@@ -430,7 +436,7 @@
     .slide img {
       max-width: 100%;
       max-height: 100%;
-      object-fit: contain; /* Fotoğraflar kesinlikle kırpılmaz, tam görünür */
+      object-fit: contain;
       filter: drop-shadow(0 15px 25px rgba(0,0,0,0.6));
       border-radius: 16px;
     }
@@ -783,8 +789,12 @@
     <a href="#"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
     <a href="#hakkimizda"><i class="fa-solid fa-circle-info"></i> Hakkımızda</a>
     <a href="#dersler"><i class="fa-solid fa-book-open"></i> Dersler</a>
+    
+    <!-- YENİLENMİŞ VE GÜVENLİ DERS PROGRAMI MENÜSÜ -->
     <div class="dropdown">
-      <a href="javascript:void(0)"><i class="fa-solid fa-calendar-days"></i> Ders Programları <i class="fa-solid fa-chevron-down" style="font-size: 11px; margin-left: 2px;"></i></a>
+      <a href="javascript:void(0)" class="dropdown-btn">
+        <i class="fa-solid fa-calendar-days"></i> Ders Programları <i class="fa-solid fa-chevron-down" style="font-size: 11px; margin-left: 2px;"></i>
+      </a>
       <div class="dropdown-content">
         <a href="javascript:void(0)" onclick="dersProgramiGoster('1. Sınıf')">1. Sınıf</a>
         <a href="javascript:void(0)" onclick="dersProgramiGoster('2. Sınıf')">2. Sınıf</a>
@@ -796,6 +806,7 @@
         <a href="javascript:void(0)" onclick="dersProgramiGoster('8. Sınıf')">8. Sınıf</a>
       </div>
     </div>
+    
     <a href="#iletisim"><i class="fa-solid fa-envelope"></i> İletişim</a>
   </nav>
 
