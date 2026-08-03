@@ -302,10 +302,13 @@
           eslesenUser = { id: docSnap.id, ...u };
         }
       });
-      if (!eslesenUser) eslesenUser = { id: kAdi, kullaniciAdi: kAdi, adSoyad: kAdi, brans: kAdi };
-      aktifOgretmen = eslesenUser;
-      localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
-      paneliAc();
+      if (eslesenUser) {
+        aktifOgretmen = eslesenUser;
+        localStorage.setItem("ongoru_ogretmen", JSON.stringify(aktifOgretmen));
+        paneliAc();
+      } else {
+        alert("Hatalı kullanıcı adı veya şifre! Lütfen bilgilerinizi kontrol edin.");
+      }
     } catch (err) { alert("Giriş hatası: " + err.message); } 
     finally { gBtn.disabled = false; gBtn.innerText = "Giriş Yap"; }
   });
