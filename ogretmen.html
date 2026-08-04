@@ -37,7 +37,7 @@
     .dosya-alani label { cursor: pointer; color: #ff7a00; font-weight: bold; display: block; }
 
     /* PAYLAŞIM LİSTESİ VE TABLO */
-    .liste { max-height: 500px; overflow-y: auto; margin-top: 15px; }
+    .liste { max-height: 700px; overflow-y: auto; margin-top: 15px; }
     .kart { background: #252525; border-left: 4px solid #ff7a00; padding: 15px; border-radius: 8px; margin-bottom: 12px; position: relative; }
     .kart h4 { color: #ff7a00; font-size: 16px; margin-bottom: 5px; }
     .kart p { font-size: 13px; color: #ddd; margin-bottom: 8px; white-space: pre-wrap; }
@@ -171,7 +171,7 @@
       <input type="text" id="baslik" placeholder="Not / Ödev Başlığı" required>
       <textarea id="aciklama" placeholder="Açıklama, ödev detayları..." required></textarea>
 
-      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 500 KB - İsteğe Bağlı):</label>
+      <label style="font-size:12px; color:#aaa;">Dosya Ekle (Maksimum 700 KB - İsteğe Bağlı):</label>
       <div class="dosya-alani">
         <label for="dosyaInput" id="dosyaEtiket">
           <i class="fa-solid fa-cloud-arrow-up fa-2x"></i><br>
@@ -464,7 +464,7 @@
 
       if (dosyaInput.files.length > 0) {
         const file = dosyaInput.files[0];
-        if (file.size > 500 * 1024) { alert("Dosya 500 KB'dan büyük olamaz!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
+        if (file.size > 700 * 1024) { alert("Dosya 700 KB'dan büyük olamaz!"); btn.disabled = false; btn.innerText = "Paylaş"; return; }
         dAdi = file.name;
         dUrl = await dosyayiOku(file);
       }
