@@ -18,22 +18,12 @@
     
     input, select, button { width:100%; padding:12px; margin-bottom:12px; background:#2f2f2f; border:1px solid #444; border-radius:8px; color:white; font-size:14px; outline:none; }
     button { background:#ff7a00; font-weight:bold; cursor:pointer; transition:.3s; border:none; }
-    button:hover { background:white; color:#ff7a00; }
+    button:hover { opacity:0.9; }
     
     .panel { display:none; max-width:900px; margin:0 auto; }
     .kutu { background:#383838; padding:25px; border-radius:15px; border-top:4px solid #ff7a00; margin-bottom:20px; }
     .kutu h2 { color:#ff7a00; margin-bottom:15px; font-size:20px; display:flex; align-items:center; gap:10px; }
     
-    .not-kart { background:#252525; padding:18px; border-radius:10px; margin-bottom:15px; border-left:4px solid #ff7a00; }
-    .not-kart .ust-bilgi { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid #3a3a3a; padding-bottom:8px; }
-    .not-kart .ogretmen-adi { color:#ff7a00; font-weight:bold; font-size:15px; }
-    .not-kart .tarih { color:#aaa; font-size:12px; }
-    .not-kart h3 { color:white; font-size:16px; margin-bottom:8px; }
-    .not-kart p { color:#ddd; font-size:14px; line-height:1.6; white-space:pre-wrap; margin-bottom:10px; }
-    
-    .dosya-indir-btn { display: inline-flex; align-items: center; gap: 8px; background: #ff7a00; color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold; margin-top: 5px; transition: .3s; }
-
-    /* SINAV SORU TASARIMI */
     .test-kart { background: #252525; padding: 15px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #ff7a00; display:flex; justify-content:space-between; align-items:center; }
     .soru-kart { background: #252525; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #ff7a00; }
     .soru-kart h4 { color: #ff7a00; font-size: 15px; margin-bottom: 10px; }
@@ -43,61 +33,49 @@
     .secenek-label input[type="radio"] { width: auto; margin: 0; }
 
     .sonuc-kutusu { background: #1f1f1f; border: 2px solid #ff7a00; padding: 20px; border-radius: 10px; text-align: center; margin-top: 15px; display: none; }
+    .cozuldu-rozet { background: #22c55e; color: white; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1><i class="fa-solid fa-user-graduate"></i> Öngörü Akademi - Öğrenci Paneli</h1>
+  <h1><i class="fa-solid fa-user-graduate"></i> Öngörü Akademi - Öğretmen & Öğrenci Paneli</h1>
   <div>
     <span id="ogrenciIsmi" style="margin-right:15px; font-weight:bold; color:#ff7a00;"></span>
-    <a href="index.html" id="anaSayfaBtn"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
+    <a href="index.html"><i class="fa-solid fa-house"></i> Ana Sayfa</a>
     <button class="cikis-btn" id="cikisBtn" style="display:none;"><i class="fa-solid fa-right-from-bracket"></i> Çıkış</button>
   </div>
 </header>
 
-<!-- ÖĞRENCİ GİRİŞ FORMU -->
 <div class="giris-kutu" id="girisAlani">
   <h2>Öğrenci Girişi</h2>
   <form id="ogrenciGirisForm">
-    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı / T.C. No" required autofocus>
+    <input type="text" id="gKullaniciAdi" placeholder="Kullanıcı Adı" required autofocus>
     <input type="password" id="gSifre" placeholder="Şifre" required>
     <button type="submit" id="girisBtn">Giriş Yap</button>
   </form>
 </div>
 
-<!-- ÖĞRENCİ PANEL ALANI -->
 <div class="panel" id="panelAlani">
-  
-  <!-- AKTİF TESTLER -->
   <div class="kutu">
     <h2><i class="fa-solid fa-file-pen"></i> Bana Atanan Testler</h2>
     <div id="testlerListesi">Yükleniyor...</div>
 
-    <!-- SINAV SORULARI EKRANI -->
     <div id="sinavEkrani" style="display:none; margin-top:20px; border-top: 2px dashed #ff7a00; padding-top:20px;">
       <h3 id="aktifTestBaslik" style="color:#ff7a00; margin-bottom:15px;"></h3>
       <form id="sinavFormu">
         <div id="sorularContainer"></div>
-        <button type="submit" id="sinavBitirBtn" style="margin-top:15px; background:#22c55e;"><i class="fa-solid fa-check-double"></i> Testi Tamamla ve Öğretmene Gönder</button>
+        <button type="submit" id="sinavBitirBtn" style="margin-top:15px; background:#22c55e;"><i class="fa-solid fa-check-double"></i> Testi Tamamla ve Gönder</button>
       </form>
 
       <div id="sonucKutusu" class="sonuc-kutusu">
-        <h3><i class="fa-solid fa-trophy"></i> Test Sonucunuz Öğretmene İletildi!</h3>
-        <p id="sonucMesaj"></p>
+        <h3><i class="fa-solid fa-trophy"></i> Test Sonucunuz İletildi!</h3>
+        <p id="sonucMesaj" style="margin-top:10px; line-height: 1.6;"></p>
       </div>
     </div>
   </div>
-
-  <!-- DERS NOTLARI VE ÖDEVLER -->
-  <div class="kutu">
-    <h2><i class="fa-solid fa-book-open"></i> Ders Notlarım ve Ödevlerim</h2>
-    <div id="notlarListesi">Yükleniyor...</div>
-  </div>
-
 </div>
 
-<!-- FIREBASE UYGULAMASI -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -106,7 +84,6 @@
     apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
     authDomain: "weffg5-b84a8.firebaseapp.com",
     projectId: "weffg5-b84a8",
-    storageBucket: "weffg5-b84a8.firebasestorage.app",
     messagingSenderId: "979023738185",
     appId: "1:979023738185:web:6327d7ba34be220de91698",
     measurementId: "G-P80RPZCSE7"
@@ -117,15 +94,12 @@
 
   let aktifOgrenci = null;
   let seciliTest = null;
+  let seciliTestDocId = null;
+  let cozulenTestIds = [];
 
   function escapeHtml(text) {
     if (!text) return "";
-    return String(text)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   }
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -166,8 +140,7 @@
     document.getElementById("cikisBtn").style.display = "inline-block";
     document.getElementById("ogrenciIsmi").innerText = "Hoş geldin, " + escapeHtml(aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi);
 
-    testleriYukle();
-    notlariYukle();
+    canliTestleriDinle();
   }
 
   document.getElementById("cikisBtn").addEventListener("click", () => {
@@ -175,7 +148,22 @@
     location.reload();
   });
 
-  // ÖĞRENCİYE ÖZEL TESTLERİ CANLI LİSTELE
+  // ÇÖZÜLEN TESTLERİ ÖĞRENCİ BAZLI DİNLE
+  function canliTestleriDinle() {
+    const qSonuc = query(collection(db, "test_sonuclari"), where("ogrenciId", "==", aktifOgrenci.id));
+    
+    onSnapshot(qSonuc, (sonucSnap) => {
+      cozulenTestIds = [];
+      sonucSnap.forEach(docSnap => {
+        const data = docSnap.data();
+        if (data.testId) cozulenTestIds.push(data.testId);
+        else if (data.testBaslik) cozulenTestIds.push(data.testBaslik); // Eski kayıt desteği
+      });
+
+      testleriYukle();
+    });
+  }
+
   function testleriYukle() {
     onSnapshot(collection(db, "testler"), (snapshot) => {
       const div = document.getElementById("testlerListesi");
@@ -184,22 +172,36 @@
 
       snapshot.forEach(docSnap => {
         const t = docSnap.data();
+        const testId = docSnap.id;
         const herkese = t.hedefTuru === "hepsi";
         const sinifa = t.hedefTuru === "sinif" && t.hedefSinif === aktifOgrenci.sinif;
         const kisiye = t.hedefTuru === "ogrenci" && t.hedefOgrenciId === aktifOgrenci.id;
 
         if (herkese || sinifa || kisiye) {
           testVar = true;
+          // Öğrenci bu testi ID'sine veya başlığına göre çözdü mü?
+          const zatenCozuldu = cozulenTestIds.includes(testId) || cozulenTestIds.includes(t.baslik);
+          
           const elem = document.createElement("div");
           elem.className = "test-kart";
+
+          let aksiyon = `<button class="coz-btn" style="width:auto; padding:6px 15px;"><i class="fa-solid fa-pen-to-square"></i> Testi Çöz</button>`;
+          if (zatenCozuldu) {
+            aksiyon = `<span class="cozuldu-rozet"><i class="fa-solid fa-circle-check"></i> Çözüldü</span>`;
+          }
+
           elem.innerHTML = `
             <div>
               <strong>${escapeHtml(t.baslik)}</strong>
               <div style="font-size:12px; color:#aaa;">Öğretmen: ${escapeHtml(t.ogretmenAd)} | Tarih: ${escapeHtml(t.tarih)}</div>
             </div>
-            <button class="coz-btn" style="width:auto; padding:6px 15px;"><i class="fa-solid fa-pen-to-square"></i> Testi Çöz</button>
+            ${aksiyon}
           `;
-          elem.querySelector(".coz-btn").addEventListener("click", () => testiBaslat(t));
+
+          if (!zatenCozuldu) {
+            elem.querySelector(".coz-btn").addEventListener("click", () => testiBaslat(t, testId));
+          }
+
           div.appendChild(elem);
         }
       });
@@ -208,11 +210,19 @@
     });
   }
 
-  function testiBaslat(testData) {
+  function testiBaslat(testData, docId) {
+    if (cozulenTestIds.includes(docId) || cozulenTestIds.includes(testData.baslik)) {
+      alert("Bu testi daha önce çözdünüz! Tekrar gönderemezsiniz.");
+      return;
+    }
+
     seciliTest = testData;
+    seciliTestDocId = docId;
     document.getElementById("aktifTestBaslik").innerText = testData.baslik;
     const container = document.getElementById("sorularContainer");
     container.innerHTML = "";
+    
+    document.getElementById("sinavFormu").style.display = "block";
     document.getElementById("sonucKutusu").style.display = "none";
 
     testData.sorular.forEach((q, index) => {
@@ -232,10 +242,30 @@
     document.getElementById("sinavEkrani").style.display = "block";
   }
 
-  // SINAV BİTİNCE SONUCU VERİTABANINA GÖNDER
+  // TEKRAR GÖNDERİMİ ENGELLER
   document.getElementById("sinavFormu").addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!confirm("Testi tamamlayıp göndermek istiyor musunuz?")) return;
+    const btn = document.getElementById("sinavBitirBtn");
+
+    // Anlık Veritabanı Doğrulaması (Çift Kontrol)
+    try {
+      const qCheck = query(
+        collection(db, "test_sonuclari"), 
+        where("ogrenciId", "==", aktifOgrenci.id), 
+        where("testId", "==", seciliTestDocId)
+      );
+      const checkSnap = await getDocs(qCheck);
+
+      if (!checkSnap.empty) {
+        alert("Bu testi zaten çözüp gönderdiniz! İkinci kez gönderemezsiniz.");
+        document.getElementById("sinavEkrani").style.display = "none";
+        return;
+      }
+    } catch(err) {
+      console.error("Kontrol hatası:", err);
+    }
+
+    if (!confirm("Testi bitirip göndermek istediğinize emin misiniz? (Her test tek seferliktir)")) return;
 
     let d = 0, y = 0, b = 0;
     seciliTest.sorular.forEach(q => {
@@ -246,11 +276,11 @@
     });
 
     const basari = ((d / seciliTest.sorular.length) * 100) || 0;
-    const btn = document.getElementById("sinavBitirBtn");
     btn.disabled = true; btn.innerText = "İletiliyor...";
 
     try {
       await addDoc(collection(db, "test_sonuclari"), {
+        testId: seciliTestDocId,
         ogretmenId: seciliTest.ogretmenId,
         ogrenciId: aktifOgrenci.id,
         ogrenciAd: aktifOgrenci.adSoyad || aktifOgrenci.kullaniciAdi,
@@ -262,46 +292,16 @@
         tarih: new Date().toLocaleString('tr-TR')
       });
 
-      document.getElementById("sonucMesaj").innerHTML = `Başarıyla Tamamlandı!<br> <strong>${d} Doğru, ${y} Yanlış, ${b} Boş.</strong><br> Başarı Oranı: %${basari.toFixed(1)}`;
+      document.getElementById("sinavFormu").style.display = "none";
+      document.getElementById("sonucMesaj").innerHTML = `Tamamlandı!<br> <strong>${d} Doğru, ${y} Yanlış, ${b} Boş.</strong><br> Başarı Oranı: %${basari.toFixed(1)}`;
       document.getElementById("sonucKutusu").style.display = "block";
-      alert("Test sonucunuz öğretmen paneline iletildi!");
+
+      alert("Sonucunuz öğretmen paneline başarıyla iletildi!");
     } catch(err) {
       alert("Hata: " + err.message);
-    } finally {
-      btn.disabled = false; btn.innerText = "Testi Tamamla ve Öğretmene Gönder";
+      btn.disabled = false; btn.innerText = "Testi Tamamla ve Gönder";
     }
   });
-
-  function notlariYukle() {
-    onSnapshot(collection(db, "paylasimlar"), (snapshot) => {
-      const div = document.getElementById("notlarListesi");
-      div.innerHTML = "";
-      let nVar = false;
-
-      snapshot.forEach(docSnap => {
-        const item = docSnap.data();
-        const herkese = item.hedefTuru === "hepsi";
-        const sinifa = item.hedefTuru === "sinif" && item.hedefSinif === aktifOgrenci.sinif;
-        const kisiye = item.hedefTuru === "ogrenci" && item.hedefOgrenciId === aktifOgrenci.id;
-
-        if (herkese || sinifa || kisiye) {
-          nVar = true;
-          div.innerHTML += `
-            <div class="not-kart">
-              <div class="ust-bilgi">
-                <span class="ogretmen-adi">${escapeHtml(item.ogretmenAd)}</span>
-                <span class="tarih">${escapeHtml(item.tarih)}</span>
-              </div>
-              <h3>${escapeHtml(item.baslik)}</h3>
-              <p>${escapeHtml(item.aciklama)}</p>
-              ${item.dosyaUrl ? `<a href="${item.dosyaUrl}" download="${escapeHtml(item.dosyaAdi)}" class="dosya-indir-btn"><i class="fa-solid fa-arrow-down"></i> ${escapeHtml(item.dosyaAdi)}</a>` : ''}
-            </div>
-          `;
-        }
-      });
-      if (!nVar) div.innerHTML = "<p style='color:#aaa;'>Henüz not paylaşılmamış.</p>";
-    });
-  }
 </script>
 </body>
 </html>
