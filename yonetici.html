@@ -363,6 +363,26 @@
       font-weight: 600;
     }
 
+    .sinif-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #1f1f1f;
+      border: 1px solid var(--orange);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+
+    .sinif-badge button {
+      background: transparent;
+      border: none;
+      color: var(--danger);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -403,21 +423,27 @@
 
     <div class="admin-container">
 
+      <!-- SINIF YÖNETİMİ -->
+      <div class="admin-card">
+        <h2><i class="fa-solid fa-school"></i> Sınıf Yönetimi</h2>
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center; max-width: 450px;">
+          <input type="text" id="sinifAdiInput" placeholder="Ekstra Sınıf Ekle (Örn: Özel Sınıf)" style="padding: 10px; background: var(--input-bg); border: 1px solid #444; border-radius: 6px; color: #fff; width: 100%;">
+          <button type="button" onclick="sinifEkle()" class="btn-orange" style="width: auto; padding: 10px 20px; white-space: nowrap;">
+            <i class="fa-solid fa-plus"></i> Sınıf Ekle
+          </button>
+        </div>
+        <h3 style="font-size: 14px; margin-bottom: 10px; color: var(--orange);">Mevcut Tanımlı Sınıflar</h3>
+        <div id="siniflarListesi" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+      </div>
+
       <!-- DERS PROGRAMI YÖNETİMİ -->
       <div class="admin-card">
         <h2><i class="fa-solid fa-calendar-days"></i> Ders Programı Yükle</h2>
         <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
           <div>
             <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #ddd;">Sınıf Seçin:</label>
-            <select id="dpSinifSecimi" style="padding: 10px; border-radius: 6px; background: var(--input-bg); color: #fff; border: 1px solid #444; min-width: 180px;">
-              <option value="1. Sınıf">1. Sınıf</option>
-              <option value="2. Sınıf">2. Sınıf</option>
-              <option value="3. Sınıf">3. Sınıf</option>
-              <option value="4. Sınıf">4. Sınıf</option>
-              <option value="5. Sınıf">5. Sınıf</option>
-              <option value="6. Sınıf">6. Sınıf</option>
-              <option value="7. Sınıf">7. Sınıf</option>
-              <option value="8. Sınıf">8. Sınıf</option>
+            <select id="dpSinifSecimi" style="padding: 10px; border-radius: 6px; background: var(--input-bg); color: #fff; border: 1px solid #444; min-width: 220px;">
+              <option value="">Sınıf Seçiniz</option>
             </select>
           </div>
 
@@ -496,7 +522,7 @@
             <button type="button" id="ogretmenCancelBtn" class="btn-orange btn-danger" style="display:none; margin-top:8px;" onclick="formSifirla('ogretmen')">İptal</button>
           </form>
 
-          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğretmenler (Detay için tıkla)</h3>
+          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğretmenler</h3>
           <div id="ogretmenListesi" class="user-accordion-list"></div>
         </div>
 
@@ -512,7 +538,9 @@
               <input type="text" id="ogrenciOkul" placeholder="Okulu">
             </div>
             <div class="form-group" style="margin-bottom: 12px;">
-              <input type="text" id="ogrenciSinif" placeholder="Sınıfı (Örn: 7. Sınıf)">
+              <select id="ogrenciSinif" required>
+                <option value="">Sınıf Seçiniz</option>
+              </select>
             </div>
             <div class="form-group" style="margin-bottom: 12px;">
               <input type="text" id="ogrenciKadi" placeholder="Kullanıcı Adı / T.C. No" required>
@@ -534,7 +562,7 @@
             <button type="button" id="ogrenciCancelBtn" class="btn-orange btn-danger" style="display:none; margin-top:8px;" onclick="formSifirla('ogrenci')">İptal</button>
           </form>
 
-          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler (Detay için tıkla)</h3>
+          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
           <div id="ogrenciListesi" class="user-accordion-list"></div>
         </div>
 
@@ -558,7 +586,7 @@
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyB4eNzIWtGNhUPSvdtCRvbymwFoBqQtqZk",
+      apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
       authDomain: "weffg5-b84a8.firebaseapp.com",
       databaseURL: "https://weffg5-b84a8-default-rtdb.europe-west1.firebasedatabase.app",
       projectId: "weffg5-b84a8",
@@ -579,6 +607,19 @@
     window.doc = doc;
     window.onSnapshot = onSnapshot;
 
+    // ANA SAYFA İLE BİREBİR UYUMLU SABİT SINIF YAPISI
+    const sabitSiniflar = [
+      { id: "s1", ad: "1. Sınıf", isStatic: true },
+      { id: "s2", ad: "2. Sınıf", isStatic: true },
+      { id: "s3", ad: "3. Sınıf", isStatic: true },
+      { id: "s4", ad: "4. Sınıf Proje OKULLARI", isStatic: true },
+      { id: "s5", ad: "5. Sınıf", isStatic: true },
+      { id: "s6", ad: "6. Sınıf", isStatic: true },
+      { id: "s7", ad: "7. Sınıf", isStatic: true },
+      { id: "s8", ad: "8. Sınıf LGS", isStatic: true }
+    ];
+
+    let dinamikSiniflar = [];
     let kullaniciVerileri = {};
     const YONETICI_SIFRESI = "Ongoru34+";
 
@@ -630,7 +671,6 @@
       document.getElementById('imageModal').style.display = 'flex';
     };
 
-    // GÖRSEL SIKIŞTIRICI (Firebase limitini aşmaması için 800px & 0.65 kaliteye çekildi)
     function gorselBoyutlandir(file, maxWidth, maxHeight, callback) {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -675,9 +715,83 @@
       }
     };
 
+    /* SINIF İŞLEMLERİ */
+    window.sinifEkle = async function() {
+      const input = document.getElementById('sinifAdiInput');
+      const sinifAdi = input.value.trim();
+
+      if (!sinifAdi) {
+        alert("Lütfen sınıf adını giriniz.");
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "siniflar"), {
+          ad: sinifAdi,
+          tarih: new Date().toLocaleString('tr-TR')
+        });
+        input.value = "";
+      } catch (e) {
+        console.error("Sınıf ekleme hatası:", e);
+        alert("Sınıf eklenirken bir hata oluştu.");
+      }
+    };
+
+    window.sinifSil = async function(id) {
+      if(confirm("Bu özel sınıfı silmek istediğinize emin misiniz?")) {
+        await deleteDoc(doc(db, "siniflar", id));
+      }
+    };
+
+    function sinifListeleriniRenderEt() {
+      const div = document.getElementById('siniflarListesi');
+      div.innerHTML = "";
+
+      const tumSiniflar = [...sabitSiniflar, ...dinamikSiniflar];
+
+      tumSiniflar.forEach(s => {
+        if (s.isStatic) {
+          div.innerHTML += `
+            <div class="sinif-badge" style="border-color: #555; background: #222;">
+              <span>${s.ad}</span>
+              <small style="font-size: 10px; color: #aaa;">(Varsayılan)</small>
+            </div>`;
+        } else {
+          div.innerHTML += `
+            <div class="sinif-badge">
+              <span>${s.ad}</span>
+              <button onclick="sinifSil('${s.id}')" title="Sınıfı Sil"><i class="fa-solid fa-xmark"></i></button>
+            </div>`;
+        }
+      });
+
+      // Select Seçim Kutularını Güncelle
+      const dpSelect = document.getElementById('dpSinifSecimi');
+      const ogrenciSelect = document.getElementById('ogrenciSinif');
+
+      const dpSecilen = dpSelect.value;
+      const ogrSecilen = ogrenciSelect.value;
+
+      let optionsHTML = '<option value="">Sınıf Seçiniz</option>';
+      tumSiniflar.forEach(s => {
+        optionsHTML += `<option value="${s.ad}">${s.ad}</option>`;
+      });
+
+      dpSelect.innerHTML = optionsHTML;
+      ogrenciSelect.innerHTML = optionsHTML;
+
+      dpSelect.value = dpSecilen;
+      ogrenciSelect.value = ogrSecilen;
+    }
+
     window.dersProgramiYukle = async function() {
       const sinif = document.getElementById('dpSinifSecimi').value;
       const input = document.getElementById('dpGorselInput');
+
+      if (!sinif) {
+        alert("Lütfen sınıf seçiniz.");
+        return;
+      }
 
       if (!input.files || !input.files[0]) {
         alert("Lütfen görsel seçiniz.");
@@ -695,7 +809,7 @@
           input.value = "";
         } catch (e) {
           console.error("Yükleme hatası:", e);
-          alert("Görsel boyutu yüksek geldi, yüklenemedi.");
+          alert("Görsel yüklenirken bir sorun oluştu.");
         }
       });
     };
@@ -705,6 +819,17 @@
     };
 
     function canliDinleyiciler() {
+      // Dinamik Sınıfları Dinle
+      onSnapshot(collection(db, "siniflar"), (snapshot) => {
+        dinamikSiniflar = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          dinamikSiniflar.push({ id: docSnap.id, ad: data.ad, isStatic: false });
+        });
+        sinifListeleriniRenderEt();
+      });
+
+      // Ders Programlarını Dinle
       onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
         const div = document.getElementById('dersProgramlariListesi');
         div.innerHTML = "";
@@ -717,13 +842,14 @@
           const id = docSnap.id;
           div.innerHTML += `
             <div class="galeri-item">
-              <img src="${data.gorsel}" onclick="resimBuyut('${data.gorsel}', '${data.sinif}')">
-              <div style="font-size:12px; padding:3px; background:#111; color:var(--orange);">${data.sinif}</div>
+              <img src="${data.gorsel || data.url}" onclick="resimBuyut('${data.gorsel || data.url}', '${data.sinif}')">
+              <div style="font-size:11px; padding:3px; background:#111; color:var(--orange);">${data.sinif}</div>
               <button onclick="dersProgramiSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
             </div>`;
         });
       });
 
+      // Galeriyi Dinle
       onSnapshot(collection(db, "galeri"), (snapshot) => {
         const div = document.getElementById('galeriContainer');
         div.innerHTML = "";
@@ -732,12 +858,13 @@
           const data = docSnap.data();
           div.innerHTML += `
             <div class="galeri-item">
-              <img src="${data.url}" onclick="resimBuyut('${data.url}', 'Galeri')">
+              <img src="${data.url || data.gorsel}" onclick="resimBuyut('${data.url || data.gorsel}', 'Galeri')">
               <button onclick="galeriSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
             </div>`;
         });
       });
 
+      // Başvuruları Dinle (Ana Sayfadan Gelenler)
       onSnapshot(collection(db, "basvurular"), (snapshot) => {
         const tbody = document.getElementById('basvuruContainer');
         tbody.innerHTML = "";
@@ -751,8 +878,8 @@
           tbody.innerHTML += `
             <tr>
               <td>${b.tarih || '-'}</td>
-              <td>${b.adSoyad || '-'}</td>
-              <td>${b.telefon || '-'}</td>
+              <td>${b.ad || b.adSoyad || '-'}</td>
+              <td>${b.tel || b.telefon || '-'}</td>
               <td>${b.sinif || '-'}</td>
               <td>${b.mesaj || '-'}</td>
               <td><button class="btn-danger" style="padding:4px 8px; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="basvuruSil('${id}')">Sil</button></td>
@@ -760,6 +887,7 @@
         });
       });
 
+      // Kullanıcıları Dinle
       onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
         const ogretmenDiv = document.getElementById('ogretmenListesi');
         const ogrenciDiv = document.getElementById('ogrenciListesi');
