@@ -562,13 +562,17 @@
             <button type="button" id="ogrenciCancelBtn" class="btn-orange btn-danger" style="display:none; margin-top:8px;" onclick="formSifirla('ogrenci')">İptal</button>
           </form>
 
-          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
-          
-          <!-- ÖĞRENCİ ARAMA KUTUSU -->
-          <div class="input-box" style="margin-top: 10px; margin-bottom: 10px;">
-            <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı ile Ara..." onkeyup="ogrenciAra()">
+          <!-- KAYIT FORMU HEMEN ALTINA YERLEŞTİRİLEN ARAMA KUTUSU -->
+          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #444;">
+            <label style="font-size: 13px; color: var(--orange); display: block; margin-bottom: 6px;">
+              <i class="fa-solid fa-magnifying-glass"></i> Kayıtlı Öğrencilerde Ara:
+            </label>
+            <div class="input-box" style="margin-bottom: 0;">
+              <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı Yazarak Arayın..." onkeyup="ogrenciAra()">
+            </div>
           </div>
 
+          <h3 style="margin-top:20px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
           <div id="ogrenciListesi" class="user-accordion-list"></div>
         </div>
 
@@ -613,7 +617,6 @@
     window.doc = doc;
     window.onSnapshot = onSnapshot;
 
-    // ANA SAYFA İLE BİREBİR UYUMLU SABİT SINIF YAPISI
     const sabitSiniflar = [
       { id: "s1", ad: "1. Sınıf", isStatic: true },
       { id: "s2", ad: "2. Sınıf", isStatic: true },
@@ -721,7 +724,7 @@
       }
     };
 
-    // ÖĞRENCİ ARAMA FONKSİYONU
+    // ANLIK ÖĞRENCİ ARAMA FONKSİYONU
     window.ogrenciAra = function() {
       const aranan = document.getElementById('ogrenciAramaInput').value.toLocaleLowerCase('tr-TR');
       const liste = document.querySelectorAll('#ogrenciListesi .user-accordion-item');
@@ -739,7 +742,6 @@
       });
     };
 
-    /* SINIF İŞLEMLERİ */
     window.sinifEkle = async function() {
       const input = document.getElementById('sinifAdiInput');
       const sinifAdi = input.value.trim();
@@ -789,7 +791,6 @@
         }
       });
 
-      // Select Seçim Kutularını Güncelle
       const dpSelect = document.getElementById('dpSinifSecimi');
       const ogrenciSelect = document.getElementById('ogrenciSinif');
 
@@ -843,7 +844,6 @@
     };
 
     function canliDinleyiciler() {
-      // Dinamik Sınıfları Dinle
       onSnapshot(collection(db, "siniflar"), (snapshot) => {
         dinamikSiniflar = [];
         snapshot.forEach(docSnap => {
@@ -853,7 +853,6 @@
         sinifListeleriniRenderEt();
       });
 
-      // Ders Programlarını Dinle
       onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
         const div = document.getElementById('dersProgramlariListesi');
         div.innerHTML = "";
@@ -873,7 +872,6 @@
         });
       });
 
-      // Galeriyi Dinle
       onSnapshot(collection(db, "galeri"), (snapshot) => {
         const div = document.getElementById('galeriContainer');
         div.innerHTML = "";
@@ -888,7 +886,6 @@
         });
       });
 
-      // Başvuruları Dinle (Ana Sayfadan Gelenler)
       onSnapshot(collection(db, "basvurular"), (snapshot) => {
         const tbody = document.getElementById('basvuruContainer');
         tbody.innerHTML = "";
@@ -911,7 +908,6 @@
         });
       });
 
-      // Kullanıcıları Dinle
       onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
         const ogretmenDiv = document.getElementById('ogretmenListesi');
         const ogrenciDiv = document.getElementById('ogrenciListesi');
@@ -986,7 +982,6 @@
           }
         });
 
-        // Veriler yüklendikten sonra arama filtresini güncel tut
         ogrenciAra();
       });
     }
@@ -1035,7 +1030,7 @@
         document.getElementById('ogrenciForm').reset();
         document.getElementById('ogrenciEditId').value = "";
         document.getElementById('ogrenciFormTitle').innerHTML = '<i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı';
-        document.getElementById('ogrenciBtn').innerText = 'Öğrenci Kaydet';
+        document.getElementById('ogrenciBtn').innerText = 'Öğretmen Kaydet';
         document.getElementById('ogrenciCancelBtn').style.display = 'none';
       }
     };
