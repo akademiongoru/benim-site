@@ -371,7 +371,7 @@
       appearance: auto;
     }
 
-    /* CRITICAL FIX: SELECT & OPTION STYLES FOR ALL BROWSERS */
+    /* SELECT & OPTION STYLES FOR ALL BROWSERS */
     select option {
       background-color: #12141d !important;
       color: #ffffff !important;
@@ -490,7 +490,7 @@
     .sol { left: 20px; }
     .sag { right: 20px; }
 
-    /* İLETİŞİM ALANI */
+    /* İLETİŞİM ALANI & ZİYARETÇİ SAYACI */
     .iletisim p {
       margin-bottom: 18px;
       font-size: 14px;
@@ -510,6 +510,36 @@
       border-radius: 10px;
       min-width: 32px;
       text-align: center;
+    }
+
+    .sayac-alani {
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sayac-kutusu {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      text-align: center;
+    }
+
+    .sayac-kutusu span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .sayac-kutusu strong {
+      font-size: 18px;
+      color: var(--primary);
+      font-weight: 800;
     }
 
     /* KARTLAR */
@@ -817,7 +847,6 @@
         <i class="fa-solid fa-circle-info"></i> Hızlı Bilgi Al
       </button>
 
-      <!-- HIZLI FORM (EKSİKSİZ SINIF LİSTESİ DÜZELTİLDİ) -->
       <div class="hizli-form-alani" id="hizliFormAlani">
         <form id="hizliContactForm">
           <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" minlength="3" required>
@@ -894,6 +923,18 @@
           <i class="fa-brands fa-instagram"></i> @arnavutkoyongoruakademi
         </a>
       </p>
+
+      <!-- CANLI ZİYARETÇİ SAYACI KUTULARI (EKLENDİ) -->
+      <div class="sayac-alani">
+        <div class="sayac-kutusu">
+          <span>Toplam Ziyaret</span>
+          <strong id="toplamZiyaret">...</strong>
+        </div>
+        <div class="sayac-kutusu">
+          <span>Tekil Ziyaretçi</span>
+          <strong id="tekilZiyaret">...</strong>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -924,7 +965,6 @@
     </div>
   </section>
 
-  <!-- ÖN KAYIT FORMU (EKSİKSİZ SINIF LİSTESİ DÜZELTİLDİ) -->
   <section class="kayit">
     <div class="kayit-alan">
       <div class="form-kutu">
@@ -1074,10 +1114,22 @@
     };
   </script>
 
-  <!-- FIREBASE SCRİPTİ -->
+  <!-- FIREBASE SCRİPTİ (EKSİKSİZ HALE GETİRİLDİ) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      onSnapshot, 
+      query, 
+      where,
+      doc,
+      getDoc,
+      setDoc,
+      updateDoc,
+      increment
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB4eNZiWTGnHUPSvdtCRvbymwFoBqQtqZk",
@@ -1092,6 +1144,51 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    // --- ZİYARETÇİ SAYACI SİSTEMİ ---
+    async function ziyaretciSayaciniGuncelle() {
+      const sayacRef = doc(db, "istatistikler", "ziyaretler");
+      const yeniZiyaretci = !localStorage.getItem("ongoru_ziyaretci_id");
+
+      try {
+        const docSnap = await getDoc(sayacRef);
+        
+        if (!docSnap.exists()) {
+          await setDoc(sayacRef, {
+            toplam: 1,
+            tekil: 1
+          });
+        } else {
+          const guncellemeVerisi = {
+            toplam: increment(1)
+          };
+          if (yeniZiyaretci) {
+            guncellemeVerisi.tekil = increment(1);
+          }
+          await updateDoc(sayacRef, guncellemeVerisi);
+        }
+
+        if (yeniZiyaretci) {
+          localStorage.setItem("ongoru_ziyaretci_id", "true");
+        }
+      } catch (err) {
+        console.error("Ziyaretçi sayacı güncellenirken hata oluştu:", err);
+      }
+
+      onSnapshot(sayacRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          const toplamEl = document.getElementById("toplamZiyaret");
+          const tekilEl = document.getElementById("tekilZiyaret");
+          
+          if (toplamEl) toplamEl.innerText = data.toplam || 0;
+          if (tekilEl) tekilEl.innerText = data.tekil || 0;
+        }
+      });
+    }
+
+    // Sayaç fonksiyonunu çalıştır
+    ziyaretciSayaciniGuncelle();
 
     // DERS PROGRAMI GÖSTERME
     window.dersProgramiGoster = function(sinifAdi) {
