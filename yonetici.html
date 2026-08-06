@@ -383,6 +383,36 @@
       font-size: 14px;
     }
 
+    .search-box-wrapper {
+      position: relative;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+
+    .search-box-wrapper input {
+      width: 100%;
+      padding: 10px 35px 10px 12px;
+      background: var(--input-bg);
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-box-wrapper input:focus {
+      border-color: var(--orange);
+    }
+
+    .search-box-wrapper i {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--orange);
+      font-size: 14px;
+    }
+
     .modal {
       display: none;
       position: fixed;
@@ -391,30 +421,6 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
-    }
-
-    /* ARAMA ALANI ÖZEL STİLİ */
-    .arama-kutu-wrapper {
-      margin-top: 20px;
-      padding: 15px;
-      background: #1e1e1e;
-      border: 1px solid var(--orange);
-      border-radius: 8px;
-    }
-
-    .arama-kutu-wrapper input {
-      width: 100%;
-      padding: 10px 14px;
-      background: #121212;
-      border: 1px solid #555;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 14px;
-      outline: none;
-    }
-
-    .arama-kutu-wrapper input:focus {
-      border-color: var(--orange);
     }
   </style>
 </head>
@@ -547,6 +553,13 @@
           </form>
 
           <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğretmenler</h3>
+          
+          <!-- ÖĞRETMEN ARAMA KUTUSU -->
+          <div class="search-box-wrapper">
+            <input type="text" id="ogretmenAramaInput" placeholder="Öğretmen Adı veya Branş Ara..." oninput="kullaniciListele()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </div>
+
           <div id="ogretmenListesi" class="user-accordion-list"></div>
         </div>
 
@@ -586,15 +599,14 @@
             <button type="button" id="ogrenciCancelBtn" class="btn-orange btn-danger" style="display:none; margin-top:8px;" onclick="formSifirla('ogrenci')">İptal</button>
           </form>
 
-          <!-- ARAMA KUTUSU (KAYIT FORMUNUN TAM ALTINDA) -->
-          <div class="arama-kutu-wrapper">
-            <label style="font-size: 13px; color: var(--orange); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-weight: 600;">
-              <i class="fa-solid fa-magnifying-glass"></i> Kayıtlı Öğrenci Ara:
-            </label>
-            <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı Yazınız..." oninput="ogrenciAra()">
+          <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
+
+          <!-- ÖĞRENCİ ARAMA KUTUSU -->
+          <div class="search-box-wrapper">
+            <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı, Sınıfı veya T.C. Ara..." oninput="kullaniciListele()">
+            <i class="fa-solid fa-magnifying-glass"></i>
           </div>
 
-          <h3 style="margin-top:20px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
           <div id="ogrenciListesi" class="user-accordion-list"></div>
         </div>
 
@@ -639,6 +651,7 @@
     window.doc = doc;
     window.onSnapshot = onSnapshot;
 
+    // ANA SAYFA İLE BİREBİR UYUMLU SABİT SINIF YAPISI
     const sabitSiniflar = [
       { id: "s1", ad: "1. Sınıf", isStatic: true },
       { id: "s2", ad: "2. Sınıf", isStatic: true },
@@ -746,27 +759,7 @@
       }
     };
 
-    // İSME GÖRE CANLI ANLIK ARAMA FONKSİYONU
-    window.ogrenciAra = function() {
-      const inputEl = document.getElementById('ogrenciAramaInput');
-      if (!inputEl) return;
-
-      const aranan = inputEl.value.toLocaleLowerCase('tr-TR').trim();
-      const liste = document.querySelectorAll('#ogrenciListesi .user-accordion-item');
-
-      liste.forEach(item => {
-        const isimEl = item.querySelector('.user-info-head strong');
-        if (isimEl) {
-          const isim = isimEl.innerText.toLocaleLowerCase('tr-TR');
-          if (isim.includes(aranan)) {
-            item.style.display = 'block';
-          } else {
-            item.style.display = 'none';
-          }
-        }
-      });
-    };
-
+    /* SINIF İŞLEMLERİ */
     window.sinifEkle = async function() {
       const input = document.getElementById('sinifAdiInput');
       const sinifAdi = input.value.trim();
@@ -816,6 +809,7 @@
         }
       });
 
+      // Select Seçim Kutularını Güncelle
       const dpSelect = document.getElementById('dpSinifSecimi');
       const ogrenciSelect = document.getElementById('ogrenciSinif');
 
@@ -868,91 +862,31 @@
       if(confirm("Ders programı silinsin mi?")) await deleteDoc(doc(db, "ders_programlari", id));
     };
 
-    function canliDinleyiciler() {
-      onSnapshot(collection(db, "siniflar"), (snapshot) => {
-        dinamikSiniflar = [];
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          dinamikSiniflar.push({ id: docSnap.id, ad: data.ad, isStatic: false });
-        });
-        sinifListeleriniRenderEt();
-      });
+    // Kullanıcıları Arama Filtresine Göre Ekrana Yazdıran Fonksiyon
+    window.kullaniciListele = function() {
+      const ogretmenDiv = document.getElementById('ogretmenListesi');
+      const ogrenciDiv = document.getElementById('ogrenciListesi');
+      
+      const ogrArama = (document.getElementById('ogretmenAramaInput')?.value || '').toLowerCase().trim();
+      const ogrnArama = (document.getElementById('ogrenciAramaInput')?.value || '').toLowerCase().trim();
 
-      onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
-        const div = document.getElementById('dersProgramlariListesi');
-        div.innerHTML = "";
-        if (snapshot.empty) {
-          div.innerHTML = "<small style='color:#888;'>Henüz yüklenmiş ders programı yok.</small>";
-          return;
-        }
-        snapshot.forEach(docSnap => {
-          const data = docSnap.data();
-          const id = docSnap.id;
-          div.innerHTML += `
-            <div class="galeri-item">
-              <img src="${data.gorsel || data.url}" onclick="resimBuyut('${data.gorsel || data.url}', '${data.sinif}')">
-              <div style="font-size:11px; padding:3px; background:#111; color:var(--orange);">${data.sinif}</div>
-              <button onclick="dersProgramiSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
-            </div>`;
-        });
-      });
+      ogretmenDiv.innerHTML = "";
+      ogrenciDiv.innerHTML = "";
 
-      onSnapshot(collection(db, "galeri"), (snapshot) => {
-        const div = document.getElementById('galeriContainer');
-        div.innerHTML = "";
-        snapshot.forEach(docSnap => {
-          const id = docSnap.id;
-          const data = docSnap.data();
-          div.innerHTML += `
-            <div class="galeri-item">
-              <img src="${data.url || data.gorsel}" onclick="resimBuyut('${data.url || data.gorsel}', 'Galeri')">
-              <button onclick="galeriSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
-            </div>`;
-        });
-      });
+      let ogretmenSayac = 0;
+      let ogrenciSayac = 0;
 
-      onSnapshot(collection(db, "basvurular"), (snapshot) => {
-        const tbody = document.getElementById('basvuruContainer');
-        tbody.innerHTML = "";
-        if (snapshot.empty) {
-          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">Henüz hiç başvuru yok.</td></tr>`;
-          return;
-        }
-        snapshot.forEach(docSnap => {
-          const id = docSnap.id;
-          const b = docSnap.data();
-          tbody.innerHTML += `
-            <tr>
-              <td>${b.tarih || '-'}</td>
-              <td>${b.ad || b.adSoyad || '-'}</td>
-              <td>${b.tel || b.telefon || '-'}</td>
-              <td>${b.sinif || '-'}</td>
-              <td>${b.mesaj || '-'}</td>
-              <td><button class="btn-danger" style="padding:4px 8px; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="basvuruSil('${id}')">Sil</button></td>
-            </tr>`;
-        });
-      });
+      Object.keys(kullaniciVerileri).forEach(id => {
+        const u = kullaniciVerileri[id];
+        const fotoUrl = u.foto || 'https://via.placeholder.com/100?text=Profil';
 
-      onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
-        const ogretmenDiv = document.getElementById('ogretmenListesi');
-        const ogrenciDiv = document.getElementById('ogrenciListesi');
-        ogretmenDiv.innerHTML = "";
-        ogrenciDiv.innerHTML = "";
-        kullaniciVerileri = {};
+        if (u.rol === 'ogretmen') {
+          const adMatch = (u.adSoyad || '').toLowerCase().includes(ogrArama);
+          const bransMatch = (u.brans || '').toLowerCase().includes(ogrArama);
+          const kadiMatch = (u.kullaniciAdi || '').toLowerCase().includes(ogrArama);
 
-        if (snapshot.empty) {
-          ogretmenDiv.innerHTML = "<small style='color:#888;'>Kayıtlı öğretmen bulunamadı.</small>";
-          ogrenciDiv.innerHTML = "<small style='color:#888;'>Kayıtlı öğrenci bulunamadı.</small>";
-          return;
-        }
-
-        snapshot.forEach((docSnap) => {
-          const id = docSnap.id;
-          const u = docSnap.data();
-          kullaniciVerileri[id] = u;
-          const fotoUrl = u.foto || 'https://via.placeholder.com/100?text=Profil';
-
-          if (u.rol === 'ogretmen') {
+          if (!ogrArama || adMatch || bransMatch || kadiMatch) {
+            ogretmenSayac++;
             ogretmenDiv.innerHTML += `
               <div class="user-accordion-item">
                 <div class="user-accordion-header" onclick="toggleAccordion('${id}')">
@@ -977,7 +911,15 @@
                   </div>
                 </div>
               </div>`;
-          } else if (u.rol === 'ogrenci') {
+          }
+        } else if (u.rol === 'ogrenci') {
+          const adMatch = (u.adSoyad || '').toLowerCase().includes(ogrnArama);
+          const sinifMatch = (u.sinif || '').toLowerCase().includes(ogrnArama);
+          const kadiMatch = (u.kullaniciAdi || '').toLowerCase().includes(ogrnArama);
+          const okulMatch = (u.okul || '').toLowerCase().includes(ogrnArama);
+
+          if (!ogrnArama || adMatch || sinifMatch || kadiMatch || okulMatch) {
+            ogrenciSayac++;
             ogrenciDiv.innerHTML += `
               <div class="user-accordion-item">
                 <div class="user-accordion-header" onclick="toggleAccordion('${id}')">
@@ -1005,10 +947,98 @@
                 </div>
               </div>`;
           }
+        }
+      });
+
+      if (ogretmenSayac === 0) {
+        ogretmenDiv.innerHTML = "<small style='color:#888;'>Eşleşen öğretmen bulunamadı.</small>";
+      }
+      if (ogrenciSayac === 0) {
+        ogrenciDiv.innerHTML = "<small style='color:#888;'>Eşleşen öğrenci bulunamadı.</small>";
+      }
+    };
+
+    function canliDinleyiciler() {
+      // Dinamik Sınıfları Dinle
+      onSnapshot(collection(db, "siniflar"), (snapshot) => {
+        dinamikSiniflar = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          dinamikSiniflar.push({ id: docSnap.id, ad: data.ad, isStatic: false });
+        });
+        sinifListeleriniRenderEt();
+      });
+
+      // Ders Programlarını Dinle
+      onSnapshot(collection(db, "ders_programlari"), (snapshot) => {
+        const div = document.getElementById('dersProgramlariListesi');
+        div.innerHTML = "";
+        if (snapshot.empty) {
+          div.innerHTML = "<small style='color:#888;'>Henüz yüklenmiş ders programı yok.</small>";
+          return;
+        }
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          const id = docSnap.id;
+          div.innerHTML += `
+            <div class="galeri-item">
+              <img src="${data.gorsel || data.url}" onclick="resimBuyut('${data.gorsel || data.url}', '${data.sinif}')">
+              <div style="font-size:11px; padding:3px; background:#111; color:var(--orange);">${data.sinif}</div>
+              <button onclick="dersProgramiSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+            </div>`;
+        });
+      });
+
+      // Galeriyi Dinle
+      onSnapshot(collection(db, "galeri"), (snapshot) => {
+        const div = document.getElementById('galeriContainer');
+        div.innerHTML = "";
+        snapshot.forEach(docSnap => {
+          const id = docSnap.id;
+          const data = docSnap.data();
+          div.innerHTML += `
+            <div class="galeri-item">
+              <img src="${data.url || data.gorsel}" onclick="resimBuyut('${data.url || data.gorsel}', 'Galeri')">
+              <button onclick="galeriSil('${id}')"><i class="fa-solid fa-trash"></i> Sil</button>
+            </div>`;
+        });
+      });
+
+      // Başvuruları Dinle (Ana Sayfadan Gelenler)
+      onSnapshot(collection(db, "basvurular"), (snapshot) => {
+        const tbody = document.getElementById('basvuruContainer');
+        tbody.innerHTML = "";
+        if (snapshot.empty) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888;">Henüz hiç başvuru yok.</td></tr>`;
+          return;
+        }
+        snapshot.forEach(docSnap => {
+          const id = docSnap.id;
+          const b = docSnap.data();
+          tbody.innerHTML += `
+            <tr>
+              <td>${b.tarih || '-'}</td>
+              <td>${b.ad || b.adSoyad || '-'}</td>
+              <td>${b.tel || b.telefon || '-'}</td>
+              <td>${b.sinif || '-'}</td>
+              <td>${b.mesaj || '-'}</td>
+              <td><button class="btn-danger" style="padding:4px 8px; border:none; border-radius:4px; color:#fff; cursor:pointer;" onclick="basvuruSil('${id}')">Sil</button></td>
+            </tr>`;
+        });
+      });
+
+      // Kullanıcıları Dinle
+      onSnapshot(collection(db, "kullanicilar"), (snapshot) => {
+        kullaniciVerileri = {};
+
+        snapshot.forEach((docSnap) => {
+          const id = docSnap.id;
+          const u = docSnap.data();
+          kullaniciVerileri[id] = u;
         });
 
-        // Yeni veri geldikten sonra arama filtresini koru
-        ogrenciAra();
+        // Veri değiştikçe dinamik aramalı listelemeyi çalıştır
+        kullaniciListele();
       });
     }
 
