@@ -371,7 +371,6 @@
       appearance: auto;
     }
 
-    /* SELECT & OPTION STYLES FOR ALL BROWSERS */
     select option {
       background-color: #12141d !important;
       color: #ffffff !important;
@@ -490,7 +489,7 @@
     .sol { left: 20px; }
     .sag { right: 20px; }
 
-    /* İLETİŞİM ALANI & ZİYARETÇİ SAYACI */
+    /* İLETİŞİM ALANI & İÇİNE GÖMÜLÜ CANLI SAYAÇ */
     .iletisim p {
       margin-bottom: 18px;
       font-size: 14px;
@@ -512,13 +511,14 @@
       text-align: center;
     }
 
+    /* SAYAÇ KUTUSU STİLLERİ */
     .sayac-alani {
       margin-top: auto;
-      padding-top: 15px;
+      padding-top: 18px;
       border-top: 1px solid var(--border-color);
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
     }
 
     .sayac-kutusu {
@@ -527,6 +527,12 @@
       border-radius: var(--radius-sm);
       padding: 10px;
       text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .sayac-kutusu:hover {
+      border-color: var(--border-orange);
+      background: rgba(255, 107, 0, 0.05);
     }
 
     .sayac-kutusu span {
@@ -534,6 +540,7 @@
       font-size: 11px;
       color: var(--text-muted);
       font-weight: 600;
+      margin-bottom: 2px;
     }
 
     .sayac-kutusu strong {
@@ -847,6 +854,7 @@
         <i class="fa-solid fa-circle-info"></i> Hızlı Bilgi Al
       </button>
 
+      <!-- HIZLI FORM -->
       <div class="hizli-form-alani" id="hizliFormAlani">
         <form id="hizliContactForm">
           <input type="text" id="hOgrenciAd" placeholder="Öğrenci Ad Soyad" minlength="3" required>
@@ -901,6 +909,7 @@
       </div>
     </div>
 
+    <!-- İLETİŞİM ALANI & İÇİNE GÖMÜLÜ SAYAÇ -->
     <div class="kutu iletisim" id="iletisim">
       <h3>
         <i class="fa-solid fa-address-book"></i> İletişim
@@ -921,21 +930,10 @@
       <p>
         <a href="https://www.instagram.com/ongoruakademi/" target="_blank" style="color: var(--text-main); text-decoration: none; display:flex; align-items:center; gap:8px;">
           <i class="fa-brands fa-instagram"></i> @arnavutkoyongoruakademi
-          <!-- CANLI ZİYARETÇİ SAYACI -->
-<div class="sayac-alani">
-  <div class="sayac-kutusu">
-    <span>Toplam Ziyaret</span>
-    <strong id="toplamZiyaret">...</strong>
-  </div>
-  <div class="sayac-kutusu">
-    <span>Tekil Ziyaretçi</span>
-    <strong id="tekilZiyaret">...</strong>
-  </div>
-</div>
         </a>
       </p>
 
-      <!-- CANLI ZİYARETÇİ SAYACI KUTULARI (EKLENDİ) -->
+      <!-- CANLI ZİYARETÇİ SAYACI -->
       <div class="sayac-alani">
         <div class="sayac-kutusu">
           <span>Toplam Ziyaret</span>
@@ -948,7 +946,6 @@
       </div>
     </div>
   </section>
-
   <section class="kartlar" id="hakkimizda">
     <div class="kart">
       <h2>Misyonumuz</h2>
@@ -976,6 +973,7 @@
     </div>
   </section>
 
+  <!-- ÖN KAYIT FORMU -->
   <section class="kayit">
     <div class="kayit-alan">
       <div class="form-kutu">
@@ -1125,7 +1123,7 @@
     };
   </script>
 
-  <!-- FIREBASE SCRİPTİ (EKSİKSİZ HALE GETİRİLDİ) -->
+  <!-- FIREBASE VE SAYAÇ SCRİPTİ -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -1156,49 +1154,41 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- ZİYARETÇİ SAYACI SİSTEMİ ---
+    // ZİYARETÇİ SAYACI MANTIĞI
     async function ziyaretciSayaciniGuncelle() {
       const sayacRef = doc(db, "istatistikler", "ziyaretler");
       const yeniZiyaretci = !localStorage.getItem("ongoru_ziyaretci_id");
 
       try {
         const docSnap = await getDoc(sayacRef);
-        
         if (!docSnap.exists()) {
-          await setDoc(sayacRef, {
-            toplam: 1,
-            tekil: 1
-          });
+          await setDoc(sayacRef, { toplam: 1, tekil: 1 });
         } else {
-          const guncellemeVerisi = {
-            toplam: increment(1)
-          };
+          const guncellemeVerisi = { toplam: increment(1) };
           if (yeniZiyaretci) {
             guncellemeVerisi.tekil = increment(1);
           }
           await updateDoc(sayacRef, guncellemeVerisi);
         }
-
         if (yeniZiyaretci) {
           localStorage.setItem("ongoru_ziyaretci_id", "true");
         }
       } catch (err) {
-        console.error("Ziyaretçi sayacı güncellenirken hata oluştu:", err);
+        console.error("Sayaç Hatası:", err);
       }
 
+      // CANLI ANLIK BİLGİ DİNLEME
       onSnapshot(sayacRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.data();
           const toplamEl = document.getElementById("toplamZiyaret");
           const tekilEl = document.getElementById("tekilZiyaret");
-          
           if (toplamEl) toplamEl.innerText = data.toplam || 0;
           if (tekilEl) tekilEl.innerText = data.tekil || 0;
         }
       });
     }
 
-    // Sayaç fonksiyonunu çalıştır
     ziyaretciSayaciniGuncelle();
 
     // DERS PROGRAMI GÖSTERME
