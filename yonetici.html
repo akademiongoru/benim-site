@@ -392,6 +392,30 @@
       align-items: center;
       z-index: 1000;
     }
+
+    /* ARAMA ALANI ÖZEL STİLİ */
+    .arama-kutu-wrapper {
+      margin-top: 20px;
+      padding: 15px;
+      background: #1e1e1e;
+      border: 1px solid var(--orange);
+      border-radius: 8px;
+    }
+
+    .arama-kutu-wrapper input {
+      width: 100%;
+      padding: 10px 14px;
+      background: #121212;
+      border: 1px solid #555;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .arama-kutu-wrapper input:focus {
+      border-color: var(--orange);
+    }
   </style>
 </head>
 <body>
@@ -562,14 +586,12 @@
             <button type="button" id="ogrenciCancelBtn" class="btn-orange btn-danger" style="display:none; margin-top:8px;" onclick="formSifirla('ogrenci')">İptal</button>
           </form>
 
-          <!-- KAYIT FORMU HEMEN ALTINA YERLEŞTİRİLEN ARAMA KUTUSU -->
-          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #444;">
-            <label style="font-size: 13px; color: var(--orange); display: block; margin-bottom: 6px;">
-              <i class="fa-solid fa-magnifying-glass"></i> Kayıtlı Öğrencilerde Ara:
+          <!-- ARAMA KUTUSU (KAYIT FORMUNUN TAM ALTINDA) -->
+          <div class="arama-kutu-wrapper">
+            <label style="font-size: 13px; color: var(--orange); display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-weight: 600;">
+              <i class="fa-solid fa-magnifying-glass"></i> Kayıtlı Öğrenci Ara:
             </label>
-            <div class="input-box" style="margin-bottom: 0;">
-              <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı Yazarak Arayın..." onkeyup="ogrenciAra()">
-            </div>
+            <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı Yazınız..." oninput="ogrenciAra()">
           </div>
 
           <h3 style="margin-top:20px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
@@ -724,9 +746,12 @@
       }
     };
 
-    // ANLIK ÖĞRENCİ ARAMA FONKSİYONU
+    // İSME GÖRE CANLI ANLIK ARAMA FONKSİYONU
     window.ogrenciAra = function() {
-      const aranan = document.getElementById('ogrenciAramaInput').value.toLocaleLowerCase('tr-TR');
+      const inputEl = document.getElementById('ogrenciAramaInput');
+      if (!inputEl) return;
+
+      const aranan = inputEl.value.toLocaleLowerCase('tr-TR').trim();
       const liste = document.querySelectorAll('#ogrenciListesi .user-accordion-item');
 
       liste.forEach(item => {
@@ -982,6 +1007,7 @@
           }
         });
 
+        // Yeni veri geldikten sonra arama filtresini koru
         ogrenciAra();
       });
     }
@@ -1030,7 +1056,7 @@
         document.getElementById('ogrenciForm').reset();
         document.getElementById('ogrenciEditId').value = "";
         document.getElementById('ogrenciFormTitle').innerHTML = '<i class="fa-solid fa-user-graduate"></i> Yeni Öğrenci Kaydı';
-        document.getElementById('ogrenciBtn').innerText = 'Öğretmen Kaydet';
+        document.getElementById('ogrenciBtn').innerText = 'Öğrenci Kaydet';
         document.getElementById('ogrenciCancelBtn').style.display = 'none';
       }
     };
