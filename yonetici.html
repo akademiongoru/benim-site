@@ -563,6 +563,12 @@
           </form>
 
           <h3 style="margin-top:25px; font-size:15px; color:var(--orange);">Kayıtlı Öğrenciler</h3>
+          
+          <!-- ÖĞRENCİ ARAMA KUTUSU -->
+          <div class="input-box" style="margin-top: 10px; margin-bottom: 10px;">
+            <input type="text" id="ogrenciAramaInput" placeholder="Öğrenci Adı ile Ara..." onkeyup="ogrenciAra()">
+          </div>
+
           <div id="ogrenciListesi" class="user-accordion-list"></div>
         </div>
 
@@ -713,6 +719,24 @@
           icon.className = isVisible ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
         }
       }
+    };
+
+    // ÖĞRENCİ ARAMA FONKSİYONU
+    window.ogrenciAra = function() {
+      const aranan = document.getElementById('ogrenciAramaInput').value.toLocaleLowerCase('tr-TR');
+      const liste = document.querySelectorAll('#ogrenciListesi .user-accordion-item');
+
+      liste.forEach(item => {
+        const isimEl = item.querySelector('.user-info-head strong');
+        if (isimEl) {
+          const isim = isimEl.innerText.toLocaleLowerCase('tr-TR');
+          if (isim.includes(aranan)) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        }
+      });
     };
 
     /* SINIF İŞLEMLERİ */
@@ -961,6 +985,9 @@
               </div>`;
           }
         });
+
+        // Veriler yüklendikten sonra arama filtresini güncel tut
+        ogrenciAra();
       });
     }
 
